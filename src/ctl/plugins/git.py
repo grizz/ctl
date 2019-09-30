@@ -203,7 +203,7 @@ class GitPlugin(RepositoryPlugin):
         files = kwargs.get("files")
         message = kwargs.get("message")
 
-        #XXX: why was this needed
+        #TODO: do we still need this in some situations ?
         #files = [os.path.join(self.checkout_path, f) for f in files]
 
         self.log.debug("COMMIT {} : {}".format(files, message))

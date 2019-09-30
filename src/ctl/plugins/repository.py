@@ -130,11 +130,10 @@ class RepositoryPlugin(ExecutablePlugin):
 
 
     def init(self):
-        self.repo_url = self.config.get("repo_url")
-        self.checkout_path = self.config.get("checkout_path")
+        self.repo_url = self.get_config("repo_url")
+        self.checkout_path = self.get_config("checkout_path")
 
-        #XXX hardset to master default for now, but should come from default config
-        branch = self.config.get("branch") or "master"
+        branch = self.get_config("branch")
 
         if not self.checkout_path:
 

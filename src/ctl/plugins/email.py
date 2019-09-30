@@ -15,22 +15,16 @@ class EmailPluginConfig(confu.schema.Schema):
     sender = confu.schema.Email()
     recipients = confu.schema.List(item=confu.schema.Email(),
                                    help="list of recipient addresses")
-    smtp = SMTPConfigSchema
-
+    smtp = SMTPConfigSchema()
 
 @ctl.plugin.register("email")
 class EmailPlugin(PluginBase):
     class ConfigSchema(PluginBase.ConfigSchema):
-        config = EmailPluginConfig
+        config = EmailPluginConfig()
 
-    #XXX smtp default config exists in here, but doesnt
-    #end up in self.config for some reason?
-    defaults = confu.generator.generate(ConfigSchema)
 
     def init(self):
-        #XXX need to do it like this until the defaults issue
-        # is resolved
-        smtp_host = self.config.get("smtp",{}).get("host","localhost")
+        smtp_host = self.config.get("smtp").get("host")
         self.smtp = smtplib.SMTP(smtp_host)
 
     def alert(self, message):

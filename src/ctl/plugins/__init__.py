@@ -30,7 +30,6 @@ class PluginBase(pluginmgr.config.PluginBase):
 
     Initializes:
 
-XXX
     - `self.config` as plugins config
     - `self.log` as a ctl.log.Log instance
     - `self.ctl` as a reference to the main ctl object
@@ -103,7 +102,6 @@ XXX
     @property
     def log(self):
         if not getattr(self, '_logger', None):
-            # XXX should be plugins.name?
             self._logger = Log("ctl.plugins.{}".format(self.plugin_type))
         return self._logger
 

@@ -33,8 +33,7 @@ class LogAlertPlugin(LogPlugin):
         plugin_name = kwargs.get("plugin")
         output_levels = kwargs.get("output_levels", levels)
 
-        #XXX should be a function in pluginmgr
-        plugin = ctl.plugin._instance.get(plugin_name)
+        plugin = self.other_plugin(plugin_name)
         if not plugin:
             raise Exception("Plugin instance not found: {}".format(plugin_name))
 
