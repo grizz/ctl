@@ -50,13 +50,8 @@ class GitPlugin(RepositoryPlugin):
     @property
     def uuid(self):
         """ return recent commit hash of the repo """
-        try:
-            command = self.command("rev-parse", "--short", "HEAD")
-            return self.run_git_command(command)[0].strip()
-        except RuntimeError as exc:
-            if u"{}".format(exc).find("ambiguous argument 'HEAD'") > -1:
-                return ""
-            raise
+        command = self.command("rev-parse", "--short", "HEAD")
+        return self.run_git_command(command)[0].strip()
 
     @property
     def is_cloned(self):

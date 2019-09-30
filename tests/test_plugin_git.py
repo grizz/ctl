@@ -7,11 +7,12 @@ def init_tmp_repo(tmpdir):
     repo_path_clone = str(tmpdir.mkdir("git_repo_clone"))
 
     subprocess.call(["cd {path}; git init --bare;".format(path=repo_path)], shell=True)
+    subprocess.call(["git clone {src} {path}".format(src=repo_path, path=repo_path_clone)], shell=True)
 
     subprocess.call(["echo empty > {path}/README.md".format(path=repo_path_clone)], shell=True)
-    subprocess.call(["cd {path}; git init; git config user.name pytest; git add *; git commit -am initial;".format(
+    subprocess.call(["cd {path}; git config user.name pytest; git add *; git commit -am initial;".format(
         path=repo_path_clone)], shell=True)
-    subprocess.call(["cd {path}; git remote add origin {src}; git push -u origin master;".format(
+    subprocess.call(["cd {path}; git push -u origin master;".format(
         path=repo_path_clone, src=repo_path)], shell=True)
 
     subprocess.call(["cd {path}; git branch test;".format(
