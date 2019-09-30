@@ -8,7 +8,6 @@ def plugin_instance():
 
 def test_init():
     plugin = plugin_instance()
-    assert isinstance(plugin.smtp, smtplib.SMTP)
 
 def test_send():
     plugin = plugin_instance()

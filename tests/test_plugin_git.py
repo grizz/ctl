@@ -10,7 +10,7 @@ def init_tmp_repo(tmpdir):
     subprocess.call(["git clone {src} {path}".format(src=repo_path, path=repo_path_clone)], shell=True)
 
     subprocess.call(["echo empty > {path}/README.md".format(path=repo_path_clone)], shell=True)
-    subprocess.call(["cd {path}; git config user.name pytest; git add *; git commit -am initial;".format(
+    subprocess.call(["cd {path}; git config user.name pytest; git config user.email pytest@localhost; git add *; git commit -am initial;".format(
         path=repo_path_clone)], shell=True)
     subprocess.call(["cd {path}; git push -u origin master;".format(
         path=repo_path_clone, src=repo_path)], shell=True)
@@ -32,7 +32,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
     config["config"].update(**kwargs)
     plugin = instantiate_test_plugin("git", "test_git", _ctl=ctlr, **config)
 
-    subprocess.call(["cd {path}; git config user.name pytest;".format(
+    subprocess.call(["cd {path}; git config user.name pytest; git config user.email pytest@localhost".format(
         path=plugin.checkout_path)], shell=True)
 
     return plugin, repo_path_clone

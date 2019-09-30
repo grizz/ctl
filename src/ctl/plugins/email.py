@@ -22,10 +22,14 @@ class EmailPlugin(PluginBase):
     class ConfigSchema(PluginBase.ConfigSchema):
         config = EmailPluginConfig()
 
+    @property
+    def smtp(self):
+        if not hasattr(self, "_smtp"):
+            self._smtp = smtplib.SMTP(self.smtp_host)
+        return self._smtp
 
     def init(self):
-        smtp_host = self.config.get("smtp").get("host")
-        self.smtp = smtplib.SMTP(smtp_host)
+        self.smtp_host = self.config.get("smtp").get("host")
 
     def alert(self, message):
         return self.send(message)
