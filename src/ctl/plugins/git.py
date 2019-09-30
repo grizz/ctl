@@ -183,12 +183,8 @@ class GitPlugin(RepositoryPlugin):
         for err in stderr:
             self.log.error(err)
 
-        # for some reason git push outputs info to stderr. no other git command seems to
-        # do that
         if stderr:
-            if ("push" not in command and "pull" not in command and "checkout" not in command) or proc.returncode is not None:
-                raise RuntimeError("\n".join(stderr))
-            elif re.search("(error|fatal):", "\n".join(stderr)):
+            if re.search("(error|fatal):", "\n".join(stderr)):
                 raise RuntimeError("\n".join(stderr))
 
         return stdout
