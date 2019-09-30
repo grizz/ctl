@@ -3,7 +3,7 @@ import subprocess
 from util import instantiate_test_plugin
 
 def init_tmp_repo(tmpdir):
-    repo_path = str(tmpdir.mkdir("git_repo_src"))
+    repo_path = str(tmpdir.mkdir("git_repo_src.git"))
     repo_path_clone = str(tmpdir.mkdir("git_repo_clone"))
 
     subprocess.call(["cd {path}; git init --bare;".format(path=repo_path)], shell=True)
