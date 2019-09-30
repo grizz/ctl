@@ -1,0 +1,11 @@
+*.py[cod]
+*.egg
+*.egg-info
+.cache/
+.coverage
+.pytest_cache/
+.tox
+cfg/
+coverage.xml
+dist/
+site/

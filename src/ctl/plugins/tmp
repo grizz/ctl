@@ -1,0 +1,57 @@
+plugins:
+
+  # plugin that controls the repo we want to install from
+  - type: git
+    name: git_fullctl
+    config:
+      repo_url: git@git.20c.com:fullctl/www.fullctl.com
+
+
+  # copy files 
+  - type: copy 
+    name: copy_fullctl
+    config:
+      src: {{tmp}}/git@git.20c.com:fullctl/www.fullctl.com
+      dest: {{tmp}}/builds/www.fullctl.com/{{tag}}
+      walk_dirs:
+        - {{src}}/fullctl/website
+        - {{src}}/fullctl/ixportal
+
+
+  # template files
+  - type: template
+    name: template_fullctl
+    config:
+      src: {{tmp}}/git@git.20c.com:fullctl/www.fullctl.com
+      dest: {{tmp}}/builds/www.fullctl.com/{{tag}}/fullctl
+      walk_dirs:
+        - {{src}}Ctl/fullctl/templates
+      vars:
+        - {{src}}/Ctl/fullctl/{{env}}.yaml  
+          
+
+  # rsync
+  - type: rsync
+    name: rsync_fullctl
+    config:
+      gateways:
+        beta:
+          - host: 127.0.0.1
+            user: fullctl
+
+  # run installation sequence
+  - type: chain
+    name: facsimile
+    config:
+      chains:
+        beta:
+          # stage `git` - checks out the tag passed in the cli
+          - git_fullctl checkout {{tag}}
+          # stage `copy` - copy project files
+          - copy_fullctl beta {{tag}}
+          # stage `template` - build template files
+          - template_fullctl beta {{tag}}
+          # stage `rsync`
+          - rsync_fullctl beta {{tmp}}/builds/www.fullctl.com/{{tag}}
+
+

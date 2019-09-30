@@ -1,0 +1,12 @@
+[distutils]
+index-servers =
+  pypi
+  pypitest
+
+[pypi]
+username: 20c-thisdoesntexist
+password: 20c-thisdoesntexist 
+
+[pypitest]
+uusername: 20c-thisdoesntexist
+password: 20c-thisdoesntexist 

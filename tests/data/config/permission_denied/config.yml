@@ -1,0 +1,15 @@
+
+ctl:
+
+  plugins:
+    - name: ls
+      type: command
+      config:
+        command:
+          - ls
+
+  log:
+
+  permissions:
+    - namespace: ctl.command
+      permission: r
