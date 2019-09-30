@@ -1,6 +1,13 @@
 
 # Ctl
 
+[![PyPI](https://img.shields.io/pypi/v/ctl.svg?maxAge=60)](https://pypi.python.org/pypi/ctl)
+[![PyPI](https://img.shields.io/pypi/pyversions/ctl.svg?maxAge=600)](https://pypi.python.org/pypi/ctl)
+[![Travis CI](https://img.shields.io/travis/20c/ctl.svg?maxAge=60)](https://travis-ci.org/20c/ctl)
+[![Codecov](https://img.shields.io/codecov/c/github/20c/ctl/master.svg?maxAge=60)](https://codecov.io/github/20c/ctl)
+[![Requires.io](https://img.shields.io/requires/github/20c/ctl.svg?maxAge=60)](https://requires.io/github/20c/ctl/requirements)
+
+
 Full control of your environment
 
 
