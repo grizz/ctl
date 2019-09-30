@@ -13,6 +13,7 @@ matrix:
   fast_finish: true
 before_install:
   - sudo apt-get -qq update
+  - git config --global user.name "ctlpytest"
 install:
   - pip install -U pip
   - pip install -U setuptools
