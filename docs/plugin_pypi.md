@@ -23,7 +23,7 @@ ctl:
 ## Through filepath
 
 ```
-ctl pypi 1.2.3 release path/to/my/local/checkout
+ctl pypi release 1.2.3 path/to/my/local/checkout
 ```
 
 ## Through git plugin
