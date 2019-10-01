@@ -1,6 +1,6 @@
 # PyPI plugin
 
-The PyPI plugin allows you to facility python package releases
+The PyPI plugin allows you to facilitate python package releases
 
 ## Config
 
