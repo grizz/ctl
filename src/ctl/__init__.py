@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 import os
 from pkg_resources import get_distribution
@@ -19,7 +19,7 @@ from ctl.util.template import IgnoreUndefined, filter_escape_regex
 from grainy.core import PermissionSet, int_flags
 
 
-__version__ = get_distribution('ctl').version
+__version__ = get_distribution("ctl").version
 
 try:
     import tmpl
@@ -32,11 +32,13 @@ class PluginManager(pluginmgr.config.ConfigPluginManager):
     """
     ctl plugin manager
     """
+
     def __init__(self, *args, **kwargs):
         super(PluginManager, self).__init__(*args, **kwargs)
 
 
-plugin = PluginManager('ctl.plugins')
+plugin = PluginManager("ctl.plugins")
+
 
 def plugin_cli_arguments(ctlr, parser, plugin_config):
 
@@ -66,9 +68,9 @@ def plugin_cli_arguments(ctlr, parser, plugin_config):
     # generate argparse options using the confu schema
     # use the currnet config values as defaults
 
-    argparse_options(confu_target, plugin_class.ConfigSchema().config,
-                     defaults=config.get("config"))
-
+    argparse_options(
+        confu_target, plugin_class.ConfigSchema().config, defaults=config.get("config")
+    )
 
 
 def read_config(schema, config_dir, config_name="config", ctx=None):
@@ -89,16 +91,15 @@ def read_config(schema, config_dir, config_name="config", ctx=None):
             engine.engine.undefined = IgnoreUndefined
             # TODO need a streamlined way to load in template filters
             engine.engine.filters["escape_regex"] = filter_escape_regex
-            data = codec().loads(engine._render(src=os.path.basename(filename), env=ctx.tmpl["env"]))
+            data = codec().loads(
+                engine._render(src=os.path.basename(filename), env=ctx.tmpl["env"])
+            )
             ctx.tmpl.update(engine=engine)
         else:
             with open(filename) as fobj:
                 data = codec().load(fobj)
 
-        meta = dict(
-            config_dir=config_dir,
-            config_file=filename,
-        )
+        meta = dict(config_dir=config_dir, config_file=filename)
         return confu.config.Config(schema, data, meta)
 
     raise IOError("config dir not found at {}".format(conf_path))
@@ -109,27 +110,45 @@ class Context(object):
     class to hold current context, debug, logging, sandbox, etc
     also holds master config
     """
-    app_name = 'ctl'
+
+    app_name = "ctl"
 
     @classmethod
     def search_path(cls):
-        return ['$%s_HOME' % cls.app_name.upper(),
-                os.path.join('.', cls.app_name.capitalize()),
-                os.path.expanduser(os.path.join('~', '.' + cls.app_name))]
+        return [
+            "$%s_HOME" % cls.app_name.upper(),
+            os.path.join(".", cls.app_name.capitalize()),
+            os.path.expanduser(os.path.join("~", "." + cls.app_name)),
+        ]
 
     @classmethod
     def pop_options(cls, kwargs):
-        keys = ('debug', 'home', 'verbose', 'quiet')
+        keys = ("debug", "home", "verbose", "quiet")
         return {k: kwargs.pop(k, None) for k in keys}
 
     @classmethod
     def option_list(cls):
         return [
-            dict(name='--debug', help='enable extra debug output', is_flag=True, default=None),
-            dict(name='--home', help='specify the home directory, by default will check in order: ' + ', '.join(cls.search_path()), default=None),
-            dict(name='--verbose', help='enable more verbose output', is_flag=True, default=None),
-            dict(name='--quiet', help='no output at all', is_flag=True, default=None),
-            ]
+            dict(
+                name="--debug",
+                help="enable extra debug output",
+                is_flag=True,
+                default=None,
+            ),
+            dict(
+                name="--home",
+                help="specify the home directory, by default will check in order: "
+                + ", ".join(cls.search_path()),
+                default=None,
+            ),
+            dict(
+                name="--verbose",
+                help="enable more verbose output",
+                is_flag=True,
+                default=None,
+            ),
+            dict(name="--quiet", help="no output at all", is_flag=True, default=None),
+        ]
 
     def update_options(self, kwargs):
         """
@@ -146,13 +165,13 @@ class Context(object):
 
         # TODO move this to the pop_options function, use confu
         if opt.get("debug", None) is not None:
-            self.debug = opt['debug']
+            self.debug = opt["debug"]
 
         if opt.get("verbose", None) is not None:
-            self.verbose = opt['verbose']
+            self.verbose = opt["verbose"]
 
         if opt.get("quiet", None) is not None:
-            self.quiet = opt['quiet']
+            self.quiet = opt["quiet"]
 
         if opt.get("home", None):
             if "config_dir" in kwargs:
@@ -176,16 +195,13 @@ class Context(object):
         self.home = None
         self.config = None
 
-        self.tmpl = {
-            "engine": None,
-            "env" : {"ctx":self}
-        }
+        self.tmpl = {"engine": None, "env": {"ctx": self}}
 
         self.update_options(kwargs)
 
     def find_home(self):
         for path in self.__class__.search_path():
-            if path.startswith('$'):
+            if path.startswith("$"):
                 if path[1:] not in os.environ:
                     continue
                 path = os.environ[path[1:]]
@@ -202,7 +218,7 @@ class Context(object):
         user_home = os.path.expanduser("~")
 
         self.tmpdir = os.path.abspath(os.path.join(self.home, "tmp"))
-        self.cachedir = os.path.abspath(os.path.join(user_home, '.ctl', 'cache'))
+        self.cachedir = os.path.abspath(os.path.join(user_home, ".ctl", "cache"))
         self.user_home = user_home
 
         if not os.path.exists(self.tmpdir):
@@ -213,7 +229,6 @@ class Context(object):
 
         self.read_config()
 
-
     def read_config(self):
         if getattr(self, "config", None) and self.tmpl:
             self.tmpl["env"]["config"] = self.config.data
@@ -223,6 +238,7 @@ class Context(object):
         """
         call after updating options
         """
+
 
 def argv_to_grainy_namespace(operation, args=[]):
     """
@@ -273,7 +289,6 @@ class Ctl(object):
         if full_init:
             self.init()
 
-
     def init(self):
         # validate config
         self.validate_config()
@@ -281,8 +296,6 @@ class Ctl(object):
         # these requrie config
         self.init_plugin_manager()
         self.init_plugins()
-
-
 
     def init_context(self, ctx=None, config_dir=None):
         # TODO check for mutual exclusive
@@ -298,7 +311,6 @@ class Ctl(object):
         self.tmpdir = ctx.tmpdir
         self.cachedir = ctx.cachedir
 
-
     def init_plugin_manager(self):
         """
         Initialize the plugin manager and
@@ -313,7 +325,6 @@ class Ctl(object):
         else:
             plugin.searchpath = [os.path.join(self.ctx.home, "plugins")]
 
-
     def init_logging(self):
         """
         Apply python logging config and create `log` and `usage_log`
@@ -325,29 +336,30 @@ class Ctl(object):
         self.log = Log("ctl")
         self.usage_log = Log("usage")
 
-
     def init_permissions(self):
         """
         Initialize permissions for ctl usage
         """
         # TODO: load permissions from db?
-        self.permissions = PermissionSet(dict([
-            (row.get("namespace"), int_flags(row.get("permission")))
-            for row in self.ctx.config.get_nested("ctl", "permissions")
-        ]))
-
+        self.permissions = PermissionSet(
+            dict(
+                [
+                    (row.get("namespace"), int_flags(row.get("permission")))
+                    for row in self.ctx.config.get_nested("ctl", "permissions")
+                ]
+            )
+        )
 
     def init_plugins(self):
         """
         Instantiate plugins
         """
         plugin.import_external()
-        plugins_config = self.ctx.config.get_nested('ctl', 'plugins')
+        plugins_config = self.ctx.config.get_nested("ctl", "plugins")
 
         # can't lazy init since plugins might double inherit
         if plugins_config:
             plugin.instantiate(plugins_config, self)
-
 
     def expose_plugin_vars(self):
         """
@@ -366,11 +378,9 @@ class Ctl(object):
             plugin_class = self.get_plugin_class(plugin_config["type"])
             name = plugin_config.get("name")
             if hasattr(plugin_class, "expose_vars"):
-                env = self.ctx.tmpl["env"]["plugin"].get(name,{})
-                plugin_class.expose_vars(env, plugin_config.get("config",{}))
+                env = self.ctx.tmpl["env"]["plugin"].get(name, {})
+                plugin_class.expose_vars(env, plugin_config.get("config", {}))
                 self.ctx.tmpl["env"]["plugin"][name] = env
-
-
 
     def validate_config(self):
         # just accessing data validates
@@ -381,14 +391,13 @@ class Ctl(object):
         if self.config.errors:
             for err in self.config.errors:
                 self.log.error("[config error] {}".format(err.pretty))
-            raise ConfigError('config invalid')
+            raise ConfigError("config invalid")
 
         for warn in self.config.warnings:
             self.log.info("[config warning] {}".format(warn.pretty))
 
-
     def check_permissions(self, namespace, perm):
-        #self.log.debug("checking permissions namespace '{}' for '{}'".format(namespace, perm))
+        # self.log.debug("checking permissions namespace '{}' for '{}'".format(namespace, perm))
 
         if not self.permissions.check(namespace, grainy.core.int_flags(perm)):
             raise PermissionDenied(namespace, perm)

@@ -26,16 +26,18 @@ class WalkDirPluginConfig(confu.schema.Schema):
     source = confu.schema.Str(help="source directory")
     output = confu.schema.Str(help="output directory")
 
-    walk_dirs = confu.schema.List(item=confu.schema.Str(), cli=False,
-                                  help="list of subdirectories to walk and process files in")
+    walk_dirs = confu.schema.List(
+        item=confu.schema.Str(),
+        cli=False,
+        help="list of subdirectories to walk and process files in",
+    )
 
     ignore = confu.schema.List(item=confu.schema.Str(), cli=False)
 
     process = confu.schema.List(item=MatchConfig(), cli=False)
 
     debug = confu.schema.Bool(default=False)
-    skip_dotfiles = confu.schema.Bool(default=True,
-                                      help="Skip dot files")
+    skip_dotfiles = confu.schema.Bool(default=True, help="Skip dot files")
 
 
 @ctl.plugin.register("walk_dir")
@@ -45,18 +47,14 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
         config = WalkDirPluginConfig("config")
 
-#    @classmethod
-#    def add_arguments(cls, parser, plugin_config):
-#        parser.add_argument("--source", type=str, help="source dir")
-#        parser.add_argument("--output", type=str, help="output dir")
+    #    @classmethod
+    #    def add_arguments(cls, parser, plugin_config):
+    #        parser.add_argument("--source", type=str, help="source dir")
+    #        parser.add_argument("--output", type=str, help="output dir")
 
     def prepare(self, **kwargs):
         self.debug = self.config.get("debug")
-        self.debug_info = {
-            "files": [],
-            "processed": [],
-            "mkdir": [],
-        }
+        self.debug_info = {"files": [], "processed": [], "mkdir": []}
 
         self.requires_output = False
         self._source = self.get_config("source")
@@ -81,7 +79,6 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
             return os.path.join(self._output, path)
         return self._output
 
-
     def execute(self, **kwargs):
 
         super(WalkDirPlugin, self).execute(**kwargs)
@@ -101,13 +98,14 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
 
         self.process_files()
 
-
     def process_files(self):
         for subdir in self.walk_dirs:
             for dirpath, dirnames, filenames in os.walk(self.source(subdir)):
                 path = re.sub(self.source_regex, "", dirpath)
 
-                for filepath, filename in [(os.path.join(path, _f), _f) for _f in filenames]:
+                for filepath, filename in [
+                    (os.path.join(path, _f), _f) for _f in filenames
+                ]:
 
                     if self.skip_dotfiles and filename[0] == ".":
                         continue
@@ -116,13 +114,11 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
                         self.prepare_file(filepath, path)
                         self.process_file(filepath, path)
 
-
     def prepare_file(self, path, dirpath):
         output_dir = os.path.dirname(self.output(path))
         if not os.path.isdir(output_dir):
             os.makedirs(output_dir)
             self.debug_append("mkdir", output_dir)
-
 
     def process_file(self, path, dirpath):
 
@@ -134,27 +130,21 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
             pattern = process_config.get("pattern")
             if re.search(pattern, path) is not None:
                 fn = getattr(plugin, action)
-                r = fn(
-                    source=self.source(path),
-                    output=self.output(path)
-                )
+                r = fn(source=self.source(path), output=self.output(path))
                 self.debug_append(
                     "processed",
-                    {"plugin":process_config.get("plugin"),
-                     "source":self.source(path),
-                     "output":self.output(path)}
+                    {
+                        "plugin": process_config.get("plugin"),
+                        "source": self.source(path),
+                        "output": self.output(path),
+                    },
                 )
-
 
     def ignored(self, path, dirpath):
         for pattern in self.get_config("ignore"):
             if re.search(pattern, path) is not None:
                 return True
 
-
     def debug_append(self, typ, data):
         if self.debug:
             self.debug_info[typ].append(data)
-
-
-

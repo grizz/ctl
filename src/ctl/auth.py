@@ -39,16 +39,18 @@ class expose(object):
 
             # format the namespace using the plugin instance
             # and any arguments passed to the decorated method
-            namespace_args = {"plugin":self, "plugin_name":self.pluginmgr_config.get("name")}
+            namespace_args = {
+                "plugin": self,
+                "plugin_name": self.pluginmgr_config.get("name"),
+            }
             namespace_args.update(**kwargs)
             namespace = namespace_.format(**namespace_args)
-
 
             # obtain required permission level
             if level is None:
                 # level is not specified at all in the decorator,
                 # in which case we obtain from plugin config and default to 'r'
-                permissions = self.config.get("permissions", {}).get(fn.__name__,"r")
+                permissions = self.config.get("permissions", {}).get(fn.__name__, "r")
             elif callable(level):
                 # level is specified and a function, call it and set from there
                 permissions = level(self)
@@ -57,7 +59,9 @@ class expose(object):
                 permissions = level
 
             # check permissions
-            allowed = self.ctl.permissions.check(namespace, int_flags(permissions), explicit=explicit)
+            allowed = self.ctl.permissions.check(
+                namespace, int_flags(permissions), explicit=explicit
+            )
 
             # raise on permission check failure
             if not allowed:
@@ -65,7 +69,6 @@ class expose(object):
 
             # execute method
             return fn(self, *args, **kwargs)
+
         wrapped.exposed = True
         return wrapped
-
-

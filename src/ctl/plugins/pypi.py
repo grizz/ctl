@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 import os.path
 import subprocess
@@ -32,8 +32,10 @@ class PyPIPluginConfig(release.ReleasePluginConfig):
     config_file = confu.schema.Str(help="path to pypi config file (e.g. ~/.pypirc)")
 
     # PyPI repository name, needs to exist in your pypi config file
-    repository = confu.schema.Str(help="PyPI repository name - needs to exist "\
-                                       "in your pypi config file", default="pypi")
+    repository = confu.schema.Str(
+        help="PyPI repository name - needs to exist " "in your pypi config file",
+        default="pypi",
+    )
 
     # sign releases
     sign = confu.schema.Bool(help="sign releases", default=False)
@@ -41,9 +43,7 @@ class PyPIPluginConfig(release.ReleasePluginConfig):
     identity = confu.schema.Str(help="sign release with this identity", default=None)
 
 
-
-
-@ctl.plugin.register('pypi')
+@ctl.plugin.register("pypi")
 class PyPIPlugin(release.ReleasePlugin):
 
     """
@@ -53,23 +53,22 @@ class PyPIPlugin(release.ReleasePlugin):
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
         config = PyPIPluginConfig()
 
-
     @property
     def dist_path(self):
         return os.path.join(self.target.checkout_path, "dist", "*")
-
 
     def prepare(self):
         super(PyPIPlugin, self).prepare()
         self.shell = True
         self.repository = self.get_config("repository")
         self.pypirc_path = os.path.expanduser(self.config.get("config_file"))
-        self.twine_settings = Settings(config_file=self.pypirc_path,
-                                       repository_name=self.repository,
-                                       sign=self.get_config("sign"),
-                                       identity=self.get_config("identity"),
-                                       sign_with=self.get_config("sign_with"))
-
+        self.twine_settings = Settings(
+            config_file=self.pypirc_path,
+            repository_name=self.repository,
+            sign=self.get_config("sign"),
+            identity=self.get_config("identity"),
+            sign_with=self.get_config("sign_with"),
+        )
 
     def _release(self, **kwargs):
 
@@ -79,13 +78,9 @@ class PyPIPlugin(release.ReleasePlugin):
         # upload to pypi repo
         self._upload()
 
-
     def _build_dist(self, **kwargs):
-        command = ["rm dist/* -rf",
-                   "python setup.py sdist",
-                   ]
+        command = ["rm dist/* -rf", "python setup.py sdist"]
         self._run_commands(command)
-
 
     def _validate(self, **kwargs):
 
@@ -93,20 +88,15 @@ class PyPIPlugin(release.ReleasePlugin):
         self._validate_dist(**kwargs)
         self._validate_manifest(**kwargs)
 
-
     def _validate_dist(self, **kwargs):
         twine_check([self.dist_path])
 
-
     def _validate_manifest(self, **kwargs):
         pass
-
 
     def _upload(self, **kwargs):
 
         self.log.info("Using pypi config from {}".format(self.pypirc_path))
 
         if not self.dry_run:
-            twine_upload(self.twine_settings,[self.dist_path])
-
-
+            twine_upload(self.twine_settings, [self.dist_path])

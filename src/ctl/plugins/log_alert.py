@@ -6,11 +6,9 @@ from datetime import datetime
 
 @ctl.plugin.register("log_alert")
 class LogAlertPlugin(LogPlugin):
-
     def init(self):
         super(LogAlertPlugin, self).init()
         self.messages = []
-
 
     def alert(self, **kwargs):
 
@@ -38,7 +36,7 @@ class LogAlertPlugin(LogPlugin):
             raise Exception("Plugin instance not found: {}".format(plugin_name))
 
         if not hasattr(plugin, "alert"):
-            raise Exception("{} Plugin has no `alert` method". format(plugin_name))
+            raise Exception("{} Plugin has no `alert` method".format(plugin_name))
 
         # collect messages into here
         collected = []
@@ -56,7 +54,6 @@ class LogAlertPlugin(LogPlugin):
             self.log.debug("No messages to send")
             return
 
-
         # cycle through all messages and collect messages according
         # to levels specified in `output_levels`
         for level, message in self.messages:
@@ -68,7 +65,6 @@ class LogAlertPlugin(LogPlugin):
 
         # reset messages (configurable?)
         self.messages = []
-
 
     def finalize(self, message, level):
         self.messages.append((level, message))

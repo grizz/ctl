@@ -45,9 +45,11 @@ class Events(object):
         it automatically after event has been triggered
         """
         listener = self
+
         def wrapped(*args, **kwargs):
             callback(*args, **kwargs)
             listener.off(event_name, wrapped)
+
         self.on(event_name, wrapped)
 
 

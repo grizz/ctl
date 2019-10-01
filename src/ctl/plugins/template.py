@@ -14,21 +14,27 @@ except ImportError:
 
 from ctl.plugins.copy import CopyPluginConfig, CopyPlugin
 
-class TemplatePluginConfig(CopyPluginConfig):
-    engine = confu.schema.Str("engine", default="jinja2",
-                              choices=["jinja2"],
-                              help="template engine")
-    vars = confu.schema.List("vars", confu.schema.Str(), cli=False,
-                             help="list of files containing template "\
-                                  "variables to import")
 
-def update(a,b):
+class TemplatePluginConfig(CopyPluginConfig):
+    engine = confu.schema.Str(
+        "engine", default="jinja2", choices=["jinja2"], help="template engine"
+    )
+    vars = confu.schema.List(
+        "vars",
+        confu.schema.Str(),
+        cli=False,
+        help="list of files containing template " "variables to import",
+    )
+
+
+def update(a, b):
     for key, value in list(b.items()):
         if isinstance(value, collections.Mapping):
-            a[key] = update(a.get(key,{}), value)
+            a[key] = update(a.get(key, {}), value)
         else:
             a[key] = value
     return a
+
 
 @ctl.plugin.register("template")
 class TemplatePlugin(CopyPlugin):
@@ -65,9 +71,9 @@ class TemplatePlugin(CopyPlugin):
                     data = codec().load(fh)
                 update(env, data)
             except IOError as exc:
-                #print("Could not load vars file {}".format(filepath))
-                #TODO: not sure why this shouldn't always raise, if the
-                #vars file is missing, its probably bad.
+                # print("Could not load vars file {}".format(filepath))
+                # TODO: not sure why this shouldn't always raise, if the
+                # vars file is missing, its probably bad.
                 raise
 
     @property
@@ -84,9 +90,9 @@ class TemplatePlugin(CopyPlugin):
         """
         if not hasattr(self, "_engine"):
             self._engine = tmpl.get_engine(self.config.get("engine"))(
-                tmpl_dir=self.source())
+                tmpl_dir=self.source()
+            )
         return self._engine
-
 
     def prepare(self, **kwargs):
         """
@@ -119,7 +125,6 @@ class TemplatePlugin(CopyPlugin):
                 data = codec().load(fh)
             update(self._tmpl_env, data)
 
-
     def copy_file(self, path, dirpath):
         """
         Since we are extending the copy plugin we hijack
@@ -133,7 +138,6 @@ class TemplatePlugin(CopyPlugin):
         """
 
         self.template_file(path)
-
 
     def template_file(self, path):
         """

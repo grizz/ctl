@@ -16,14 +16,16 @@ except ImportError:
 
 class PluginConfig(confu.schema.Schema):
     repo_url = confu.schema.Str(cli=False)
-    checkout_path = confu.schema.Directory(default="", blank=True,
-                                           help="checkout to this local "\
-                                           "location - if not specified "\
-                                           "will default to "\
-                                           "~/.ctl/cache/{repo_url}")
+    checkout_path = confu.schema.Directory(
+        default="",
+        blank=True,
+        help="checkout to this local "
+        "location - if not specified "
+        "will default to "
+        "~/.ctl/cache/{repo_url}",
+    )
 
-    branch = confu.schema.Str(help="Checkout this branch",
-                              default="master")
+    branch = confu.schema.Str(help="Checkout this branch", default="master")
 
 
 class RepositoryPlugin(ExecutablePlugin):
@@ -33,12 +35,10 @@ class RepositoryPlugin(ExecutablePlugin):
     def __repr__(self):
         return "Repository `{}`".format(self.plugin_name)
 
-
     @property
     def uuid(self):
         """ should return current commit hash/id """
         raise NotImplementedError()
-
 
     @property
     def version(self):
@@ -48,7 +48,7 @@ class RepositoryPlugin(ExecutablePlugin):
                 version = version_tuple(fh.read().strip())
         except FileNotFoundError:
             self.log.debug("No version file found at {}".format(self.version_file))
-            return (0,0,0)
+            return (0, 0, 0)
         return version
 
     @property
@@ -74,7 +74,6 @@ class RepositoryPlugin(ExecutablePlugin):
         if clean, False if not
         """
         raise NotImplementedError()
-
 
     @property
     def branch(self):
@@ -128,7 +127,6 @@ class RepositoryPlugin(ExecutablePlugin):
         """ Should merge branch b into branch a """
         raise NotImplementedError()
 
-
     def init(self):
         self.repo_url = self.get_config("repo_url")
         self.checkout_path = self.get_config("checkout_path")
@@ -147,7 +145,8 @@ class RepositoryPlugin(ExecutablePlugin):
             # print("resource", parsed_url.resource)
 
             self.checkout_path = os.path.join(
-                self.ctl.cachedir, parsed_url.resource, parsed_url.pathname)
+                self.ctl.cachedir, parsed_url.resource, parsed_url.pathname
+            )
 
         # while checkout patch can be relative in the config, we want
         # it to be absolute from here on out

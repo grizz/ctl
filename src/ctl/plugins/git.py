@@ -38,15 +38,12 @@ def temporary_plugin(ctl, name, path, **config):
         - GitPlugin instance
     """
 
-    config.update({"checkout_path":path})
-    return GitPlugin({"type":"git",
-                      "name":name,
-                      "config":config}, ctl)
+    config.update({"checkout_path": path})
+    return GitPlugin({"type": "git", "name": name, "config": config}, ctl)
 
 
-@ctl.plugin.register('git')
+@ctl.plugin.register("git")
 class GitPlugin(RepositoryPlugin):
-
     @property
     def uuid(self):
         """ return recent commit hash of the repo """
@@ -59,8 +56,7 @@ class GitPlugin(RepositoryPlugin):
         returns whether or not the checkout_path location is a valid
         git repo or not
         """
-        return os.path.exists(os.path.join(self.checkout_path,".git"))
-
+        return os.path.exists(os.path.join(self.checkout_path, ".git"))
 
     @property
     def is_clean(self):
@@ -71,7 +67,6 @@ class GitPlugin(RepositoryPlugin):
         result = self.run_git_command(check_clean)
         return len(result) == 0
 
-
     @property
     def branch(self):
         """
@@ -80,7 +75,6 @@ class GitPlugin(RepositoryPlugin):
         get_branch = self.command("rev-parse", "--abbrev-ref", "HEAD")
         result = self.run_git_command(get_branch)
         return result[0].strip()
-
 
     def branch_exists(self, name):
         """
@@ -95,7 +89,6 @@ class GitPlugin(RepositoryPlugin):
             raise
         return True
 
-
     @classmethod
     def add_arguments(cls, parser, plugin_config):
 
@@ -108,20 +101,20 @@ class GitPlugin(RepositoryPlugin):
         sub = parser.add_subparsers(title="Operation", dest="op")
 
         # operation `clone`
-        op_clone_parser = sub.add_parser("clone", help="clone repo",
-                                         parents=[shared_parser])
-
+        op_clone_parser = sub.add_parser(
+            "clone", help="clone repo", parents=[shared_parser]
+        )
 
         # operation `pull`
-        op_pull_parser = sub.add_parser("pull", help="pull remote",
-                                        parents=[shared_parser])
+        op_pull_parser = sub.add_parser(
+            "pull", help="pull remote", parents=[shared_parser]
+        )
 
         # operation `checkout`
-        op_checkout_parser = sub.add_parser("checkout", help="checkout tag or branch",
-                                            parents=[shared_parser])
+        op_checkout_parser = sub.add_parser(
+            "checkout", help="checkout tag or branch", parents=[shared_parser]
+        )
         op_checkout_parser.add_argument("tag", nargs=1, help="tag or branch")
-
-
 
     def execute(self, **kwargs):
         super(GitPlugin, self).execute(**kwargs)
@@ -149,15 +142,19 @@ class GitPlugin(RepositoryPlugin):
 
         fn(**kwargs)
 
-
     def command(self, *command):
         """
         Prep git command list to use with run_git_command()
 
         Will automaticdally prepare --git-dir and --work-tree options
         """
-        return ["git", "--git-dir", os.path.join(self.checkout_path,".git"), "--work-tree", self.checkout_path] + list(command)
-
+        return [
+            "git",
+            "--git-dir",
+            os.path.join(self.checkout_path, ".git"),
+            "--work-tree",
+            self.checkout_path,
+        ] + list(command)
 
     def run_git_command(self, command):
         """
@@ -170,11 +167,11 @@ class GitPlugin(RepositoryPlugin):
         stdout = []
         stderr = []
         with proc.stdout:
-            for line in iter(proc.stdout.readline, b''):
+            for line in iter(proc.stdout.readline, b""):
                 stdout.append(line.decode("utf-8").strip())
 
         with proc.stderr:
-            for line in iter(proc.stderr.readline, b''):
+            for line in iter(proc.stderr.readline, b""):
                 stderr.append(line.decode("utf-8").strip())
 
         for msg in stdout:
@@ -203,8 +200,8 @@ class GitPlugin(RepositoryPlugin):
         files = kwargs.get("files")
         message = kwargs.get("message")
 
-        #TODO: do we still need this in some situations ?
-        #files = [os.path.join(self.checkout_path, f) for f in files]
+        # TODO: do we still need this in some situations ?
+        # files = [os.path.join(self.checkout_path, f) for f in files]
 
         self.log.debug("COMMIT {} : {}".format(files, message))
 
@@ -247,18 +244,16 @@ class GitPlugin(RepositoryPlugin):
         self.run_git_command(command_pull)
         self.log.debug("PULL {} complete".format(self.checkout_path))
 
-
     def push(self, **kwargs):
         """
         Push commits
         """
         self.log.debug("PUSH {}".format(self.checkout_path))
-        command_push = self.command("push", "origin",self.branch)
+        command_push = self.command("push", "origin", self.branch)
         if kwargs.get("tags"):
             command_push += ["--tags"]
         self.run_git_command(command_push)
         self.log.debug("PUSH {} complete".format(self.checkout_path))
-
 
     def tag(self, version, message, **kwargs):
         command_tag = self.command("tag", "-a", version, "-m", message)
@@ -266,14 +261,12 @@ class GitPlugin(RepositoryPlugin):
         if kwargs.get("push"):
             self.push(tags=True)
 
-
     @expose("ctl.{plugin_name}.checkout")
     def checkout(self, branch, **kwargs):
         if not self.branch_exists(branch) and kwargs.get("create"):
             self.run_git_command(self.command("branch", branch))
         command_checkout = self.command("checkout", branch)
         self.run_git_command(command_checkout)
-
 
     def merge(self, branch_a, branch_b, **kwargs):
         old_branch = self.branch

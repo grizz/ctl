@@ -5,7 +5,7 @@ from ctl import plugin
 from ctl.plugins.log import LogPlugin
 
 
-@ctl.plugin.register('log_user')
+@ctl.plugin.register("log_user")
 class LogUserPlugin(LogPlugin):
     def init(self):
         super(LogUserPlugin, self).init()
@@ -13,5 +13,4 @@ class LogUserPlugin(LogPlugin):
 
     def apply(self, message):
         prefix = "{who}".format(who=self.username)
-        return "{prefix} - {message}".format(
-            prefix=prefix, message=message)
+        return "{prefix} - {message}".format(prefix=prefix, message=message)

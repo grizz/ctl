@@ -13,9 +13,11 @@ from email.mime.text import MIMEText
 class EmailPluginConfig(confu.schema.Schema):
     subject = confu.schema.Str()
     sender = confu.schema.Email()
-    recipients = confu.schema.List(item=confu.schema.Email(),
-                                   help="list of recipient addresses")
+    recipients = confu.schema.List(
+        item=confu.schema.Email(), help="list of recipient addresses"
+    )
     smtp = SMTPConfigSchema()
+
 
 @ctl.plugin.register("email")
 class EmailPlugin(PluginBase):
@@ -36,11 +38,10 @@ class EmailPlugin(PluginBase):
 
     def send(self, body, **kwargs):
         subject = kwargs.get("subject", self.config.get("subject"))
-        recipients = kwargs.get("recipients", self.config.get("recipients",[]))
+        recipients = kwargs.get("recipients", self.config.get("recipients", []))
         sender = kwargs.get("sender", self.config.get("sender"))
         for recipient in recipients:
             self._send(body, subject, sender, recipient)
-
 
     def _send(self, body, subject, sender, recipient, **kwargs):
         msg = MIMEText(body)
@@ -48,11 +49,8 @@ class EmailPlugin(PluginBase):
         msg["From"] = sender
         msg["To"] = recipient
 
-        self.log.debug("SENDING {} from {} to {}".format(subject,
-                                                         sender,
-                                                         recipient))
+        self.log.debug("SENDING {} from {} to {}".format(subject, sender, recipient))
         if kwargs.get("test_mode"):
             return msg
 
         self.smtp.sendmail(sender, recipient, msg.as_string())
-

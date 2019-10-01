@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 import pluginmgr.config
 import confu.schema
@@ -8,16 +8,19 @@ from ctl.log import Log
 from ctl.events import common_events
 from ctl.exceptions import ConfigError, UsageError, OperationNotExposed
 
-__all__ = ['command', 'config']
+__all__ = ["command", "config"]
 
 
 class PluginConfigSchema(confu.schema.Schema):
     """
     configuration schema for plugin base
     """
+
     name = confu.schema.Str("name", default="", help="Plugin name")
     type = confu.schema.Str("type", help="Plugin type")
-    description = confu.schema.Str("description", default="", blank=True, help="description of plugin")
+    description = confu.schema.Str(
+        "description", default="", blank=True, help="description of plugin"
+    )
 
     # we also want to create an empty sub schema for `config` key
     # this should be overwritten in the classes extending this plugin
@@ -38,8 +41,8 @@ class PluginBase(pluginmgr.config.PluginBase):
 
     ConfigSchema = PluginConfigSchema
 
-#    def init(self):
-#        pass
+    #    def init(self):
+    #        pass
 
     def __init__(self, plugin_config, ctx, *args, **kwargs):
         self.ctl = ctx
@@ -50,12 +53,12 @@ class PluginBase(pluginmgr.config.PluginBase):
         schema = self.ConfigSchema()
         confu.schema.apply_defaults(schema, plugin_config)
 
-        self.config = plugin_config.get('config', {})
+        self.config = plugin_config.get("config", {})
 
         self.args = args
         self.kwargs = kwargs
         self.init()
-        self.attach_events(self.pluginmgr_config.get("events",{}))
+        self.attach_events(self.pluginmgr_config.get("events", {}))
 
     @property
     def plugin_name(self):
@@ -73,7 +76,11 @@ class PluginBase(pluginmgr.config.PluginBase):
             handler = getattr(self, handler_name, None)
 
             if not handler:
-                raise ValueError("Tried to attach unknown plugin method `{}` to event `{}`".format(handler_name, name))
+                raise ValueError(
+                    "Tried to attach unknown plugin method `{}` to event `{}`".format(
+                        handler_name, name
+                    )
+                )
 
             def callback(events, handler=handler, *args, **kwargs):
                 if not instances:
@@ -81,6 +88,7 @@ class PluginBase(pluginmgr.config.PluginBase):
                     return
                 for params in instances:
                     handler(**params)
+
             common_events.on(name, callback)
 
     def init(self):
@@ -100,7 +108,7 @@ class PluginBase(pluginmgr.config.PluginBase):
 
     @property
     def log(self):
-        if not getattr(self, '_logger', None):
+        if not getattr(self, "_logger", None):
             self._logger = Log("ctl.plugins.{}".format(self.plugin_type))
         return self._logger
 
@@ -129,13 +137,12 @@ class PluginBase(pluginmgr.config.PluginBase):
             return content
 
         if env:
-            _env = {"kwargs":env}
+            _env = {"kwargs": env}
             _env.update(tmpl["env"])
             env = _env
         else:
             env = tmpl["env"]
         return tmpl["engine"]._render_str_to_str(content, env)
-
 
     def get_op(self, op):
         if not op:
@@ -166,7 +173,6 @@ class ExecutablePlugin(PluginBase):
         """
         pass
 
-
     def execute(self, **kwargs):
         """
         Extended execute function should call this to make
@@ -174,7 +180,6 @@ class ExecutablePlugin(PluginBase):
         """
         self.kwargs = kwargs
         self.prepare()
-
 
     def get_config(self, name):
         """
@@ -200,4 +205,3 @@ class ExecutablePlugin(PluginBase):
 
 
 # TODO PluginStageBase
-

@@ -9,9 +9,11 @@ import ctl
 
 from ctl.plugins.walk_dir import WalkDirPlugin, WalkDirPluginConfig
 
+
 class CopyPluginConfig(WalkDirPluginConfig):
-    copy_metadata = confu.schema.Bool("copy_metadata", default=True,
-                                      help="Copy file metadata")
+    copy_metadata = confu.schema.Bool(
+        "copy_metadata", default=True, help="Copy file metadata"
+    )
 
 
 @ctl.plugin.register("copy")
@@ -28,7 +30,6 @@ class CopyPlugin(WalkDirPlugin):
         self.debug_info["copied"] = []
         self.copy_metadata = self.get_config("copy_metadata")
 
-
     def process_file(self, path, dirpath):
         r = self.copy_file(path, dirpath)
         super(CopyPlugin, self).process_file(path, dirpath)
@@ -44,5 +45,3 @@ class CopyPlugin(WalkDirPlugin):
             shutil.copy2(self.source(path), self.output(path))
         else:
             shutil.copy(self.source(path), self.output(path))
-
-

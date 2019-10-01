@@ -8,6 +8,7 @@ import confu.generator
 from ctl import plugin
 from ctl.log import ATTACHED
 
+
 class LogPluginLoggerConfig(confu.schema.Schema):
     logger = confu.schema.Str("logger")
     file = confu.schema.Str("file", default="")
@@ -16,19 +17,19 @@ class LogPluginLoggerConfig(confu.schema.Schema):
 
 class LogPluginConfig(ctl.plugins.PluginBase.ConfigSchema):
     loggers = confu.schema.List(
-        "loggers", LogPluginLoggerConfig(),
-        help="list of logger names to log to")
+        "loggers", LogPluginLoggerConfig(), help="list of logger names to log to"
+    )
 
 
-@ctl.plugin.register('log')
+@ctl.plugin.register("log")
 class LogPlugin(ctl.plugins.PluginBase):
-
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
         config = LogPluginConfig
+
     default_config = confu.generator.generate(LogPluginConfig)
 
     def init(self):
-        loggers = self.config.get("loggers",[])
+        loggers = self.config.get("loggers", [])
 
         for logger_config in loggers:
             logger_name = logger_config.get("logger")
@@ -41,12 +42,12 @@ class LogPlugin(ctl.plugins.PluginBase):
         filename = logger_config.get("file")
         logger = logging.getLogger(logger_name)
         if filename:
-            formatter = logger_config.get("format", LogPluginLoggerConfig.format.default)
+            formatter = logger_config.get(
+                "format", LogPluginLoggerConfig.format.default
+            )
             fh = logging.FileHandler(filename=filename, mode="a+")
             fh.setFormatter(logging.Formatter(formatter))
             logger.addHandler(fh)
-
-
 
     def attach_to_logger(self, logger_name):
         # attach log plugin to loggers
@@ -55,12 +56,8 @@ class LogPlugin(ctl.plugins.PluginBase):
         else:
             ATTACHED[logger_name].append(self)
 
-
     def apply(self, message, level):
         return message
 
     def finalize(self, message, level):
         pass
-
-
-

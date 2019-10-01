@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 import argparse
 import munge
@@ -17,12 +17,12 @@ from ctl.events import common_events
 # <release env> moving after deploy
 def add_options(parser, options):
     for opt in options:
-        name = opt.pop('name')
+        name = opt.pop("name")
 
         # clicks is_flag
-        if 'is_flag' in opt:
-            del opt['is_flag']
-            opt['action'] = 'store_true'
+        if "is_flag" in opt:
+            del opt["is_flag"]
+            opt["action"] = "store_true"
 
         parser.add_argument(name, **opt)
 
@@ -33,10 +33,13 @@ def ctl_options(parser):
 
 def mk_parser():
     # add_help=False, fall through does full help, initial doesn't need
-    parser = argparse.ArgumentParser(description='control', add_help=False)
+    parser = argparse.ArgumentParser(description="control", add_help=False)
     add_options(parser, Context.option_list())
-    parser.add_argument('--version', action='version',
-        version="{}s version {}".format("%(prog)", ctl.__version__))
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="{}s version {}".format("%(prog)", ctl.__version__),
+    )
     ctl_options(parser)
     return parser
 
@@ -49,7 +52,7 @@ def mk_operation_parser(ctlr, sub_parser, name, plugin_config):
     plugin_class = ctl.plugin.get_plugin_class(plugin_config["type"])
 
     # only list if it has execute method
-    if not hasattr(plugin_class, 'execute'):
+    if not hasattr(plugin_class, "execute"):
         return False
 
     descr = plugin_config.get("description", None)
@@ -68,14 +71,13 @@ def mk_parser_all(ctlr):
     parser = mk_parser()
     sub_parser = parser.add_subparsers(title="[ALL] Configured Operations")
 
-    for plugin_config in ctlr.ctx.config.get_nested("ctl","plugins"):
-        mk_operation_parser(ctlr, sub_parser, plugin_config.get("name"),
-                            plugin_config)
+    for plugin_config in ctlr.ctx.config.get_nested("ctl", "plugins"):
+        mk_operation_parser(ctlr, sub_parser, plugin_config.get("name"), plugin_config)
 
     return parser
 
 
-def exit_full_help(ctlr,exit=1):
+def exit_full_help(ctlr, exit=1):
     parser = mk_parser_all(ctlr)
     parser.print_help()
 
@@ -94,7 +96,7 @@ def exit_full_help(ctlr,exit=1):
 def main(argv=sys.argv, run=True):
     parser = mk_parser()
     # make it not exit on anything and just get the first arg
-    parser.add_argument("ctl_operation", nargs='?')
+    parser.add_argument("ctl_operation", nargs="?")
 
     try:
         args, unknown = parser.parse_known_args(args=argv[1:])
@@ -106,7 +108,7 @@ def main(argv=sys.argv, run=True):
     # update cli context with options/arguments before
     # using it to instantiate Ctl instance
     ctx = Context()
-    ctx.tmpl["env"].update(input={"ctl":args.__dict__})
+    ctx.tmpl["env"].update(input={"ctl": args.__dict__})
     ctx.update_options(args.__dict__)
 
     ctlr = Ctl(ctx, full_init=False)
@@ -121,10 +123,12 @@ def main(argv=sys.argv, run=True):
     # reparse to get plugin args
     # differs from mk_parser_all in that it doesn't need to load all every configured plugin
     parser = mk_parser()
-    sub_parser = parser.add_subparsers(title="Configured Operations", dest="ctl_operation")
+    sub_parser = parser.add_subparsers(
+        title="Configured Operations", dest="ctl_operation"
+    )
     mk_operation_parser(ctlr, sub_parser, operation, ctlr.get_plugin_config(operation))
 
-# TODO add help plugin to inspect plugins
+    # TODO add help plugin to inspect plugins
 
     try:
         args, unknown = parser.parse_known_args(args=argv[1:])
@@ -163,8 +167,6 @@ def main(argv=sys.argv, run=True):
         if ctx.debug:
             raise
         return 1
-
-
 
     # this shouldn't be here, it lets a plugin modify ctl options
     # ctx.update_options(vars(args))

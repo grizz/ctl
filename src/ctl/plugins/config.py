@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 import confu
 from confu.cli import argparse_options
@@ -8,17 +8,18 @@ import select
 
 import ctl
 
+
 class ConfigPluginConfig(confu.schema.Schema):
     """
     configuration schema for command plugin
     """
-    format = confu.schema.Str("format", default="yaml",
-        help="output format")
+
+    format = confu.schema.Str("format", default="yaml", help="output format")
 
 
 def option_name(path, delimiter="--"):
     """returns a cli option name from attribute path"""
-    return "--{}".format(delimiter.join(path).replace("_","-"))
+    return "--{}".format(delimiter.join(path).replace("_", "-"))
 
 
 def destination_name(path, delimiter="__"):
@@ -28,15 +29,16 @@ def destination_name(path, delimiter="__"):
 
 def list_options(schema):
     rv = []
+
     def optionize(attribute, path):
         if not attribute.cli:
             return
 
         kwargs = {
-            "type" : lambda x: attribute.validate(x, path),
-            "help" : attribute.help,
-            "dest" : destination_name(path),
-            "default" : attribute.default
+            "type": lambda x: attribute.validate(x, path),
+            "help": attribute.help,
+            "dest": destination_name(path),
+            "default": attribute.default,
         }
 
         name = option_name(path, delimiter=".")
@@ -52,13 +54,14 @@ def list_options(schema):
     return rv
 
 
-@ctl.plugin.register('config')
+@ctl.plugin.register("config")
 class ConfigPlugin(ctl.plugins.PluginBase):
     """
     ctl config tool
     """
 
     ConfigSchema = ConfigPluginConfig
+
     def init(self):
         self.ConfigSchema = self.ConfigSchema()
 
@@ -67,10 +70,10 @@ class ConfigPlugin(ctl.plugins.PluginBase):
         return list_options(cls.ConfigSchema())
 
     def execute(self, command=None, **kwargs):
-        fmt = kwargs.get('format')
+        fmt = kwargs.get("format")
         ctx = self.ctl.ctx
         print("current config from {}".format(ctx.home))
         print("fmt ".format(fmt))
-        fmt="yml"
+        fmt = "yml"
         codec = munge.get_codec(fmt)()
         print(codec.dumps(ctx.config.data))

@@ -13,11 +13,13 @@ class Permission(confu.schema.Str):
     """
     for permission values
     """
+
     def validate(self, value, path, **kwargs):
         value = super(Permission, self).validate(value, path, **kwargs)
         if not grainy.core.int_flags(value):
             raise confu.exceptions.ValidationError(
-                self,path, value, "valid permission flags required")
+                self, path, value, "valid permission flags required"
+            )
 
         return value
 
@@ -26,13 +28,10 @@ class PermissionSchema(confu.schema.Schema):
     """
     Configuration schem for permissions
     """
-    namespace = confu.schema.Str(
-        "namespace",
-        help="Permissioning namespace")
 
-    permission = Permission(
-        "permission",
-        help="Permissioning level")
+    namespace = confu.schema.Str("namespace", help="Permissioning namespace")
+
+    permission = Permission("permission", help="Permissioning level")
 
 
 class PluginProxySchema(confu.schema.ProxySchema):
@@ -40,31 +39,37 @@ class PluginProxySchema(confu.schema.ProxySchema):
     Will properly route plugin validation to the correct
     plugin schema
     """
+
     def schema(self, config):
         import ctl
+
         return ctl.plugin.get_plugin_class(config["type"]).ConfigSchema()
 
     def validate(self, config, path=None, errors=None, warnings=None):
         path[-1] = config["name"]
-        return self.schema(config).validate(config, path=path, errors=errors, warnings=warnings)
+        return self.schema(config).validate(
+            config, path=path, errors=errors, warnings=warnings
+        )
 
 
 class CTLSchema(confu.schema.Schema):
     """
     Configuration schema for ctl config
     """
+
     plugin_path = confu.schema.List(
         "plugin_path",
         confu.schema.Directory("plugin_path.item"),
-        help="list of directories to search for plugins")
+        help="list of directories to search for plugins",
+    )
 
     permissions = confu.schema.List(
-        "permissions", PermissionSchema(),
-        help="list of permissions")
+        "permissions", PermissionSchema(), help="list of permissions"
+    )
 
     plugins = confu.schema.List(
-        "plugins", PluginProxySchema(),
-        help="list of plugin config objects")
+        "plugins", PluginProxySchema(), help="list of plugin config objects"
+    )
 
 
 class SMTPConfigSchema(confu.schema.Schema):
@@ -75,6 +80,7 @@ class ArgparseSchema(confu.schema.Schema):
     """
     Defines an argparse argument
     """
+
     name = confu.schema.Str("name", help="argument name")
     help = confu.schema.Str("help", default="", blank=True, help="help text")
     choices = confu.schema.List("choices", confu.schema.Str(), help="value choices")
@@ -117,4 +123,5 @@ class BaseSchema(confu.schema.Schema):
         """
         Sub schema for ctl config
         """
+
         ctl = CTLSchema("ctl")
