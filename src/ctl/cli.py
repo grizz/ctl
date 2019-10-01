@@ -126,7 +126,18 @@ def main(argv=sys.argv, run=True):
     sub_parser = parser.add_subparsers(
         title="Configured Operations", dest="ctl_operation"
     )
-    mk_operation_parser(ctlr, sub_parser, operation, ctlr.get_plugin_config(operation))
+
+    try:
+        mk_operation_parser(
+            ctlr, sub_parser, operation, ctlr.get_plugin_config(operation)
+        )
+
+    except ValueError as exc:
+        if "{}".format(exc).find("unknown plugin") > -1:
+            ctlr.log.error("unknown operation: {}".format(operation))
+            exit_full_help(ctlr)
+        else:
+            raise
 
     # TODO add help plugin to inspect plugins
 
@@ -158,12 +169,8 @@ def main(argv=sys.argv, run=True):
     try:
         plugin_obj = ctlr.get_plugin(operation)
 
-        if not plugin_obj:
-            print("operation not found")
-            exit_full_help(ctlr)
-
     except Exception as e:
-        print("oper EXC {}".format(e))
+        ctlr.log.error("operation `{}` raised exception: {}".format(operation, e))
         if ctx.debug:
             raise
         return 1
