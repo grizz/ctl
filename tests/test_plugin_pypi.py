@@ -96,6 +96,11 @@ def test_set_target_error(tmpdir, ctlr):
     with pytest.raises(TypeError):
         plugin.set_target("test_pypi")
 
+    # no target
+
+    with pytest.raises(ValueError):
+        plugin.set_target(None)
+
 
 def test_build_dist(tmpdir, ctlr):
 

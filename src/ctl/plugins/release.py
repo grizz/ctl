@@ -17,7 +17,11 @@ import ctl.plugins.repository
 import ctl.plugins.git
 
 class ReleasePluginConfig(confu.schema.Schema):
-    pass
+    target = confu.schema.Str(help="target for release - should be a path " \
+                              "to a python package or the name of a " \
+                              "repository type plugin", cli=False,
+                              default=None)
+
 
 
 class ReleasePlugin(command.CommandPlugin):
@@ -37,14 +41,13 @@ class ReleasePlugin(command.CommandPlugin):
         shared_parser = argparse.ArgumentParser(add_help=False)
         group = shared_parser.add_argument_group()
 
-        group.add_argument("target", nargs=1, type=str, default=".",
-                            help="target for release - should be a path to a " \
-                                 "python package or the name of a repository " \
-                                 "type plugin")
-
         group.add_argument("version", nargs=1, type=str,
                            help="release version - if target is managed by git, "\
                                 "checkout this branch/tag")
+
+        group.add_argument("target", nargs="?", type=str,
+                           default=plugin_config.get("target"),
+                           help=ReleasePluginConfig().target.help)
 
 
         sub = parser.add_subparsers(title="Operation", dest="op")
@@ -69,7 +72,7 @@ class ReleasePlugin(command.CommandPlugin):
         self.prepare()
         self.shell = True
 
-        self.set_target(kwargs.get("target")[0])
+        self.set_target(self.get_config("target"))
         self.dry_run = kwargs.get("dry")
         self.version = kwargs.get("version")[0]
         self.orig_branch = self.target.branch
@@ -88,6 +91,9 @@ class ReleasePlugin(command.CommandPlugin):
 
 
     def set_target(self, target):
+        if not target:
+            raise ValueError("No target specified")
+
         try:
             self.target = self.other_plugin(target)
             if not isinstance(self.target, ctl.plugins.repository.RepositoryPlugin):

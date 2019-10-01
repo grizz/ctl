@@ -23,7 +23,7 @@ ctl:
 ## Through filepath
 
 ```
-ctl pypi release path/to/my/local/checkout 1.2.3
+ctl pypi 1.2.3 release path/to/my/local/checkout
 ```
 
 ## Through git plugin
@@ -42,7 +42,27 @@ ctl:
 Then just use the plugin name as a target
 
 ```
-ctl pypi release my_repo 1.2.3
+ctl pypi release 1.2.3 my_repo
+```
+
+## Set default target
+
+You can also set a default target so you dont need to specify
+it in the cli
+
+```yaml
+ctl:
+  plugins:
+
+    - type: pypi
+      name: pypi_my_repo
+      config:
+        config_file: ~/.pypirc
+        target: my_repo
+```
+
+```
+ctl pypi_my_repo release 1.2.3
 ```
 
 ## Usage
@@ -65,13 +85,14 @@ Operation:
 usage: ctl pypi release [-h] [--dry] [--config-file CONFIG_FILE]
                         [--identity IDENTITY] [--repository REPOSITORY]
                         [--sign] [--sign-with SIGN_WITH]
-                        target version
+                        version [target]
 
 optional arguments:
   -h, --help            show this help message and exit
   --dry                 Do a dry run (nothing will be uploaded)
   --config-file CONFIG_FILE
-                        path to pypi config file (e.g. ~/.pypirc)
+                        path to pypi config file (e.g. ~/.pypirc) (~/.pypirc-
+                        vegu)
   --identity IDENTITY   sign release with this identity
   --repository REPOSITORY
                         PyPI repository name - needs to exist in your pypi
@@ -80,23 +101,23 @@ optional arguments:
   --sign-with SIGN_WITH
                         sign release with this program (gpg)
 
-  target                target for release - should be a path to a python
-                        package or the name of a repository type plugin
   version               release version - if target is managed by git,
                         checkout this branch/tag
+  target                target for release - should be a path to a python
+                        package or the name of a repository type plugin
 ```
 
 ### Validate
 
 ```
-usage: ctl pypi validate [-h] target version
+usage: ctl pypi validate [-h] version [target]
 
 optional arguments:
   -h, --help  show this help message and exit
 
-  target      target for release - should be a path to a python package or the
-              name of a repository type plugin
   version     release version - if target is managed by git, checkout this
               branch/tag
+  target      target for release - should be a path to a python package or the
+              name of a repository type plugin
 ```
 
