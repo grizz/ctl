@@ -1,4 +1,4 @@
-#XXX: py 3 implements PermissionError, probably extend that?
+# TODO py3 implements PermissionError, probably extend that?
 class PermissionDenied(Exception):
 
     def __init__(self, grainy_namespace, level):

@@ -1,4 +1,2 @@
-# loads and registers all codecs without polluting namespace
+# loads and registers all plugins without polluting namespace
 from . import *
-
-# XXX should also loop through user dirs

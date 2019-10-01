@@ -42,7 +42,6 @@ class PluginBase(pluginmgr.config.PluginBase):
 #        pass
 
     def __init__(self, plugin_config, ctx, *args, **kwargs):
-        # XXX wrap with a read only proxy class for ctx - security
         self.ctl = ctx
         self.pluginmgr_config = plugin_config
 
@@ -105,10 +104,8 @@ class PluginBase(pluginmgr.config.PluginBase):
             self._logger = Log("ctl.plugins.{}".format(self.plugin_type))
         return self._logger
 
-    # XXX return a class with __enter__?
     def call(self, *args, **kwargs):
         print("command call ")
-
 
     def other_plugin(self, name):
         """

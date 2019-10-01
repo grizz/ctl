@@ -87,7 +87,7 @@ def read_config(schema, config_dir, config_name="config", ctx=None):
 
             engine = tmpl.get_engine("jinja2")(search_path=os.path.dirname(filename))
             engine.engine.undefined = IgnoreUndefined
-            #XXX: need a streamlined way to load in template filters
+            # TODO need a streamlined way to load in template filters
             engine.engine.filters["escape_regex"] = filter_escape_regex
             data = codec().loads(engine._render(src=os.path.basename(filename), env=ctx.tmpl["env"]))
             ctx.tmpl.update(engine=engine)
@@ -399,7 +399,6 @@ class Ctl(object):
         """
         self.check_permissions(argv_to_grainy_namespace(name), "r")
         # TODO log usage - -set audit level?
-        # XXX make controller context option that only has read only access
         return plugin.get_plugin_class(name)
 
     def get_plugin(self, name):
@@ -408,8 +407,4 @@ class Ctl(object):
         """
         self.check_permissions(argv_to_grainy_namespace(name), "r")
         # TODO log usage - -set audit level?
-        # XXX make controller context option that only has read only access
         return plugin.get_instance(name, self)
-
-
-
