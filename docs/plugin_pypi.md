@@ -2,6 +2,15 @@
 
 The PyPI plugin allows you to facilitate python package releases
 
+## Requirements
+
+The `twine` module needs to be installed
+
+```
+py(27|34|35): pip install twine>=1.14.0,<2
+py36: pip install twine>=2,<3
+```
+
 ## Config
 
 ```yaml
