@@ -82,7 +82,7 @@ class PyPIPlugin(release.ReleasePlugin):
 
     def _build_dist(self, **kwargs):
         command = ["rm dist/* -rf",
-                   "python setup.py sdist bdist_wheel",
+                   "python setup.py sdist",
                    ]
         self._run_commands(command)
 
