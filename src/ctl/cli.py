@@ -100,8 +100,8 @@ def main(argv=sys.argv, run=True):
         args, unknown = parser.parse_known_args(args=argv[1:])
 
     except Exception as e:
-        # XXX handle correctly
-        print("UNK ARG EXC " + e)
+        ctlr.log.error("unknown arg error: {}".format(e))
+        raise
 
     # update cli context with options/arguments before
     # using it to instantiate Ctl instance
@@ -116,7 +116,6 @@ def main(argv=sys.argv, run=True):
 
     if not operation:
         exit_full_help(ctlr)
-
 
     # rebuild argparse with plugin's correct options
     # reparse to get plugin args
