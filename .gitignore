@@ -8,4 +8,5 @@
 cfg/
 coverage.xml
 dist/
+build/
 site/
