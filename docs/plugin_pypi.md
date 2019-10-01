@@ -71,8 +71,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --dry                 Do a dry run (nothing will be uploaded)
   --config-file CONFIG_FILE
-                        path to pypi config file (e.g. ~/.pypirc) (~/.pypirc-
-                        vegu)
+                        path to pypi config file (e.g. ~/.pypirc)
   --identity IDENTITY   sign release with this identity
   --repository REPOSITORY
                         PyPI repository name - needs to exist in your pypi
