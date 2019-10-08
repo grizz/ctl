@@ -32,7 +32,7 @@ class PyPIPluginConfig(release.ReleasePluginConfig):
     config_file = confu.schema.Str(help="path to pypi config file (e.g. ~/.pypirc)")
 
     # PyPI repository name, needs to exist in your pypi config file
-    repository = confu.schema.Str(
+    pypi_repository = confu.schema.Str(
         help="PyPI repository name - needs to exist " "in your pypi config file",
         default="pypi",
     )
@@ -55,16 +55,16 @@ class PyPIPlugin(release.ReleasePlugin):
 
     @property
     def dist_path(self):
-        return os.path.join(self.target.checkout_path, "dist", "*")
+        return os.path.join(self.repository.checkout_path, "dist", "*")
 
     def prepare(self):
         super(PyPIPlugin, self).prepare()
         self.shell = True
-        self.repository = self.get_config("repository")
+        self.pypi_repository = self.get_config("pypi_repository")
         self.pypirc_path = os.path.expanduser(self.config.get("config_file"))
         self.twine_settings = Settings(
             config_file=self.pypirc_path,
-            repository_name=self.repository,
+            repository_name=self.pypi_repository,
             sign=self.get_config("sign"),
             identity=self.get_config("identity"),
             sign_with=self.get_config("sign_with"),
