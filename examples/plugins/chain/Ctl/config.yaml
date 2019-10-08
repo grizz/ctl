@@ -1,0 +1,53 @@
+ctl:
+  plugins:
+
+    # copy plugin, that will be used in the copy stage
+    # it will copy files from a source directory
+    # to a destination directory
+
+    - name: copy
+      type: copy
+      config:
+        source: source
+        output: output
+        walk_dirs:
+          - dir_1
+
+    # template plugin that will be used in the template stage
+    # it will render the templates from a source directory
+    # to a destination directory
+
+    - name: template
+      type: template
+      config:
+        source: source
+        output: output
+        walk_dirs:
+          - dir_2
+        vars:
+          - Ctl/tmplvars.yaml
+
+    # chain plugin
+    - name: test_chain
+      type: chain
+      config:
+
+        # the stages of the chain
+        # they will be executed in order
+
+        chain:
+
+          # stage #1: copy
+
+          - stage: copy
+            plugin: copy
+
+          # stage #2: render templates
+
+          - stage: template
+            plugin: template
+
+
+  permissions:
+    - namespace: ctl
+      permission: crud

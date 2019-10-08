@@ -1,0 +1,55 @@
+ctl:
+  plugins:
+
+    # the replace command we will use to process the
+    # files
+
+    - name: replace
+      type: command
+
+      config:
+        shell: true
+        arguments:
+
+          # `source` and `output` will be individual file paths passed on
+          # from the `copy` plugin, so we need to make sure the
+          # command knows about them
+
+          - name: source
+            type: str
+          - name: output
+            type: str
+
+        command:
+          - "sed  -i 's/ cats / dogs /g' {{ kwargs.output }}"
+
+    # the copy plugin
+
+    - name: copy
+      type: copy
+      config:
+
+        source: source
+        output: output
+        walk_dirs:
+          - dir_1
+        process:
+
+          # process *.html files
+
+          - pattern: \.html$
+
+            # we want to process with this plugin
+
+            plugin: replace
+
+            # we want to use this method of the plugin
+            # to handle the processing
+
+            action: execute
+
+
+
+  permissions:
+    - namespace: ctl
+      permission: crud

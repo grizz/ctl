@@ -1,0 +1,10 @@
+ctl:
+  plugins:
+    - type: command
+      name: ls
+      config:
+        command: ls
+
+  permissions:
+    namespace: ctl
+    permission: crud

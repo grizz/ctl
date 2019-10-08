@@ -1,0 +1,15 @@
+site_name: ctl
+site_url: https://github.com/20c/ctl
+
+theme: readthedocs
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Plugins: plugins.md
+  - Plugin Events: events.md
+  - Plugin Permissons: plugin_permissions.md
+  - Config Templating: config_template.md
+
+markdown_extensions:
+  - markdown_include.include

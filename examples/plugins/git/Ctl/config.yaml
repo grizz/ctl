@@ -1,0 +1,13 @@
+ctl:
+  plugins:
+
+    - name: git_ctl
+      type: git
+      config:
+        # we want to manage the ctl github repo
+        repo_url: git@github.com:20c/ctl
+
+
+  permissions:
+    - namespace: ctl
+      permission: crud

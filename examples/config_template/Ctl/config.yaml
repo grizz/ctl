@@ -1,0 +1,22 @@
+ctl:
+  plugins:
+
+    - type: git
+      name: git_ctl
+      config:
+        repo_url: git@github.com:20c/ctl
+
+    - type: command
+      name: printenv
+
+      config:
+        shell: true
+        command:
+          - "echo \"ctx.home: {{ ctx.home }}\""
+          - "echo \"ctx.tmpdir: {{ ctx.tmpdir }}\""
+          - "echo \"ctx.cachedir: {{ ctx.cachedir }}\""
+          - "echo \"{{ input.plugin }}\""
+
+  permissions:
+    - namespace: ctl
+      permission: crud

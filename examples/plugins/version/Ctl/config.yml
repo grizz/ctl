@@ -1,0 +1,27 @@
+ctl:
+  plugins:
+
+    # we will use a git plugin instance to manage the repo
+
+    - type: git
+      name: my_repo
+      config:
+        repo_url: git@github.com:path/to/repo
+
+    # next we define an instance for the `version` plugin
+
+    - type: version
+      name: version
+      config:
+
+        # we want to default to the git repo plugin we
+        # configured above
+        #
+        # this is optional, and can be set / overridden
+        # when executing the plugin
+
+        repository: my_repo
+
+        # branches used during `merge_release` operation
+        # branch_dev: dev
+        # branch_release: master

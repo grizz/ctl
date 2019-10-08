@@ -62,4 +62,3 @@ ctl:
         smtp:
           host: mail.myhost.com
 ```
-

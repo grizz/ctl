@@ -72,5 +72,3 @@ In the next example we trigger on `error` logs, but will include `debug` level l
               # to send the alert message
               plugin: email_errors
 ```
-
-
