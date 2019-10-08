@@ -11,5 +11,6 @@ def test_ctr_config_reset(config_dir):
     git1 = ctlr1.get_plugin("ls")
     assert git0.config != git1.config
 
+
 def test_plugin_config_default():
     pass

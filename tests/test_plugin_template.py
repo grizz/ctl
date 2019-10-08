@@ -4,18 +4,15 @@ import pytest
 import ctl
 from util import instantiate_test_plugin
 
+
 def instantiate(tmpdir, ctlr=None, **kwargs):
     config = {
-        "config" : {
-            "source" : os.path.join(os.path.dirname(__file__), "data"),
-            "output" : str(tmpdir.mkdir("template_out")),
-            "debug" : True,
-            "vars" : [
-                os.path.join(os.path.dirname(__file__), "data", "tmplvars.json"),
-            ],
-            "walk_dirs": [
-                "template",
-            ]
+        "config": {
+            "source": os.path.join(os.path.dirname(__file__), "data"),
+            "output": str(tmpdir.mkdir("template_out")),
+            "debug": True,
+            "vars": [os.path.join(os.path.dirname(__file__), "data", "tmplvars.json")],
+            "walk_dirs": ["template"],
         }
     }
     config["config"].update(**kwargs)
@@ -24,7 +21,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
 
 
 def test_init():
-    ctl.plugin.get_plugin_class('template')
+    ctl.plugin.get_plugin_class("template")
 
 
 def test_process(tmpdir, ctlr):
@@ -37,13 +34,12 @@ def test_process(tmpdir, ctlr):
             assert fh.read() == "some content first variable\n"
 
 
-
 def test_expose_vars(tmpdir, ctlr):
     plugin = instantiate(tmpdir, ctlr)
 
     env = {}
     plugin.expose_vars(env, plugin.config)
-    assert env == { "var1" : "first variable" }
+    assert env == {"var1": "first variable"}
 
 
 def test_invalid_vars(tmpdir, ctlr):
@@ -51,7 +47,3 @@ def test_invalid_vars(tmpdir, ctlr):
     env = {}
     with pytest.raises(IOError):
         plugin.expose_vars(env, plugin.config)
-
-
-
-

@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-version = open('Ctl/VERSION').read().strip()
+version = open("Ctl/VERSION").read().strip()
 
 # The directory containing this file
 HERE = os.path.dirname(__file__)

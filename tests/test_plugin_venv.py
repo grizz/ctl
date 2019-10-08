@@ -9,12 +9,15 @@ from ctl.exceptions import UsageError
 
 from util import instantiate_test_plugin
 
+
 def instantiate(tmpdir, ctlr=None, **kwargs):
     vi = sys.version_info
     config = {
-        "config" : {
-            "pipfile": os.path.join(os.path.dirname(__file__), "data", "venv", "Pipfile"),
-            "python_version" :"{}.{}".format(vi[0], vi[1])
+        "config": {
+            "pipfile": os.path.join(
+                os.path.dirname(__file__), "data", "venv", "Pipfile"
+            ),
+            "python_version": "{}.{}".format(vi[0], vi[1]),
         }
     }
     print(config)
@@ -24,7 +27,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
 
 
 def test_init():
-    ctl.plugin.get_plugin_class('venv')
+    ctl.plugin.get_plugin_class("venv")
 
 
 def test_build_and_exists(tmpdir, ctlr):
@@ -39,15 +42,18 @@ def test_build_and_exists(tmpdir, ctlr):
     with pytest.raises(UsageError):
         plugin.venv_validate("does.not.exist")
 
+
 def test_sync(tmpdir, ctlr):
     path = os.path.join(str(tmpdir.mkdir("test_venv")), "venv")
     plugin = instantiate(tmpdir, ctlr)
     plugin.execute(op="sync", output=path)
 
     output = subprocess.check_output(
-        ["source {}/bin/activate; pip freeze;".format(path)], shell=True)
+        ["source {}/bin/activate; pip freeze;".format(path)], shell=True
+    )
 
     assert u"{}".format(output).find(u"cfu==") > -1
+
 
 def test_copy(tmpdir, ctlr):
     path_dir = str(tmpdir.mkdir("test_venv"))

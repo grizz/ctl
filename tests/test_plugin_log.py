@@ -10,15 +10,16 @@ def test_init():
     plugin = instantiate_test_plugin("log", "test_log")
     assert plugin.loggers == []
 
+
 def test_logger(tmpdir):
     # create temp file to log messages to
     logfile = tmpdir.join("test.log")
 
     # logger config as passed to the plugin
     logger_config = {
-        "logger" : "a_logger",
+        "logger": "a_logger",
         "file": str(logfile),
-        "format": "%(message)s"
+        "format": "%(message)s",
     }
     config = {"config": {"loggers": [logger_config]}}
 

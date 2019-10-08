@@ -3,15 +3,14 @@ import json
 import ctl
 from util import instantiate_test_plugin
 
+
 def instantiate(tmpdir, ctlr=None, **kwargs):
     config = {
-        "config" : {
-            "source" : os.path.join(os.path.dirname(__file__), "data"),
-            "output" : str(tmpdir.mkdir("walk_dir_out")),
-            "debug" : True,
-            "walk_dirs": [
-                "walk_dir",
-            ]
+        "config": {
+            "source": os.path.join(os.path.dirname(__file__), "data"),
+            "output": str(tmpdir.mkdir("walk_dir_out")),
+            "debug": True,
+            "walk_dirs": ["walk_dir"],
         }
     }
     config["config"].update(**kwargs)
@@ -20,7 +19,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
 
 
 def test_init():
-    ctl.plugin.get_plugin_class('walk_dir')
+    ctl.plugin.get_plugin_class("walk_dir")
 
 
 def test_walk_dir(tmpdir, ctlr):
@@ -40,18 +39,12 @@ def test_walk_dir(tmpdir, ctlr):
 
 
 def test_process(tmpdir, ctlr):
-    process = [
-        {
-            "plugin" : "echo",
-            "action" : "execute",
-            "pattern" : "file_1",
-        }
-    ]
-    echo_plugin = instantiate_test_plugin("command", "echo", _ctl=ctlr,
-        config = {
-            "command": ["echo 'processed' > {{ kwargs.output }}",],
-            "shell": True
-        }
+    process = [{"plugin": "echo", "action": "execute", "pattern": "file_1"}]
+    echo_plugin = instantiate_test_plugin(
+        "command",
+        "echo",
+        _ctl=ctlr,
+        config={"command": ["echo 'processed' > {{ kwargs.output }}"], "shell": True},
     )
     plugin = instantiate(tmpdir, ctlr, process=process)
     plugin.execute()
@@ -63,18 +56,11 @@ def test_process(tmpdir, ctlr):
 
 
 def test_ignore(tmpdir, ctlr):
-    ignore = [
-        "walk_dir/b"
-    ]
+    ignore = ["walk_dir/b"]
     plugin = instantiate(tmpdir, ctlr, ignore=ignore)
     plugin.execute()
 
-    expected_files = [
-        "walk_dir/a/file_1",
-        "walk_dir/a/file_2",
-    ]
+    expected_files = ["walk_dir/a/file_1", "walk_dir/a/file_2"]
 
     assert len(plugin.debug_info["mkdir"]) == 1
     assert sorted(plugin.debug_info["files"]) == expected_files
-
-
