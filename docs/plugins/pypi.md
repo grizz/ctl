@@ -14,19 +14,7 @@ py36: pip install twine>=2,<3
 ## Config
 
 ```yaml
-ctl:
-  plugins:
-
-    - type: pypi
-      name: pypi
-      config:
-        config_file: ~/.pypirc
-
-    - type: pypi
-      name: pypi_test
-      config:
-        config_file: ~/.pypirc
-        pypi_repository: testpypi
+{!examples/plugins/pypi/Ctl/config.yaml!}
 ```
 
 ## Through filepath
@@ -129,4 +117,3 @@ optional arguments:
   repository      repository for release - should be a path to a python package or the
               name of a repository type plugin
 ```
-

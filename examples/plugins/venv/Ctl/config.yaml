@@ -1,0 +1,18 @@
+ctl:
+  plugins:
+
+    - name: venv36
+      type: venv
+      config:
+
+        # this virtualenv should run on python 3.6
+        # note that this needs to be a string and not a float
+        python_version: "3.6"
+
+        # you can specify a different location for your pipfile
+        # pipfile: path/to/my/Pipfile
+
+
+  permissions:
+    - namespace: ctl
+      permission: crud

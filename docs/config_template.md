@@ -6,14 +6,21 @@ If tmpl and jinja2 are installed, config will be rendered before it is loaded.
 pip install tmpl jinja2
 ```
 
-Currently the only env variable passed to the template engine is a reference to the ctl context.
+## Example
 
 ```yaml
-    - name: copy
-      type: copy
-      config:
-        source: {{ ctx.home }}/copy/source
-        output: {{ ctx.home }}/copy/output
-        walk_dirs:
-          - dir_1
+{!examples/config_template/Ctl/config.yaml!}
 ```
+
+## Exposed variables
+
+| variable | description |
+|---|---|
+| ctx.home | path to ctl home directoy |
+| ctx.tmpdir | path to ctl tmp directory|
+| ctx.cachedir | path to ctl cache directory |
+| ctx.user_home | path to user home directory |
+| input.plugin | input parameters for the plugin that's being executed |
+| plugin.[plugin_name] | variables exposed by a plugins `expose_vars` function |
+
+

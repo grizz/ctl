@@ -1,0 +1,29 @@
+ctl:
+  plugins:
+
+    - type: command
+      name: better_echo
+      config:
+
+        # we can sepcify custom arguments for the command
+
+        arguments:
+
+          # first positional argument: content
+          - name: content
+            type: str
+
+          # second positional argument: output file
+          - name: output
+            type: str
+            help: echo to this file
+            default: example.txt
+
+        shell: true
+        command:
+          - "echo '{{ kwargs.content }}' > {{ kwargs.output }}"
+
+
+  permissions:
+    - namespace: ctl
+      permission: crud

@@ -1,0 +1,32 @@
+ctl:
+  plugins:
+
+    - name: template
+      type: template
+      config:
+
+        # template root directory (path)
+
+        source: source
+
+        # template output directory (path)
+
+        output: output
+
+        # we want to render the templates from
+        # `source/dir_1` to `output/dir_2`
+
+        walk_dirs:
+          - dir_1
+
+        # yaml files containing template variables
+        # that will be exposed to the jinja2 environemnt
+        # and can be used when rendering the templates
+
+        vars:
+          - Ctl/tmplvars.yaml
+
+
+  permissions:
+    - namespace: ctl
+      permission: crud

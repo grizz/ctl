@@ -10,11 +10,6 @@
 
 Full control of your environment
 
-
-## Changes
-
-The current change log is available at <https://github.com/fullctl/ctl/blob/master/CHANGELOG.md>
-
 ## License
 
 Copyright 2016-2019 20C, LLC

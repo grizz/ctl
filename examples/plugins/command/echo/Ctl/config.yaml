@@ -1,0 +1,18 @@
+ctl:
+  plugins:
+
+    - type: command
+      name: echo
+      config:
+
+        # we want the subprocess to have shell behaviour for
+        # for this command (caution advised)
+
+        shell: true
+        command:
+          - "echo 'this is an example' > example.txt"
+
+
+  permissions:
+    - namespace: ctl
+      permission: crud

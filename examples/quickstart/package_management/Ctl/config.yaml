@@ -1,0 +1,30 @@
+ctl:
+  plugins:
+
+    # manage / access a git repository
+
+    - type: git
+      name: git_example
+      config:
+        repo_url: git@github.com:my/repo
+
+    # manage release tags / versioning
+
+    - type: version
+      name: version
+      config:
+        repository: git_example
+
+    # handle building and uploading to PyPI
+
+    - type: pypi
+      name: pypi
+      config:
+        config_file: ~/.pypirc
+        repository: git_example
+
+  # full access to all three plugins
+
+  permissions:
+    - namespace: ctl
+      permission: crud

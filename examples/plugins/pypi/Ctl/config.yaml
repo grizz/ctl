@@ -1,0 +1,26 @@
+ctl:
+  plugins:
+
+    # ATTENTION: because of the nature of this plugin
+    # this is not a functional example, as it will require
+    # you to auth and upload to pypi, use as a reference
+    # and substitute values were necessary
+
+    # pypi plugin for live uploads
+
+    - type: pypi
+      name: pypi
+      config:
+        config_file: ~/.pypirc
+
+    # pypi plugin for test uploads
+
+    - type: pypi
+      name: pypi_test
+      config:
+        config_file: ~/.pypirc
+        pypi_repository: testpypi
+
+  permissions:
+    - namespace: ctl
+      permission: crud

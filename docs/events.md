@@ -10,7 +10,7 @@ CTL uses an event system to let plugins and components trigger and react to even
 - `{log_name}-log-write-before` - triggers before a log is written to, {log_name} is to be subsituted by the name of the logger
 - `{log_name}-log-write-after` - triggers after a log is written to, {log_name} is to be substituted by the name of the logger
 
-### Hook plugin
+### Plugin hook
 
 #### Config
 
@@ -31,9 +31,9 @@ ctl:
             test: 123
 ```
 
-#### Manually
+#### Through code
 
-You can also hook manually
+You can also hook directly in your code
 
 ```py
 from ctl.events import common_events

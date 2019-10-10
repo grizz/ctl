@@ -1,0 +1,25 @@
+ctl:
+  plugins:
+
+    - name: copy
+      type: copy
+      config:
+
+        # source directory (path)
+
+        source: source
+
+        # output directory (path)
+
+        output: output
+
+        # we want to copy files from source/dir_1 and
+        # source/dir_3, skipping source/dir_2
+
+        walk_dirs:
+          - dir_1
+          - dir_3
+
+  permissions:
+    - namespace: ctl
+      permission: crud

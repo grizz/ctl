@@ -1,14 +1,37 @@
-# Plugin Operation Permissioning via expose
+# It's grainy
 
-You can use the `expose` dectorator from `ctl.auth` to enable permission
-checking on plugin operations
+We are using [grainy](https://github.com/20c/grainy) to handle our permissioning.
 
-By default permission requirement is read from the plugin config and default to `r`
+### It's c.r.u.d
 
-Any exposed function will have `exposed` property set to True
+When refering to permissions we are using the tried and tested crud system
 
+1. *c* - create
+1. *r* - read
+1. *u* - update
+1. *d* - delete
 
-## Example Config: version plugin
+### It's also namespaced
+
+This allows for very granular namespaced based permissions
+
+#### Namespace examples
+
+| user permissions | plugin op namespace | can run |
+|---|---|---|
+| `ctl` | `ctl.{plugin_name}.do_something` | yes |
+| `ctl.my_plugin` | `ctl.my_plugin.do_something` | yes |
+| `ctl.my_plugin` | `ctl.other_plugin.do_something` | no |
+| `ctl.my_plugin.do_this` | `ctl.other_plugin.do_something` | no |
+
+## Control permission requirements 
+
+By default permission requirement for any plugin operation is `r` (unless 
+specifically overwritten in the `expose` decorator that's exposing the operation)
+
+You can specify different permission requirements in the config
+
+### Example Config: version plugin
 
 ```
     - name: version
@@ -21,7 +44,7 @@ Any exposed function will have `exposed` property set to True
           bump: c
 ```
 
-## Example Config: command plugin
+### Example Config: command plugin
 
 ```
     - name: ls
@@ -35,8 +58,28 @@ Any exposed function will have `exposed` property set to True
           - ls -all
 ```
 
+## Development
 
-## Static namespace
+### Expose plugin operations 
+
+You can use the `expose` dectorator from `ctl.auth` to expose methods on a plugin as an operation to be available on the ctl cli.
+
+Any exposed function will have `exposed` property set to `True`
+
+```py
+from ctl.auth import expose
+
+class VersionPlugion(ExecutablePlugin):
+    ...
+   
+    @expose("ctl.{plugin_name}.tag")
+    def tag(self, version, repo, **kwargs):
+        ...
+
+    ...
+```
+
+### Static namespace
 
 ```
 class ExamplePlugin(PluginBase):
@@ -45,7 +88,7 @@ class ExamplePlugin(PluginBase):
     ...
 ```
 
-## Dynamic namespace via formatting
+### Dynamic namespace via formatting
 
 ```
 class ExamplePlugin(PluginBase):
@@ -54,7 +97,7 @@ class ExamplePlugin(PluginBase):
     ...
 ```
 
-## Hardcode permission level requirement
+### overwrite default permission level requirement
 
 Sometimes you may want to hardcode a permission requirement, or perhaps obtain
 it dynamically, this can be done with the level argument
