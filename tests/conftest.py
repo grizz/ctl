@@ -1,4 +1,3 @@
-
 import os
 import pytest
 
@@ -18,6 +17,7 @@ def config_dir(this_dir):
 @pytest.fixture(params=["standard"])
 def ctlr(config_dir):
     return ctl.Ctl(config_dir=os.path.join(config_dir, "standard"))
+
 
 @pytest.fixture(params=["permission_denied"])
 def ctldeny(config_dir):

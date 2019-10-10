@@ -3,15 +3,14 @@ import json
 import ctl
 from util import instantiate_test_plugin
 
+
 def instantiate(tmpdir, ctlr=None, **kwargs):
     config = {
-        "config" : {
-            "source" : os.path.join(os.path.dirname(__file__), "data"),
-            "output" : str(tmpdir.mkdir("copy_out")),
-            "debug" : True,
-            "walk_dirs": [
-                "copy",
-            ]
+        "config": {
+            "source": os.path.join(os.path.dirname(__file__), "data"),
+            "output": str(tmpdir.mkdir("copy_out")),
+            "debug": True,
+            "walk_dirs": ["copy"],
         }
     }
     config["config"].update(**kwargs)
@@ -20,7 +19,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
 
 
 def test_init():
-    ctl.plugin.get_plugin_class('copy')
+    ctl.plugin.get_plugin_class("copy")
 
 
 def test_process(tmpdir, ctlr):
@@ -34,18 +33,11 @@ def test_process(tmpdir, ctlr):
 
 
 def test_ignore(tmpdir, ctlr):
-    ignore = [
-        "copy/b"
-    ]
+    ignore = ["copy/b"]
     plugin = instantiate(tmpdir, ctlr, ignore=ignore)
     plugin.execute()
 
-    expected_files = [
-        "copy/a/file_1",
-        "copy/a/file_2",
-    ]
+    expected_files = ["copy/a/file_1", "copy/a/file_2"]
 
     assert len(plugin.debug_info["mkdir"]) == 1
     assert sorted(plugin.debug_info["files"]) == expected_files
-
-
