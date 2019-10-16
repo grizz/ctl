@@ -1,3 +1,6 @@
+"""
+Plugin interface for plugins that manage software repositories
+"""
 from __future__ import absolute_import
 import ctl
 import os
@@ -7,6 +10,7 @@ import giturlparse
 from ctl.util.versioning import version_tuple
 
 from ctl.plugins import ExecutablePlugin
+from ctl.docs import pymdgen_confu_types
 
 try:
     import urllib.parse as urlparse
@@ -14,7 +18,11 @@ except ImportError:
     import urlparse
 
 
+@pymdgen_confu_types()
 class PluginConfig(confu.schema.Schema):
+    """
+    Configuration schema for `RepositoryPlugin`
+    """
     repo_url = confu.schema.Str(cli=False)
     checkout_path = confu.schema.Directory(
         default="",
@@ -29,6 +37,10 @@ class PluginConfig(confu.schema.Schema):
 
 
 class RepositoryPlugin(ExecutablePlugin):
+    """
+    Interface for repository type plugins
+    """
+
     class ConfigSchema(ExecutablePlugin.ConfigSchema):
         config = PluginConfig()
 
@@ -42,6 +54,7 @@ class RepositoryPlugin(ExecutablePlugin):
 
     @property
     def version(self):
+        """ current version as it exists in `version_file` """
         try:
             print("Reading version from", self.version_file)
             with open(self.version_file, "r") as fh:
@@ -53,10 +66,12 @@ class RepositoryPlugin(ExecutablePlugin):
 
     @property
     def version_file(self):
+        """ location of version file """
         return os.path.join(self.repo_ctl_dir, "VERSION")
 
     @property
     def repo_ctl_dir(self):
+        """ location of ctl directory inside repository """
         return os.path.join(self.checkout_path, "Ctl")
 
     @property
@@ -82,7 +97,7 @@ class RepositoryPlugin(ExecutablePlugin):
         """
         raise NotImplementedError()
 
-    def branch(self, name):
+    def branch_exists(self, name):
         """
         Should return True if the branch with the name exists in
         the local repository, False otherwise
@@ -93,11 +108,12 @@ class RepositoryPlugin(ExecutablePlugin):
         """
         Should commit changes
 
-        Keyword arguments:
-            - files <list>: list of files to commit, should be
-                filenames relative to the repo root
-            - message <str>: commit message
-            - push <bool=True>: push immediately
+        **Keyword arguments**
+
+        - files (`list`): list of files to commit, should be
+          filenames relative to the repo root
+        - message (`str`): commit message
+        - push (`bool`=`True`): push immediately
         """
         raise NotImplementedError()
 

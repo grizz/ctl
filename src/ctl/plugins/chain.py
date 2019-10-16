@@ -1,3 +1,7 @@
+"""
+A plugin that allows you to execute other plugins in a chain
+"""
+
 from __future__ import absolute_import
 import argparse
 
@@ -6,42 +10,84 @@ import confu.schema
 import ctl
 import ctl.config
 
+from ctl.docs import pymdgen_confu_types
 
+
+@pymdgen_confu_types()
 class ChainActionConfig(confu.schema.Schema):
+    """
+    Confu schema describes a plugin action
+    """
+
     name = confu.schema.Str(
-        default="execute", help="call this action on the plugin instance"
+        default="execute", help="call this action on the plugin instance (method name)"
     )
-    arguments = confu.schema.Schema(
-        item=confu.schema.Str(), help="arguments to pass to the plugin's " "execute"
-    )
+    arguments = confu.schema.Schema(item=confu.schema.Str(), help="arguments to pass")
 
 
+@pymdgen_confu_types()
 class ChainConfig(confu.schema.Schema):
+    """
+    Confu schema describes a stage in the chain
+    """
+
     stage = confu.schema.Str(help="user friendly name of the stage in the chain")
     plugin = confu.schema.Str(help="plugin instance name")
-    action = ChainActionConfig()
+    action = ChainActionConfig(help="plugin action")
 
 
+@pymdgen_confu_types()
 class ChainPluginConfig(confu.schema.Schema):
-    arguments = confu.schema.List(item=ctl.config.ArgparseSchema(), cli=False)
-    chain = confu.schema.List(item=ChainConfig(), cli=False)
-    vars = confu.schema.Dict(item=confu.schema.Str(blank=True), cli=False)
+    """
+    Confu schema for the chain plugin
+    """
+
+    arguments = confu.schema.List(
+        item=ctl.config.ArgparseSchema(), cli=False, help="cli parameters for the chain"
+    )
+    chain = confu.schema.List(item=ChainConfig(), cli=False, help="stages in the chain")
+    vars = confu.schema.Dict(
+        item=confu.schema.Str(blank=True), cli=False, help="extra variables"
+    )
 
 
 @ctl.plugin.register("chain")
 class ChainPlugin(ctl.plugins.ExecutablePlugin):
 
-    """ chain execute other plugins """
+    """
+    chain execute other plugins
+
+    # Instanced Attributes
+
+    - start (`int`): start at this stage
+    - end (`int`): end at this stage
+    """
 
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
         config = ChainPluginConfig("config")
 
     @classmethod
     def expose_vars(cls, env, plugin_config):
+        """
+        Expose contents of `vars` config attribute to the
+        submitted environment
+
+        **Argument(s)**
+
+        - env (`dict`)
+        - plugin_config (`dict`)
+        """
+
         env.update(plugin_config.get("vars"))
 
     @classmethod
     def add_arguments(cls, parser, plugin_config):
+        """
+        Set CLI Arguments
+
+        *overrides `PluginBase.add_arguments`*
+        """
+
         parser.add_argument("--end", type=str, help="stop at this stage")
         parser.add_argument("--start", type=str, help="start at this stage")
         ctl.config.ArgparseSchema().add_many_to_parser(
@@ -49,6 +95,17 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
         )
 
     def execute(self, **kwargs):
+        """
+        Execute the plugin
+
+        **Keyword Arguments**
+
+        - start (`int`): starting stage
+        - end (`int`): ending stage
+
+        *overrides and calls `ExecutablePlugin.execute`*
+        """
+
         super(ChainPlugin, self).execute(**kwargs)
         self.chain = chain = self.get_config("chain")
         self.end = kwargs.get("end")
@@ -56,6 +113,13 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
         self.execute_chain(chain)
 
     def execute_chain(self, chain):
+        """
+        Execute a plugin chain from ChainConfig dict
+
+        **Arguments**
+
+        - chain (`list<dict>`): list of chain configs (see `ChainConfig`)
+        """
 
         self.validate_stage(self.end)
         self.validate_stage(self.start)
@@ -82,6 +146,17 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
         self.log.info("completed chain `{}`".format(self.plugin_name))
 
     def execute_stage(self, stage, num=1, total=1):
+
+        """
+        Execute a stage
+
+        **Arguments**
+
+        - stage (`dict`): chain config (see `ChainConfig`)
+        - num (`int`): stage number in the chain
+        - total (`int`): total stages in the chain
+        """
+
         self.log.info(
             "exec {stage} [{num}/{total}]".format(s=self, num=num, total=total, **stage)
         )
@@ -101,6 +176,14 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
         fn(**kwargs)
 
     def validate_stage(self, name):
+        """
+        Validate stage by name, will raise a `ValueError` on failure to validate
+
+        **Arguments**
+
+        - name (`str`)
+        """
+
         if not name:
             return
 

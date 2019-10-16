@@ -1,3 +1,7 @@
+"""
+A plugin that allows you to run one or several shell commands
+"""
+
 from __future__ import absolute_import, division, print_function
 
 import sys
@@ -10,20 +14,24 @@ import confu.schema
 
 
 from ctl.auth import expose
+from ctl.docs import pymdgen_confu_types
 
 
+@pymdgen_confu_types()
 class CommandPluginConfig(confu.schema.Schema):
     """
     configuration schema for command plugin
     """
 
     command = confu.schema.List(
-        item=confu.schema.Str("command.item"),
-        help="List of shell commands to run",
-        cli=False,
+        item=confu.schema.Str("command.item"), help="shell commands to run", cli=False
     )
-    arguments = confu.schema.List(item=ctl.config.ArgparseSchema(), cli=False)
-    env = confu.schema.Dict(item=confu.schema.Str(), default={}, cli=False)
+    arguments = confu.schema.List(
+        item=ctl.config.ArgparseSchema(), cli=False, help="arbirtrary cli arguments"
+    )
+    env = confu.schema.Dict(
+        item=confu.schema.Str(), default={}, cli=False, help="environment variables"
+    )
     shell = confu.schema.Bool(
         default=False, cli=False, help="run subprocess in shell mode"
     )
@@ -38,6 +46,13 @@ class CommandPluginConfig(confu.schema.Schema):
 class CommandPlugin(ctl.plugins.ExecutablePlugin):
     """
     runs a command
+
+    # Instanced Attributes
+
+    - env (`dict`): shell environment variables that will be set
+      during command execution
+    - stdout: stdout target
+    - stdin: stdin target
     """
 
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
@@ -52,6 +67,18 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
         )
 
     def prepare(self, **kwargs):
+        """
+        prepares the command environment
+
+        cwd, shell env, stdout / stdin are all set up
+        through this
+
+        this is called automatically during the `ExecutablePlugin.execute`
+        call
+
+        *overrides `ExecutablePlugin.prepare`*
+        """
+
         self.env = os.environ.copy()
         self.stdout = sys.stdout
         self.stderr = sys.stderr
@@ -67,11 +94,34 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
     # in the plugin's config, and default to `r` if not specified
     @expose("ctl.{plugin_name}")
     def execute(self, **kwargs):
+
+        """
+        execute the command(s) specified in the plugin
+        config `command` list
+
+        *overrides and calls `ExecutablePlugin.execute`*
+        """
+
         super(CommandPlugin, self).execute(**kwargs)
         command = self.get_config("command")
         self._run_commands(command, **kwargs)
 
     def _run_commands(self, command, **kwargs):
+
+        """
+        execute a list of commands
+
+        this is called automatically during `execute`
+
+        **Argument(s)**
+
+        - command (`list`): list of shell commands
+
+        **Returns**
+
+        - False if command failed with error
+        """
+
         for cmd in command:
             cmd = self.render_tmpl(cmd, kwargs)
             self.log.debug("running command: {}".format(cmd))
@@ -81,7 +131,24 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
                 self.log.error("command {} failed with {}".format(cmd, rc))
                 return False
 
+        # TODO: should return True here?
+
     def _exec(self, command):
+
+        """
+        execute a single command
+
+        this is called automatically during `_run_commands`
+
+        **Argument(s)**
+
+        - command (`str`)
+
+        **Returns**
+
+        - int: process return code
+        """
+
         chunk_size = 4096
 
         popen_kwargs = {

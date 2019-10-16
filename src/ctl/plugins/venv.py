@@ -1,3 +1,10 @@
+"""
+Plugin that allows you to manage a python virtual env
+
+## Requirements
+
+`pip install pipenv`
+"""
 from __future__ import absolute_import, division, print_function
 
 import os
@@ -14,15 +21,30 @@ import confu.schema
 from ctl.auth import expose
 from ctl.plugins import command
 from ctl.exceptions import UsageError
+from ctl.docs import pymdgen_confu_types
 
-
+@pymdgen_confu_types()
 class VenvPluginConfig(confu.schema.Schema):
+    """
+    Configuration schema for `VenvPlugin`
+    """
+
     python_version = confu.schema.Str(choices=["2.7", "3.4", "3.5", "3.6", "3.7"])
     pipfile = confu.schema.Str(help="path to Pipfile", default="{{ctx.home}}/Pipfile")
 
 
 @ctl.plugin.register("venv")
 class VenvPlugin(command.CommandPlugin):
+
+    """
+    manage a virtual python envinronment
+
+    # Instanced Attributes
+
+    - binpath (`str`): path to venv `bin/` directory
+
+    """
+
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
         config = VenvPluginConfig()
 
@@ -57,9 +79,35 @@ class VenvPlugin(command.CommandPlugin):
         )
 
     def venv_exists(self, path=None):
+        """
+        Does a valid virtual environment exist at location?
+
+        If no location is supplied the path in `self.output` is checked
+
+        **Keyword Arguments**
+
+        - path (`str`): path to check (should be virtuelenv root directory)
+
+        **Returns**
+
+        `True` if venv exists, `False` if not
+        """
+
         return os.path.exists(os.path.join(path or self.output, "bin", "activate"))
 
     def venv_validate(self, path=None):
+        """
+        Validate virtualenv at location
+
+        If no location is supplied the path in `self.output` is checked
+
+        Will raise a `UsageError` on validation failure
+
+        **Keyword Arguments**
+
+        - path (`str`): path to check (should be virtuelenv root directory)
+        """
+
         if not self.venv_exists(path):
             raise UsageError("No virtualenv found at {}".format(path or self.output))
 

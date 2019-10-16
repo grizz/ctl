@@ -1,31 +1,34 @@
+import re
+from functools import wraps
+
 from ctl.exceptions import PermissionDenied
 from grainy.core import int_flags
-
 
 class expose(object):
 
     """
-    Expose a ctl plugin's method - permissions will be checked before
+    Decorator to expose a ctl plugin's method - permissions will be checked before
     method is executed
-
-    Keyword Arguments:
-        - namespace <str>: permissioning namespace, has the following formatting
-            variables available:
-                - `plugin`: the plugin instance
-                - `plugin_name`: name of the plugin instance as defined in config
-                - any arguments passed to the method by argument name
-
-        - level <function|str|None>: permission level to check.
-                - If a function is passed it is expected to return a permission level
-                  string. The function will be passed the plugin instance as an argument.
-                - If a string is passed it is expected to be a permission level string
-                - If None is passed, permission level will be obtained from the plugin's
-                  config and default to `r`
-
-        - explicit <bool=False>: If true will enable explicit namespace checking
     """
 
     def __init__(self, namespace, level=None, explicit=False):
+        """
+        **Keyword Arguments**
+
+        - namespace (`str`): permissioning namespace, has the following formatting
+          variables available:
+              - `plugin`: the plugin instance
+              - `plugin_name`: name of the plugin instance as defined in config
+              - any arguments passed to the method by argument name
+        - level (`function`|`str`|`None`): permission level to check.
+              - If a function is passed it is expected to return a permission level
+                string. The function will be passed the plugin instance as an argument.
+              - If a string is passed it is expected to be a permission level string
+              - If None is passed, permission level will be obtained from the plugin's
+                config and default to `r`
+        - explicit (`bool`=`False`): If true will enable explicit namespace checking
+        """
+
         self.namespace = namespace
         self.level = level
         self.explicit = explicit
@@ -35,6 +38,7 @@ class expose(object):
         namespace_ = self.namespace
         explicit = self.explicit
 
+        @wraps(fn)
         def wrapped(self, *args, **kwargs):
 
             # format the namespace using the plugin instance
@@ -70,5 +74,22 @@ class expose(object):
             # execute method
             return fn(self, *args, **kwargs)
 
+        doc = []
+        doc_indent = 0
+
+        if fn.__doc__:
+            doc.append(fn.__doc__)
+            m = re.search("(\s+)", fn.__doc__)
+            if m:
+                doc_indent = m.group(1)
+
+        doc.extend(
+            [
+                '{}!!! note "Exposed to CLI"'.format(doc_indent),
+                "{}    namespace: `{}`".format(doc_indent, namespace_),
+            ]
+        )
+
+        wrapped.__doc__ = "\n".join(doc)
         wrapped.exposed = True
         return wrapped

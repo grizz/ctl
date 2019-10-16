@@ -10,6 +10,27 @@ nav:
   - Plugin Events: events.md
   - Plugin Permissons: plugin_permissions.md
   - Config Templating: config_template.md
+  - API Documenation:
+    - ctl.auth: api/auth.md
+    - ctl.plugins: api/ctl.plugins.md
+    - ctl.plugins.chain: api/ctl.plugins.chain.md
+    - ctl.plugins.copy: api/ctl.plugins.copy.md
+    - ctl.plugins.command: api/ctl.plugins.command.md
+    - ctl.plugins.email: api/ctl.plugins.email.md
+    - ctl.plugins.git: api/ctl.plugins.git.md
+    - ctl.plugins.log: api/ctl.plugins.log.md
+    - ctl.plugins.log_alert: api/ctl.plugins.log_alert.md
+    - ctl.plugins.log_git: api/ctl.plugins.log_git.md
+    - ctl.plugins.log_user: api/ctl.plugins.log_user.md
+    - ctl.plugins.pypi: api/ctl.plugins.pypi.md
+    - ctl.plugins.release: api/ctl.plugins.release.md
+    - ctl.plugins.repository: api/ctl.plugins.repository.md
+    - ctl.plugins.template: api/ctl.plugins.template.md
+    - ctl.plugins.venv: api/ctl.plugins.venv.md
+    - ctl.plugins.version: api/ctl.plugins.version.md
+    - ctl.plugins.walk_dir: api/ctl.plugins.walk_dir.md
 
 markdown_extensions:
   - markdown_include.include
+  - admonition
+  - pymdgen

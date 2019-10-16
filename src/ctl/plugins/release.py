@@ -1,3 +1,6 @@
+"""
+Plugin interface for plugins that handle software releases
+"""
 from __future__ import absolute_import, division, print_function
 
 import os
@@ -12,15 +15,20 @@ import confu.schema
 from ctl.auth import expose
 from ctl.plugins import command
 from ctl.exceptions import UsageError
+from ctl.docs import pymdgen_confu_types
 
 import ctl.plugins.repository
 import ctl.plugins.git
 
-
+@pymdgen_confu_types()
 class ReleasePluginConfig(confu.schema.Schema):
+    """
+    Configuration schema for `ReleasePlugin`
+    """
+
     repository = confu.schema.Str(
         help="repository target for release - should be a path "
-        "to a python package or the name of a "
+        "to a source checkout or the name of a "
         "repository type plugin",
         cli=False,
         default=None,
@@ -101,6 +109,19 @@ class ReleasePlugin(command.CommandPlugin):
             self.repository.checkout(self.orig_branch)
 
     def set_repository(self, repository):
+
+        """
+        Set release repository. Distributions will be built from that
+        repository.
+
+        Currently only supports `git` type repositories
+
+        **Attributes**
+
+        - repository (`str`): can either be the name of a `git` type plugin
+        instance or the path to git repository checkout
+        """
+
         if not repository:
             raise ValueError("No repository specified")
 
@@ -129,10 +150,16 @@ class ReleasePlugin(command.CommandPlugin):
 
     @expose("ctl.{plugin_name}.release")
     def release(self, **kwargs):
+        """
+        Build, validate and release the package
+        """
         self._release(**kwargs)
 
     @expose("ctl.{plugin_name}.validate")
     def validate(self, **kwargs):
+        """
+        Build and validate the package
+        """
         self._validate(**kwargs)
 
     def _release(self, **kwargs):
@@ -140,5 +167,5 @@ class ReleasePlugin(command.CommandPlugin):
         raise NotImplementedError()
 
     def _validate(self, **kwargs):
-        """ should run validation logic """
+        """ should run build and validation logic """
         raise NotImplementedError()

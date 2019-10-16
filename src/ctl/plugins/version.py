@@ -1,3 +1,6 @@
+"""
+Plugin that allows you to handle repository versioning
+"""
 from __future__ import absolute_import
 import os
 import ctl
@@ -9,9 +12,14 @@ from ctl.plugins.git import temporary_plugin as temporary_git_plugin
 from ctl.util.versioning import bump_semantic, version_string
 from ctl.auth import expose
 from ctl.exceptions import UsageError, OperationNotExposed
+from ctl.docs import pymdgen_confu_types
 
 
+@pymdgen_confu_types()
 class VersionPluginConfig(confu.schema.Schema):
+    """
+    Configuration schema for `VersionPlugin`
+    """
 
     repository = confu.schema.Str(
         help="name of repository type plugin or path " "to a repository checkout",
@@ -33,7 +41,7 @@ class VersionPluginConfig(confu.schema.Schema):
 @ctl.plugin.register("version")
 class VersionPlugin(ExecutablePlugin):
     """
-    Manipulates repository versions.
+    manage repository versioning
     """
 
     class ConfigSchema(ExecutablePlugin.ConfigSchema):
@@ -50,6 +58,11 @@ class VersionPlugin(ExecutablePlugin):
         So instead for now we do the next best thing and call this
         class method on all parsers that need to support the repo
         parameter
+
+        **Arguments**
+
+        - parser (`argparse.ArgParser`)
+        - plugin_config (`dict`)
         """
         parser.add_argument(
             "repository",
@@ -129,6 +142,9 @@ class VersionPlugin(ExecutablePlugin):
 
     @property
     def init_version(self):
+        """
+        `True` if a `Ctl/VERSION` file should be created if it's missing
+        """
         return getattr(self, "_init_version", False)
 
     @init_version.setter
@@ -137,6 +153,10 @@ class VersionPlugin(ExecutablePlugin):
 
     @property
     def no_auto_dev(self):
+        """
+        `True` if we do **NOT** want to automatically bump a dev version when a major
+        minor or patch version is bumped
+        """
         return getattr(self, "_no_auto_dev", False)
 
     @no_auto_dev.setter
@@ -169,14 +189,14 @@ class VersionPlugin(ExecutablePlugin):
         """
         Return plugin instance for repository
 
-        Arguments:
+        **Arguments**
 
-            - target (str): name of a configured repository type plugin
-              or filepath to a repository checkout
+        - target (`str`): name of a configured repository type plugin
+          or filepath to a repository checkout
 
-        Returns:
+        **Returns**
 
-            - plugin: git plugin instance
+        git plugin instance (`GitPlugin`)
         """
 
         try:
@@ -213,8 +233,9 @@ class VersionPlugin(ExecutablePlugin):
         Merge branch self.branch_dev into branch self.branch_release in the specified
         repo
 
-        Arguments:
-            - repo <str>: name of existing repository type plugin instance
+        **Arguments**
+
+        - repo (`str`): name of existing repository type plugin instance
         """
         from_branch = self.get_config("branch_dev")
         to_branch = self.get_config("branch_release")
@@ -234,12 +255,14 @@ class VersionPlugin(ExecutablePlugin):
         """
         tag a version according to version specified
 
-        Arguments:
-            - version <str>
-            - repo <str>: name of existing repository type plugin instance
+        **Arguments**
 
-        Keyword Arguments:
-            - release <bool>: if true also run `merge_release`
+        - version (`str`): tag version (eg. 1.0.0)
+        - repo (`str`): name of existing repository type plugin instance
+
+        **Keyword Arguments**
+
+        - release (`bool`): if `True` also run `merge_release`
         """
         repo_plugin = self.repository(repo)
         repo_plugin.pull()
@@ -270,8 +293,10 @@ class VersionPlugin(ExecutablePlugin):
         """
         bump a version according to semantic version
 
-        Arguments:
-            - version <str>: major, minor, patch or dev
+        **Arguments**
+
+        - version (`str`): major, minor, patch or dev
+        - repo (`str`): name of existing repository type plugin instance
         """
 
         repo_plugin = self.repository(repo)

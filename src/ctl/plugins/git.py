@@ -1,3 +1,7 @@
+"""
+Plugin that allows you to manage a git repository
+"""
+
 from __future__ import absolute_import
 import os
 import re
@@ -22,20 +26,20 @@ def temporary_plugin(ctl, name, path, **config):
     Instantiate a temporary git plugin pointing
     at an existing checkout path.
 
-    Argument(s):
+    **Arguments**
 
-        - ctl: ctl instance
-        - name: plugin name
-        - path: file path to a cloned git repository
+    - ctl: ctl instance
+    - name: plugin name
+    - path: file path to a cloned git repository
 
-    Keyword Argument(s):
+    **Keyword Arguments**
 
-        Any keyword arguments will be passed on to
-        plugin config
+    Any keyword arguments will be passed on to
+    plugin config
 
-    Returns:
+    **Returns**
 
-        - GitPlugin instance
+    `GitPlugin` instance
     """
 
     config.update({"checkout_path": path})
@@ -44,6 +48,15 @@ def temporary_plugin(ctl, name, path, **config):
 
 @ctl.plugin.register("git")
 class GitPlugin(RepositoryPlugin):
+
+    """
+    manage a git repository
+
+    For information on the configuration schema please check
+    the `RepositoryPlugin` documenation
+    """
+
+
     @property
     def uuid(self):
         """ return recent commit hash of the repo """
@@ -79,6 +92,14 @@ class GitPlugin(RepositoryPlugin):
     def branch_exists(self, name):
         """
         Return if a branch exists in the local repo or not
+
+        **Arguments**
+
+        - name (`str`): branch name
+
+        **Returns**
+
+        `True` if branch exists, `False` if not
         """
         get_branch = self.command("rev-parse", "--verify", name)
         try:
@@ -117,6 +138,19 @@ class GitPlugin(RepositoryPlugin):
         op_checkout_parser.add_argument("tag", nargs=1, help="tag or branch")
 
     def execute(self, **kwargs):
+
+        """
+        Execute plugin operation
+
+        **Keyword Arguments**
+
+        - op (`str`): operation to execute - needs to be exposed
+        - checkout_path (`str`): override repo_url config param
+        - repo_url (`str`): override repo_url config param
+
+        *overrides and calls `RepositoryPlugin.execute`*
+        """
+
         super(GitPlugin, self).execute(**kwargs)
 
         op = kwargs.get("op")
@@ -144,9 +178,17 @@ class GitPlugin(RepositoryPlugin):
 
     def command(self, *command):
         """
-        Prep git command list to use with run_git_command()
+        Prepare git command to use with `run_git_command`
 
-        Will automaticdally prepare --git-dir and --work-tree options
+        Will automaticdally prepare `--git-dir` and `--work-tree` options
+
+        **Arguments**
+
+        Any arguments passed will be joined together as a command
+
+        **Returns**
+
+        prepared command (`list`)
         """
         return [
             "git",
@@ -160,7 +202,15 @@ class GitPlugin(RepositoryPlugin):
         """
         Execute git command
 
-        Use command() to prepare command
+        Use `command` to prepare command
+
+        **Arguments**
+
+        - command (`list`): command list that will be passed to subprocess
+
+        **Returns**
+
+        - captured output (`list`)
         """
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -190,11 +240,12 @@ class GitPlugin(RepositoryPlugin):
         """
         Commit changes
 
-        Keyword arguments:
-            - files <list>: list of files to commit, should be
-                filenames relative to the repo root
-            - message <str>: commit message
-            - push <bool=True>: push immediately
+        **Keyword Arguments**
+
+        - files (`list`): list of files to commit, should be
+          filenames relative to the repo root
+        - message (`str`): commit message
+        - push (`bool`=`True`): push immediately
         """
 
         files = kwargs.get("files")
@@ -218,7 +269,7 @@ class GitPlugin(RepositoryPlugin):
     @expose("ctl.{plugin_name}.clone")
     def clone(self, **kwargs):
         """
-        Clone the repo specified at config.repo_url to config.checkout_path
+        Clone the repo specified in `repo_url` to `checkout_path`
 
         Will only clone if there is no valid git repo at ceckout_path
         already
@@ -256,6 +307,14 @@ class GitPlugin(RepositoryPlugin):
         self.log.debug("PUSH {} complete".format(self.checkout_path))
 
     def tag(self, version, message, **kwargs):
+        """
+        Tag the currently active branch
+
+        **Arguments**
+
+        - vrsion (`str`): tag version string / tag name
+        - message (`str`): commit message
+        """
         command_tag = self.command("tag", "-a", version, "-m", message)
         self.run_git_command(command_tag)
         if kwargs.get("push"):
@@ -263,12 +322,32 @@ class GitPlugin(RepositoryPlugin):
 
     @expose("ctl.{plugin_name}.checkout")
     def checkout(self, branch, **kwargs):
+        """
+        Checkout a branch or tag
+
+        **Arguments**
+
+        - branch (`str`): branch name
+        """
         if not self.branch_exists(branch) and kwargs.get("create"):
             self.run_git_command(self.command("branch", branch))
         command_checkout = self.command("checkout", branch)
         self.run_git_command(command_checkout)
 
     def merge(self, branch_a, branch_b, **kwargs):
+        """
+        Merge branch A into branch B
+
+        **Arguments**
+
+        - branch_a (`str`): name of branch to merge
+        - branch_b (`str`): name of branch to merge into
+
+        **Keyword Arguments**
+
+        - push (`bool`): if true will push branch B after merge
+        """
+
         old_branch = self.branch
         self.checkout(branch_b)
         self.run_git_command(self.command("merge", branch_a))

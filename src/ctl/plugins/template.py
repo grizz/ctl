@@ -1,3 +1,11 @@
+"""
+Plugin that allows you to render templates
+
+## Requirements
+
+`pip install tmpl jinja`
+"""
+
 from __future__ import absolute_import
 
 import os
@@ -12,16 +20,21 @@ try:
 except ImportError:
     tmpl = None
 
+from ctl.docs import pymdgen_confu_types
 from ctl.plugins.copy import CopyPluginConfig, CopyPlugin
 
 
+@pymdgen_confu_types()
 class TemplatePluginConfig(CopyPluginConfig):
+    """
+    Configuration schema for `TemplatePlugin`
+    """
+
     engine = confu.schema.Str(
-        "engine", default="jinja2", choices=["jinja2"], help="template engine"
+        default="jinja2", choices=["jinja2"], help="template engine"
     )
     vars = confu.schema.List(
-        "vars",
-        confu.schema.Str(),
+        item=confu.schema.Str(),
         cli=False,
         help="list of files containing template " "variables to import",
     )
@@ -40,7 +53,7 @@ def update(a, b):
 class TemplatePlugin(CopyPlugin):
 
     """
-    template all files from a source director into an output
+    render all template files from a source director into an output
     directory
     """
 
@@ -57,10 +70,10 @@ class TemplatePlugin(CopyPlugin):
         expose the same vars to the template environment for rendering
         the templates
 
-        Argument(s):
+        **Arguments**
 
-            - env(dict): template environment
-            - plugin_config(dict)
+        - env (`dict`): template environment
+        - plugin_config (`dict`)
         """
 
         for filepath in plugin_config.get("vars", []):
@@ -79,14 +92,14 @@ class TemplatePlugin(CopyPlugin):
     @property
     def tmpl_env(self):
         """
-        Return the template enviromnent
+        template environment
         """
         return self._tmpl_env
 
     @property
     def engine(self):
         """
-        Return the template engine instance (twentyc.tmpl)
+        template engine instance
         """
         if not hasattr(self, "_engine"):
             self._engine = tmpl.get_engine(self.config.get("engine"))(
@@ -95,20 +108,12 @@ class TemplatePlugin(CopyPlugin):
         return self._engine
 
     def prepare(self, **kwargs):
-        """
-        prepare the plugin for execution
-        """
-
         super(TemplatePlugin, self).prepare(**kwargs)
         self.debug_info["rendered"] = []
         self._tmpl_env = {}
         self.load_vars()
 
     def execute(self, **kwargs):
-        """
-        Execute the plugin
-        """
-
         super(TemplatePlugin, self).execute(**kwargs)
 
     def load_vars(self):
@@ -126,16 +131,10 @@ class TemplatePlugin(CopyPlugin):
             update(self._tmpl_env, data)
 
     def copy_file(self, path, dirpath):
-        """
-        Since we are extending the copy plugin we hijack
-        the `copy_file` method to invoke the template
-        rendering from source to output using a relative
-        file path
-
-        Attribute(s):
-
-            - path(str): relative template path
-        """
+        #Since we are extending the copy plugin we hijack
+        #the `copy_file` method to invoke the template
+        #rendering from source to output using a relative
+        #file path
 
         self.template_file(path)
 
@@ -144,9 +143,9 @@ class TemplatePlugin(CopyPlugin):
         Render the template from source to output using
         a relative file path
 
-        Attribute(s):
+        **Arguments**
 
-            - path(str)
+        - path(`str`): relative (to source or output) template file path
         """
 
         out_dir = os.path.dirname(self.output(path))

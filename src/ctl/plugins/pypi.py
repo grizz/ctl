@@ -1,3 +1,11 @@
+"""
+Plugin that allows you to release a python package to pypi
+
+## Requirements
+
+`pip install twine`
+"""
+
 from __future__ import absolute_import, division, print_function
 
 import os.path
@@ -11,6 +19,7 @@ import confu.schema
 from ctl.auth import expose
 from ctl.plugins import release
 from ctl.exceptions import UsageError
+from ctl.docs import pymdgen_confu_types
 
 PYPI_TEST_REPO = "https://test.pypi.org/legacy/"
 PYPY_LIVE_REPO = ""
@@ -23,7 +32,12 @@ except ImportError:
     pass
 
 
+@pymdgen_confu_types()
 class PyPIPluginConfig(release.ReleasePluginConfig):
+
+    """
+    Configuration schema for `PyPIPlugin`
+    """
 
     # dont set a default for this since it determines
     # which user will be used to upload the package, so we
@@ -47,7 +61,14 @@ class PyPIPluginConfig(release.ReleasePluginConfig):
 class PyPIPlugin(release.ReleasePlugin):
 
     """
-    Facilitates a PyPI package release
+    facilitate a PyPI package release
+
+    **Instanced Attributes**
+
+    - dry_run (`bool`): are we doing a dry run?
+    - pypi_repository (`str`): name of the pypi repostiroy we will be targeting
+    - pypirc_path (`str`): path to to pypi config file
+    - twine_settings (`twine.Settings`)
     """
 
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
@@ -55,6 +76,9 @@ class PyPIPlugin(release.ReleasePlugin):
 
     @property
     def dist_path(self):
+        """
+        the path for dist output
+        """
         return os.path.join(self.repository.checkout_path, "dist", "*")
 
     def prepare(self):
@@ -71,6 +95,9 @@ class PyPIPlugin(release.ReleasePlugin):
         )
 
     def _release(self, **kwargs):
+        """
+        Build dist and validate dist and then upload to pypi
+        """
 
         # build dist and validate package
         self._validate()
@@ -79,22 +106,36 @@ class PyPIPlugin(release.ReleasePlugin):
         self._upload()
 
     def _build_dist(self, **kwargs):
+        """
+        Build dist
+        """
+
         command = ["rm dist/* -rf", "python setup.py sdist"]
         self._run_commands(command)
 
     def _validate(self, **kwargs):
+        """
+        Build dist and validate
+        """
 
         self._build_dist()
         self._validate_dist(**kwargs)
         self._validate_manifest(**kwargs)
 
     def _validate_dist(self, **kwargs):
+        """
+        Validate dist
+        """
+
         twine_check([self.dist_path])
 
     def _validate_manifest(self, **kwargs):
         pass
 
     def _upload(self, **kwargs):
+        """
+        Upload to pypi
+        """
 
         self.log.info("Using pypi config from {}".format(self.pypirc_path))
 

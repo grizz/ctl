@@ -1,3 +1,7 @@
+"""
+Base classes for ctl plugins
+"""
+
 from __future__ import absolute_import, division, print_function
 
 import pluginmgr.config
@@ -13,7 +17,10 @@ __all__ = ["command", "config"]
 
 class PluginConfigSchema(confu.schema.Schema):
     """
-    configuration schema for plugin base
+    Configuration Schema for [PluginBase](#pluginbase)
+
+    When creating new configuration schemas for extended plugins
+    extend this.
     """
 
     name = confu.schema.Str("name", default="", help="Plugin name")
@@ -28,23 +35,45 @@ class PluginConfigSchema(confu.schema.Schema):
 
 
 class PluginBase(pluginmgr.config.PluginBase):
+
     """
     Base plugin class
 
-    Initializes:
+    Extend other plugins from this class.
 
-    - `self.config` as plugins config
-    - `self.log` as a ctl.log.Log instance
-    - `self.ctl` as a reference to the main ctl object
+    !!! note "CLI Executable Plugins"
+        If your intention is a cli executable plugin please have
+        a look at the [ExecutablePlugin](#executableplugin) class.
 
+    # Instanced Attributes
+
+    - config (`dict`): plugin config
+    - ctl (`Ctl`): ctl context
+    - args (`list`): args passed during `__init__`
+    - kwargs (`dict`): kwargs passed during `__init__`
     """
 
     ConfigSchema = PluginConfigSchema
+    ConfigSchema.help = "Base plugin config schema"
 
     #    def init(self):
     #        pass
 
     def __init__(self, plugin_config, ctx, *args, **kwargs):
+
+        """
+        **Argument(s)**:
+
+        - plugin_config (`dict`)
+        - ctx: ctl context (`Ctl`)
+
+        Any unknown arguments will be kept in `self.args`
+
+        **Keyword Argument(s)**:
+
+        Any keyword arguments will be kept in `self.kwargs`
+        """
+
         self.ctl = ctx
         self.pluginmgr_config = plugin_config
 
@@ -60,8 +89,34 @@ class PluginBase(pluginmgr.config.PluginBase):
         self.init()
         self.attach_events(self.pluginmgr_config.get("events", {}))
 
+    @classmethod
+    def option_list(cls):
+        # deprecated?
+        return []
+
+    @classmethod
+    def add_arguments(cls, parser, plugin_config):
+        """
+        override this to add custom cli arguments to your plugin
+        """
+        pass
+
+    @property
+    def log(self):
+        """
+        logger instance for the plugin
+        """
+
+        if not getattr(self, "_logger", None):
+            self._logger = Log("ctl.plugins.{}".format(self.plugin_type))
+        return self._logger
+
     @property
     def plugin_name(self):
+        """
+        name of the plugin instance
+        """
+
         return self.pluginmgr_config.get("name")
 
     def attach_events(self, events):
@@ -72,6 +127,16 @@ class PluginBase(pluginmgr.config.PluginBase):
             self.attach_event(event_name, event_config)
 
     def attach_event(self, name, config):
+        """
+        Attaches the plugin instance to an event, allowing to
+        execute an action on the plugin when the event triggers.
+
+        **Argument(s)**
+
+        - name(str): event name
+        - config(dict): event config
+        """
+
         for handler_name, instances in config.items():
             handler = getattr(self, handler_name, None)
 
@@ -97,20 +162,6 @@ class PluginBase(pluginmgr.config.PluginBase):
         other initialization code
         """
         pass
-
-    @classmethod
-    def option_list(cls):
-        return []
-
-    @classmethod
-    def add_arguments(cls, parser, plugin_config):
-        pass
-
-    @property
-    def log(self):
-        if not getattr(self, "_logger", None):
-            self._logger = Log("ctl.plugins.{}".format(self.plugin_type))
-        return self._logger
 
     def call(self, *args, **kwargs):
         print("command call ")
@@ -168,16 +219,25 @@ class ExecutablePlugin(PluginBase):
 
     def prepare(self, **kwargs):
         """
-        extend and use this to set instance properties
+        prepare plugin for execution
+
+        override this to set instance properties
         and prepare for execution
         """
         pass
 
     def execute(self, **kwargs):
         """
-        Extended execute function should call this to make
-        sure cli parameters are set and prepare() is called
+        Execute the plugin's main action
+
+        Will automatically call `prepare`
+
+        **Keyword Arguments**
+
+        Any keyword arguments passed to this function will
+        be stored in the plugin's `kwargs` attribute
         """
+
         self.kwargs = kwargs
         self.prepare()
 
@@ -193,11 +253,11 @@ class ExecutablePlugin(PluginBase):
 
         Argument(s):
 
-            - name(str): config key
+        - name(str): config key
 
         Returns:
 
-            - config / cli parameter property
+        - config / cli parameter property
 
         """
 

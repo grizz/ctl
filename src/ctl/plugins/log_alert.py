@@ -1,3 +1,7 @@
+"""
+Plugin that allows you send notification for log events
+"""
+
 import ctl
 
 from ctl.plugins.log import LogPlugin
@@ -6,6 +10,15 @@ from datetime import datetime
 
 @ctl.plugin.register("log_alert")
 class LogAlertPlugin(LogPlugin):
+
+    """
+    send notifications on log events
+
+    # Instanced Attributes
+
+    - messages (`list`): list of messages that triggered a notification
+    """
+
     def init(self):
         super(LogAlertPlugin, self).init()
         self.messages = []
@@ -15,16 +28,17 @@ class LogAlertPlugin(LogPlugin):
         """
         Send alert through another plugin
 
-        Keyword arguments:
-            - levels <list>: list of logging levels that will cause
-                triggering of this alert. As soon as there is at least
-                one message with the appropriate level the alert will
-                be sent
-            - plugin <str>: name of plugin instance to use to facilitate
-                the alert. Plugin needs to have an `alert` method
-            - output_levels <list>: allows you to specify which levels to
-                collect into the output message. If not specified will default
-                to the `levels` list.
+        **Keyword arguments**
+
+        - levels (`list`): list of logging levels that will cause
+          triggering of this alert. As soon as there is at least
+          one message with the appropriate level the alert will
+          be sent
+        - plugin (`str`): name of plugin instance to use to facilitate
+          the alert. Plugin needs to have an `alert` method
+        - output_levels (`list`): allows you to specify which levels to
+          collect into the output message. If not specified will default
+          to the `levels` list.
         """
 
         levels = kwargs.get("levels", [])
