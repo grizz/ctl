@@ -13,7 +13,6 @@ Full control of your environment
 ## Documentation
 
 - latest: https://ctl.readthedocs.io/en/latest
-- stable: https://ctl.readthedocs.io/en/stable
 
 ## License
 
