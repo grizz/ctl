@@ -10,6 +10,11 @@
 
 Full control of your environment
 
+## Documentation
+
+- latest: https://ctl.readthedocs.io/en/latest
+- stable: https://ctl.readthedocs.io/en/stable
+
 ## License
 
 Copyright 2016-2019 20C, LLC
