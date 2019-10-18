@@ -23,6 +23,7 @@ from ctl.plugins import command
 from ctl.exceptions import UsageError
 from ctl.docs import pymdgen_confu_types
 
+
 @pymdgen_confu_types()
 class VenvPluginConfig(confu.schema.Schema):
     """

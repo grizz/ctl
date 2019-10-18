@@ -20,6 +20,7 @@ from ctl.docs import pymdgen_confu_types
 import ctl.plugins.repository
 import ctl.plugins.git
 
+
 @pymdgen_confu_types()
 class ReleasePluginConfig(confu.schema.Schema):
     """

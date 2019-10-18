@@ -23,6 +23,7 @@ class PluginConfig(confu.schema.Schema):
     """
     Configuration schema for `RepositoryPlugin`
     """
+
     repo_url = confu.schema.Str(cli=False)
     checkout_path = confu.schema.Directory(
         default="",

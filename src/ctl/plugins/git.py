@@ -56,7 +56,6 @@ class GitPlugin(RepositoryPlugin):
     the `RepositoryPlugin` documenation
     """
 
-
     @property
     def uuid(self):
         """ return recent commit hash of the repo """

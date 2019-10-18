@@ -19,9 +19,12 @@ class LogPluginLoggerConfig(confu.schema.Schema):
     """
     Configuration schema for `LogPluginLogger`
     """
+
     logger = confu.schema.Str(help="logger name")
     file = confu.schema.Str(default="", help="configure handler to log to this file")
-    format = confu.schema.Str(default="[%(asctime)s] %(message)s", help="configure formatting for logger")
+    format = confu.schema.Str(
+        default="[%(asctime)s] %(message)s", help="configure formatting for logger"
+    )
 
 
 @pymdgen_confu_types()
@@ -29,6 +32,7 @@ class LogPluginConfig(ctl.plugins.PluginBase.ConfigSchema):
     """
     Configuration schema for `LogPlugin`
     """
+
     loggers = confu.schema.List(
         "loggers", LogPluginLoggerConfig(), help="attach plugin to these loggers"
     )
@@ -73,7 +77,6 @@ class LogPlugin(ctl.plugins.PluginBase):
         - logger_name (`str`)
         - logger_confug (`dict`): see [LogPluginLoggerConfig](#logpluginloggerconfig)
         """
-
 
         filename = logger_config.get("file")
         logger = logging.getLogger(logger_name)

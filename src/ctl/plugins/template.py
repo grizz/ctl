@@ -131,10 +131,10 @@ class TemplatePlugin(CopyPlugin):
             update(self._tmpl_env, data)
 
     def copy_file(self, path, dirpath):
-        #Since we are extending the copy plugin we hijack
-        #the `copy_file` method to invoke the template
-        #rendering from source to output using a relative
-        #file path
+        # Since we are extending the copy plugin we hijack
+        # the `copy_file` method to invoke the template
+        # rendering from source to output using a relative
+        # file path
 
         self.template_file(path)
 
