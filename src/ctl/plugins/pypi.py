@@ -63,7 +63,7 @@ class PyPIPlugin(release.ReleasePlugin):
     """
     facilitate a PyPI package release
 
-    **Instanced Attributes**
+    # Instanced Attributes
 
     - dry_run (`bool`): are we doing a dry run?
     - pypi_repository (`str`): name of the pypi repostiroy we will be targeting
