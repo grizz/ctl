@@ -19,7 +19,7 @@ def test_version_tuple(version, string):
         ((1, 0, 0), (1, 0, 0), None),
         ("1.0.0.0", (1, 0, 0, 0), None),
         ((1, 0, 0, 0), (1, 0, 0, 0), None),
-        ("1.0", None, ValueError),
+        ("1.0", (1, 0), None),
         ("a.b.c", None, ValueError),
     ],
 )

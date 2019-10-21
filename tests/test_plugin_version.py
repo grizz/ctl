@@ -138,6 +138,30 @@ def test_bump(tmpdir, ctlr):
         plugin.bump(version="invalid", repo="dummy_repo")
 
 
+def test_bump_truncated(tmpdir, ctlr):
+    plugin, dummy_repo = instantiate(tmpdir, ctlr)
+    plugin.tag(version="1.0", repo="dummy_repo")
+
+    plugin.bump(version="minor", repo="dummy_repo")
+    assert dummy_repo.version == ("1", "1", "0")
+    assert dummy_repo._tag == "1.1.0"
+
+    plugin.tag(version="1.0", repo="dummy_repo")
+    plugin.bump(version="patch", repo="dummy_repo")
+    assert dummy_repo.version == ("1", "0", "1")
+    assert dummy_repo._tag == "1.0.1"
+
+    plugin.tag(version="2", repo="dummy_repo")
+    plugin.bump(version="patch", repo="dummy_repo")
+    assert dummy_repo.version == ("2", "0", "1")
+    assert dummy_repo._tag == "2.0.1"
+
+    plugin.tag(version="3", repo="dummy_repo")
+    plugin.bump(version="major", repo="dummy_repo")
+    assert dummy_repo.version == ("4", "0", "0")
+    assert dummy_repo._tag == "4.0.0"
+
+
 def test_execute(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
     plugin.execute(op="tag", version="1.0.0", repository="dummy_repo", init=True)

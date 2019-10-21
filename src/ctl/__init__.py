@@ -4,6 +4,7 @@ import os
 from pkg_resources import get_distribution
 
 import confu.config
+import confu.exceptions
 import grainy.core
 import copy
 import logging
@@ -279,11 +280,14 @@ class Ctl(object):
     # def set_config_dir(self):
 
     def __init__(self, ctx=None, config_dir=None, full_init=True):
+
         self.init_context(ctx=ctx, config_dir=config_dir)
-
         self.init_logging()
-        self.init_permissions()
 
+        if self.config.errors:
+            return self.log_config_issues()
+
+        self.init_permissions()
         self.expose_plugin_vars()
 
         if full_init:
@@ -330,8 +334,10 @@ class Ctl(object):
         Apply python logging config and create `log` and `usage_log`
         properties
         """
+
         # allow setting up python logging from ctl config
         set_pylogger_config(self.ctx.config.get_nested("ctl", "log"))
+
         # instantiate logger
         self.log = Log("ctl")
         self.usage_log = Log("usage")
