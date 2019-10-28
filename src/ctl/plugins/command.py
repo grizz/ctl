@@ -17,6 +17,39 @@ from ctl.auth import expose
 from ctl.docs import pymdgen_confu_types
 
 
+class CwdContext(object):
+    """
+    A context manager that allows you to temporarily
+    execute commands in a different working directory
+    """
+
+    def __init__(self, plugin, cwd):
+        """
+        **Arguments**
+
+        - plugin (`PluginBase`): plugin instance
+        - cwd (`str`): set current working directory to this path
+        """
+        self.cwd = os.path.expanduser(cwd)
+        self.plugin = plugin
+
+    def __enter__(self):
+        """
+        **Returns**
+
+        new working directory (`str`)
+        """
+        if not os.path.isdir(self.cwd):
+            raise ValueError("{} is not a directory".formath(self.cwd))
+
+        self.old_cwd = self.plugin.cwd
+        self.plugin.cwd = self.cwd
+        return self.cwd
+
+    def __exit__(self, *args):
+        self.plugin.cwd = self.old_cwd
+
+
 @pymdgen_confu_types()
 class CommandPluginConfig(confu.schema.Schema):
     """
@@ -180,3 +213,19 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
             self.stderr.write(u"{}".format(line))
 
         return proc.returncode
+
+    def cwd_ctx(self, cwd):
+        """
+        Returns a context manager that allows you to execute
+        commands in a new working directory
+
+        **Arguments**
+
+        - cwd `str`: path to directory
+
+        **Returns**
+
+        `CwdContext` context
+        """
+
+        return CwdContext(plugin=self, cwd=cwd)
