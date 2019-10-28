@@ -1,6 +1,7 @@
+import sys
 import os
 import subprocess
-import sys
+import shutil
 
 import pytest
 
@@ -66,3 +67,37 @@ def test_copy(tmpdir, ctlr):
 
     assert plugin.venv_exists(path_copy) == True
     plugin.venv_validate(path_copy)
+
+
+@pytest.mark.skipif(sys.version_info < (3, 6), reason="requires python3.6 or higher")
+def test_sync_setup(tmpdir, ctlr):
+    path = os.path.join(str(tmpdir.mkdir("test_venv")), "venv")
+
+    plugin = instantiate(tmpdir, ctlr)
+
+    # sync venv first so Pipfile.lock exists
+    plugin.execute(op="sync", output=path)
+
+    # copy setup.py to tmpdir
+    file_source = os.path.join(os.path.dirname(__file__), "data", "venv", "setup.py")
+    setup_file = file_copy = os.path.join(path, "setup.py")
+    shutil.copyfile(file_source, file_copy)
+
+    # copy Pipfile to tmpdir (needs to be in same location as setup.py)
+    file_source = os.path.join(os.path.dirname(__file__), "data", "venv", "Pipfile")
+    file_copy = os.path.join(path, "Pipfile")
+    shutil.copyfile(file_source, file_copy)
+
+    # copy Pipfile.lock to tmpdir (needs to be in same location as setup.py)
+    file_source = os.path.join(
+        os.path.dirname(__file__), "data", "venv", "Pipfile.lock"
+    )
+    file_copy = os.path.join(path, "Pipfile.lock")
+    shutil.copyfile(file_source, file_copy)
+
+    # sync_setup
+    plugin.execute(op="sync_setup", setup_file=setup_file)
+
+    with open(setup_file, "r") as fh:
+        setup_file_data = fh.read()
+        assert setup_file_data.find('install_requires=["cfu==') > -1
