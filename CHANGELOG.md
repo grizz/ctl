@@ -3,6 +3,9 @@
 
 ## [Unreleased]
 ### Added
+
+- `venv` plugin: `sync_setup` operation added
+
 ### Fixed
 
 - fix #5: fix config error handling for errors that happen outside of plugin config
