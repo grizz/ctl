@@ -23,20 +23,8 @@ Operations like `commit` and `push` are also available but are not exposed to th
 
 ## Usage
 
-```sh
-usage: ctl git_ctl [-h] [--branch BRANCH] [--checkout-path CHECKOUT_PATH]
-                   {clone,pull,checkout} ...
+!!! note "Plugin name"
+    This usage documentation assumes that the plugin instance name
+    is `git`
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --branch BRANCH       Checkout this branch (master)
-  --checkout-path CHECKOUT_PATH
-                        checkout to this local location - if not specified
-                        will default to ~/.ctl/cache/{repo_url} ()
-
-Operation:
-  {clone,pull,checkout}
-    clone               clone repo
-    pull                pull remote
-    checkout            checkout tag or branch
-```
+{pymdgen-cmd:ctl --home=docs git --help}
