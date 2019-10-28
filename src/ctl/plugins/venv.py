@@ -3,7 +3,9 @@ Plugin that allows you to manage a python virtual env
 
 ## Requirements
 
-`pip install pipenv`
+- `pipenv`
+- `pipenv-setup` if you want to run the `sync_setup` operation
+
 """
 from __future__ import absolute_import, division, print_function
 
@@ -22,6 +24,11 @@ from ctl.auth import expose
 from ctl.plugins import command
 from ctl.exceptions import UsageError
 from ctl.docs import pymdgen_confu_types
+
+try:
+    import pipenv_setup
+except ImportError:
+    pipenv_setup = None
 
 
 @pymdgen_confu_types()
@@ -77,6 +84,20 @@ class VenvPlugin(command.CommandPlugin):
         )
         op_copy_parser.add_argument(
             "output", nargs="?", type=str, help="venv output location"
+        )
+
+        op_sync_setup_parser = sub.add_parser(
+            "sync_setup", help="sync setup.py from Pipfile"
+        )
+        op_sync_setup_parser.add_argument(
+            "setup_file",
+            nargs="?",
+            default=".",
+            type=str,
+            help="location of the setup.py file you want to sync",
+        )
+        op_sync_setup_parser.add_argument(
+            "--dry", action="store_true", help="Do a dry run"
         )
 
     def venv_exists(self, path=None):
@@ -166,3 +187,30 @@ class VenvPlugin(command.CommandPlugin):
         command = ["ctl_venv_copy {} {}".format(source, self.output)]
 
         self._run_commands(command, **kwargs)
+
+    @expose("ctl.{plugin_name}.sync_setup")
+    def sync_setup(self, setup_file=".", dry=False, **kwargs):
+        """
+        Syncs setup.py requirements from Pipfile
+
+        **Keyword Arguments**
+
+        - setup_file (`str`): path to `setup.py` file. If not specified
+          will check in `.` instead
+        - dry (`bool`=`False`): if `True` do a dry run and report what
+          updates would be done to `setup.py`
+        """
+
+        if not pipenv_setup:
+            raise UsageError(
+                "Please install `pipenv-setup` to be able to use this command"
+            )
+
+        if dry:
+            sub_command = "check"
+        else:
+            sub_command = "sync"
+
+        with self.cwd_ctx(os.path.dirname(setup_file) or "."):
+            command = ["pipenv-setup {}".format(sub_command)]
+            self._run_commands(command, **kwargs)

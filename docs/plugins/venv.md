@@ -10,6 +10,12 @@ We currently use `pipenv` to maintain the virtualenv, although support for other
 pip install pipenv
 ```
 
+Additionally if you want to be able to sync your `setup.py` file from the Pipfile via the `sync_setup` setup operation you will need to install the `pipenv-setup` addon.
+
+```
+pip install pipenv-setup
+```
+
 ## Example
 
 In the following example we want to set up a virtualenv for python3.6. For the sake of simplicity it will only install the latest version of the `requests` module into it.
@@ -23,6 +29,14 @@ In the following example we want to set up a virtualenv for python3.6. For the s
 By default it will be looking for a pipenv `Pipfile` in your ctl home
 
 `Ctl/Pipfile`
+
+!!! note "Use a symlink"
+    While it is possible for ctl to work with a Pipfile that is not at your project root
+    having it at root seems to be the accepted standard at this point. We suggest you
+    maintain the Pipfile at `./Pipfile` and symlink it in `$CTL_HOME/Pipfile`
+
+    Alternatively you can also just setup your `pipfile` [plugin config](/api/ctl.plugins.venv#venvpluginconfig)
+    attribute accordingly.
 
 ```ini
 {!examples/plugins/venv/Ctl/Pipfile!}
