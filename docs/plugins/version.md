@@ -70,76 +70,20 @@ ctl version tag 1.0.0 [plugin_name]
 
 ### Usage
 
-```
-usage: ctl version [-h] [--branch-dev BRANCH_DEV]
-                   [--branch-release BRANCH_RELEASE]
-                   {tag,bump,merge_release} ...
+!!! note "Plugin name"
+    This usage documentation assumes that the plugin instance name
+    is `version`
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --branch-dev BRANCH_DEV
-                        the branch to merge from when the --merge-release flag
-                        is present (dev)
-  --branch-release BRANCH_RELEASE
-                        the breanch to merge to when the --merge-release flag
-                        is present (master)
-
-Operation:
-  {tag,bump,merge_release}
-    tag                 tag with a specified version
-    bump                bump semantic version
-    merge_release       merge dev branch into release branch (branches defined
-                        in config)
-```
+{pymdgen-cmd:ctl --home=docs version --help}
 
 #### Tag
 
-```
-usage: ctl version tag [-h] [--release | --init] version [repository]
-
-positional arguments:
-  version     version string to tag with
-  repository  name of repository type plugin or path to a repository checkout
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --release   if set will also perform `merge_release` operation and tag in
-              the specified release branch instead of the currently active
-              branch
-  --init      automatically create Ctl/VERSION file if it does not exist
-```
+{pymdgen-cmd:ctl --home=docs version tag --help}
 
 #### Bump
 
-```
-usage: ctl version bump [-h] [--release | --init] [--no-auto-dev]
-                        {major,minor,patch,dev} [repository]
-
-positional arguments:
-  {major,minor,patch,dev}
-                        bumps the specified version segment by 1
-  repository            name of repository type plugin or path to a repository
-                        checkout
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --release             if set will also perform `merge_release` operation and
-                        tag in the specified release branch instead of the
-                        currently active branch
-  --init                automatically create Ctl/VERSION file if it does not
-                        exist
-  --no-auto-dev         disable automatic bumping of dev version after bumping
-                        `major`, `minor` or `patch`
-```
+{pymdgen-cmd:ctl --home=docs version bump --help}
 
 #### Merge_Release
 
-```
-usage: ctl version merge_release [-h] [repository]
-
-positional arguments:
-  repository  name of repository type plugin or path to a repository checkout
-
-optional arguments:
-  -h, --help  show this help message and exit
-```
+{pymdgen-cmd:ctl --home=docs version merge_release --help}

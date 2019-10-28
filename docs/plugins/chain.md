@@ -68,7 +68,7 @@ In some cases you may want to add custom input arguments to a chain
 You can do so by using the `arguments` config.
 
 ```yaml
-    - name: test_chain
+    - name: chain
       type: chain
       config:
         arguments:
@@ -83,17 +83,8 @@ You can do so by using the `arguments` config.
 
 Arguments are passed to argparse, so --help will now show
 
-```sh
-ctl test_chain --help
+{pymdgen-cmd:ctl --home=docs chain --help}
 
-positional arguments:
-  tag            deploy this tag (e.g. 1.0.0)
-
-optional arguments:
-  -h, --help     show this help message and exit
-  --end END      stop at this stage
-  --start START  start at this stage
-```
 
 ### Customize stage actions
 

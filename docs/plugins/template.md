@@ -42,16 +42,8 @@ ctl template
 
 ## Usage
 
-```sh
-usage: ctl template [-h] [--no-copy-metadata] [--debug] [--engine ENGINE]
-                    [--output OUTPUT] [--no-skip-dotfiles] [--source SOURCE]
+!!! note "Plugin name"
+    This usage documentation assumes that the plugin instance name
+    is `template`
 
-optional arguments:
-  -h, --help          show this help message and exit
-  --no-copy-metadata  DISABLE Copy file metadata
-  --debug
-  --engine ENGINE     template engine (jinja2)
-  --output OUTPUT     output directory (output)
-  --no-skip-dotfiles  DISABLE Skip dot files
-  --source SOURCE     source directory (source)
-```
+{pymdgen-cmd:ctl --home=docs template --help}

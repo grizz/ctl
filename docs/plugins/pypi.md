@@ -64,56 +64,16 @@ ctl pypi_my_repo release 1.2.3
 
 ## Usage
 
-```
-usage: ctl pypi [-h] {release,validate} ...
+!!! note "Plugin name"
+    This usage documentation assumes that the plugin instance name
+    is `pypi`
 
-optional arguments:
-  -h, --help          show this help message and exit
-
-Operation:
-  {release,validate}
-    release           execute release
-    validate          validate release
-```
+{pymdgen-cmd:ctl --home=docs pypi --help}
 
 ### Release
 
-```
-usage: ctl pypi release [-h] [--dry] [--config-file CONFIG_FILE]
-                        [--identity IDENTITY] [--repository REPOSITORY]
-                        [--sign] [--sign-with SIGN_WITH]
-                        version [repository]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --dry                 Do a dry run (nothing will be uploaded)
-  --config-file CONFIG_FILE
-                        path to pypi config file (e.g. ~/.pypirc) (~/.pypirc-
-                        vegu)
-  --identity IDENTITY   sign release with this identity
-  --pypi-repository REPOSITORY
-                        PyPI repository name - needs to exist in your pypi
-                        config file (pypi)
-  --sign                sign releases
-  --sign-with SIGN_WITH
-                        sign release with this program (gpg)
-
-  version               release version - if repository is managed by git,
-                        checkout this branch/tag
-  repository                repository for release - should be a path to a python
-                        package or the name of a repository type plugin
-```
+{pymdgen-cmd:ctl --home=docs pypi release --help}
 
 ### Validate
 
-```
-usage: ctl pypi validate [-h] version [repository]
-
-optional arguments:
-  -h, --help  show this help message and exit
-
-  version     release version - if repository is managed by git, checkout this
-              branch/tag
-  repository      repository for release - should be a path to a python package or the
-              name of a repository type plugin
-```
+{pymdgen-cmd:ctl --home=docs pypi validate --help}

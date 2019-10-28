@@ -65,57 +65,24 @@ ctl venv36 copy output/venv36 output/venv36_copy
 
 ## Usage
 
-```sh
-usage: ctl venv36 [-h] [--pipfile PIPFILE] [--python-version PYTHON_VERSION]
-                  {build,sync,copy} ...
+!!! note "Plugin name"
+    This usage documentation assumes that the plugin instance name
+    is `venv`
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --pipfile PIPFILE     path to Pipfile ({{ctx.home}}/Pipfile)
-  --python-version PYTHON_VERSION
-                        (3.6)
-
-Operation:
-  {build,sync,copy}
-    build               build virtualenv
-    sync                sync virtualenv using pipenv, will build venv first if
-                        it does not exist
-    copy                copy virtualenv
-```
+{pymdgen-cmd:ctl --home=docs venv --help}
 
 ### Build
 
-```sh
-usage: ctl venv36 build [-h] [output]
-
-positional arguments:
-  output      venv location
-
-optional arguments:
-  -h, --help  show this help message and exit
-```
+{pymdgen-cmd:ctl --home=docs venv build --help}
 
 ### Sync
 
-```sh
-usage: ctl venv36 sync [-h] [output]
+{pymdgen-cmd:ctl --home=docs venv sync --help}
 
-positional arguments:
-  output      venv location
+### Sync Setup
 
-optional arguments:
-  -h, --help  show this help message and exit
-```
+{pymdgen-cmd:ctl --home=docs venv sync_setup --help}
 
 ### Copy
 
-```sh
-usage: ctl venv36 copy [-h] [source] [output]
-
-positional arguments:
-  source      venv source location
-  output      venv output location
-
-optional arguments:
-  -h, --help  show this help message and exit
-```
+{pymdgen-cmd:ctl --home=docs venv copy --help}

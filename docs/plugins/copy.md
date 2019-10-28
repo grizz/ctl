@@ -48,15 +48,8 @@ In the following example we do a simple search and replace on `*.html` files via
 
 ## Usage
 
-```sh
-usage: ctl copy [-h] [--no-copy-metadata] [--debug] [--output OUTPUT]
-                [--no-skip-dotfiles] [--source SOURCE]
+!!! note "Plugin name"
+    This usage documentation assumes that the plugin instance name
+    is `copy`
 
-optional arguments:
-  -h, --help          show this help message and exit
-  --no-copy-metadata  DISABLE Copy file metadata
-  --debug
-  --output OUTPUT     output directory (output)
-  --no-skip-dotfiles  DISABLE Skip dot files
-  --source SOURCE     source directory (source)
-```
+{pymdgen-cmd:ctl --home=docs copy --help}
