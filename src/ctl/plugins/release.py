@@ -46,7 +46,7 @@ class ReleasePlugin(command.CommandPlugin):
         config = ReleasePluginConfig()
 
     @classmethod
-    def add_arguments(cls, parser, plugin_config):
+    def add_arguments(cls, parser, plugin_config, confu_router):
 
         shared_parser = argparse.ArgumentParser(add_help=False)
         group = shared_parser.add_argument_group()
@@ -83,7 +83,6 @@ class ReleasePlugin(command.CommandPlugin):
 
         return {
             "group": group,
-            "confu_repository": op_release_parser,
             "op_release_parser": op_release_parser,
             "op_validate_parser": op_validate_parser,
         }
