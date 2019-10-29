@@ -73,7 +73,7 @@ class VersionPlugin(ExecutablePlugin):
         )
 
     @classmethod
-    def add_arguments(cls, parser, plugin_config):
+    def add_arguments(cls, parser, plugin_config, confu_router):
 
         shared_parser = argparse.ArgumentParser(add_help=False)
 

@@ -77,10 +77,6 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
         config = WalkDirPluginConfig("config")
 
-    #    @classmethod
-    #    def add_arguments(cls, parser, plugin_config):
-    #        parser.add_argument("--source", type=str, help="source dir")
-    #        parser.add_argument("--output", type=str, help="output dir")
 
     def prepare(self, **kwargs):
 
