@@ -33,7 +33,7 @@ class ConfuArgparseRouter(object):
         self.routes = []
 
     def route(self, parser, *attributes):
-        self.routes.append([parser, *attributes])
+        self.routes.append([parser, attributes])
         argparse_options(parser, self.schema, defaults=self.defaults, attributes=attributes)
 
 
