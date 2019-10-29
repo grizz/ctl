@@ -5,6 +5,7 @@
 ### Added
 
 - `venv` plugin: `sync_setup` operation added
+- `ConfuArgparseRouter`: better way to route confu generated cli parameters to sub parsers
 
 ### Fixed
 
