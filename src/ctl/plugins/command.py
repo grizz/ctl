@@ -94,7 +94,7 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
     description = "run a command"
 
     @classmethod
-    def add_arguments(cls, parser, plugin_config):
+    def add_arguments(cls, parser, plugin_config, confu_router):
         ctl.config.ArgparseSchema().add_many_to_parser(
             parser, plugin_config.get("arguments")
         )

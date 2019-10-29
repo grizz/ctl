@@ -41,6 +41,7 @@ class PluginManager(pluginmgr.config.ConfigPluginManager):
 plugin = PluginManager("ctl.plugins")
 
 
+
 def plugin_cli_arguments(ctlr, parser, plugin_config):
 
     """
@@ -56,22 +57,21 @@ def plugin_cli_arguments(ctlr, parser, plugin_config):
     config = copy.deepcopy(plugin_config)
     confu.schema.apply_defaults(plugin_class.ConfigSchema(), config)
 
-    confu_target = parser
+    confu_router = plugin_class.confu_router_cls()(
+        parser,
+        plugin_class.ConfigSchema().config,
+        config.get("config")
+    )
 
     # add any aditional cli args
 
     if hasattr(plugin_class, "add_arguments"):
-        parsers = plugin_class.add_arguments(parser, config.get("config"))
+        parsers = plugin_class.add_arguments(parser, config.get("config"), confu_router)
 
-        if parsers and "confu_target" in parsers:
-            confu_target = parsers.get("confu_target")
-
-    # generate argparse options using the confu schema
-    # use the currnet config values as defaults
-
-    argparse_options(
-        confu_target, plugin_class.ConfigSchema().config, defaults=config.get("config")
-    )
+    # if no confu generated cli parameters were attached / routed
+    # route them all to the main parser
+    if not confu_router.routes:
+        confu_router.route(parser)
 
 
 def read_config(schema, config_dir, config_name="config", ctx=None):

@@ -59,7 +59,7 @@ class VenvPlugin(command.CommandPlugin):
     description = "manage a virtualenv using venv"
 
     @classmethod
-    def add_arguments(cls, parser, plugin_config):
+    def add_arguments(cls, parser, plugin_config, confu_router):
         install_parser = argparse.ArgumentParser(add_help=False)
         group = install_parser.add_mutually_exclusive_group(required=False)
         group.add_argument("output", nargs="?", type=str, help="venv location")

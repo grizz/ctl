@@ -81,7 +81,7 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
         env.update(plugin_config.get("vars"))
 
     @classmethod
-    def add_arguments(cls, parser, plugin_config):
+    def add_arguments(cls, parser, plugin_config, confu_router):
         """
         Set CLI Arguments
 
