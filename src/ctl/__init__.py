@@ -41,7 +41,6 @@ class PluginManager(pluginmgr.config.ConfigPluginManager):
 plugin = PluginManager("ctl.plugins")
 
 
-
 def plugin_cli_arguments(ctlr, parser, plugin_config):
 
     """
@@ -58,9 +57,7 @@ def plugin_cli_arguments(ctlr, parser, plugin_config):
     confu.schema.apply_defaults(plugin_class.ConfigSchema(), config)
 
     confu_router = plugin_class.confu_router_cls()(
-        parser,
-        plugin_class.ConfigSchema().config,
-        config.get("config")
+        parser, plugin_class.ConfigSchema().config, config.get("config")
     )
 
     # add any aditional cli args

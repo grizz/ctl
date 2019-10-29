@@ -15,6 +15,7 @@ from ctl.exceptions import ConfigError, UsageError, OperationNotExposed
 
 __all__ = ["command", "config"]
 
+
 class ConfuArgparseRouter(object):
     """
     An instance of this will be passed to plugin's `add_arguments`
@@ -34,8 +35,9 @@ class ConfuArgparseRouter(object):
 
     def route(self, parser, *attributes):
         self.routes.append([parser, attributes])
-        argparse_options(parser, self.schema, defaults=self.defaults, attributes=attributes)
-
+        argparse_options(
+            parser, self.schema, defaults=self.defaults, attributes=attributes
+        )
 
 
 class PluginConfigSchema(confu.schema.Schema):

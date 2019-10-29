@@ -77,7 +77,6 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
     class ConfigSchema(ctl.plugins.PluginBase.ConfigSchema):
         config = WalkDirPluginConfig("config")
 
-
     def prepare(self, **kwargs):
 
         """
