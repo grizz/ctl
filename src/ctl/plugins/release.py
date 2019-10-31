@@ -46,7 +46,7 @@ class ReleasePlugin(command.CommandPlugin):
         config = ReleasePluginConfig()
 
     @classmethod
-    def add_arguments(cls, parser, plugin_config, confu_router):
+    def add_arguments(cls, parser, plugin_config, confu_cli_args):
 
         shared_parser = argparse.ArgumentParser(add_help=False)
         group = shared_parser.add_argument_group()

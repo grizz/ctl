@@ -33,7 +33,22 @@ class ConfuArgparseRouter(object):
         self.defaults = defaults
         self.routes = []
 
-    def route(self, parser, *attributes):
+    def add(self, parser, *attributes):
+        """
+        Add cli enabled arguments from the confu schema in `self.schema`
+        to an argparser.ArgumentParser instance.
+
+        **Arguments**
+
+        - parser (`argparse.ArgumentParser`): parser instance to add arguments to
+        - any other arguments specified should be attribute names from the schema
+
+        if no attribute names are supplied, ALL cli enabled attributes from the
+        schema will be added to the parser
+
+        In order to add nested attributes use the "__" delimiter in the attribute
+        name to delimit between parent and child attributes.
+        """
         self.routes.append([parser, attributes])
         argparse_options(
             parser, self.schema, defaults=self.defaults, attributes=attributes
@@ -120,14 +135,14 @@ class PluginBase(pluginmgr.config.PluginBase):
         return []
 
     @classmethod
-    def add_arguments(cls, parser, plugin_config, confu_router):
+    def add_arguments(cls, parser, plugin_config, confu_cli_args):
         """
         override this to add custom cli arguments to your plugin
         """
         pass
 
     @classmethod
-    def confu_router_cls(cls):
+    def confu_cli_args_cls(cls):
         return ConfuArgparseRouter
 
     @property
