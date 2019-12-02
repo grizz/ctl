@@ -21,3 +21,5 @@ script:
   - tox
 after_success:
   - codecov
+env:
+  TRAVIS=true
