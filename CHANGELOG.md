@@ -1,26 +1,18 @@
+# Changelog
 
-# Change Log
 
-## [Unreleased]
-### Added
-
+## unreleased
+### added
 - `venv` plugin: `sync_setup` operation added
-- `ConfuArgparseRouter`: better way to route confu generated cli parameters to sub parsers
-
-### Fixed
-
+- `confuargparserouter`: better way to route confu generated cli parameters to sub parsers
+- `changelog` plugin`
+- `version` plugin: changelog validation
+### fixed
 - fix #5: fix config error handling for errors that happen outside of plugin config
 - fix #6: fix semantic version bumping when the current version is truncated
 
-### Changed
-### Deprecated
-### Removed
-### Security
 
-
-## [0.2.0]
-
-### Changed
+## 0.2.0
+### changed
 - pypi plugin: config `repository` changed to `pypi_repository` (#2)
 - pypi plugin: config `target` changed to `repository` (#2)
-

@@ -7,6 +7,8 @@ unreleased:
   - '`venv` plugin: `sync_setup` operation added'
   - '`confuargparserouter`: better way to route confu generated cli parameters to
     sub parsers'
+  - '`changelog` plugin`'
+  - '`version` plugin: changelog validation'
   changed: []
   deprecated: []
   fixed:
