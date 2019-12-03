@@ -2,15 +2,15 @@
 
 
 ## unreleased
-### added
+### Added
 - first feature added
-### changed
+### Changed
 - first change
 - second change
 
 ## 1.0.0
-### changed
+### Changed
 - first change
 - second change
-### removed
+### Removed
 - first feature removed

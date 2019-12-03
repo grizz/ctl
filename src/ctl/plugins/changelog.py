@@ -303,7 +303,7 @@ class ChangeLogPlugin(ExecutablePlugin):
         out = ["# Changelog"]
 
         releases = [
-            {"version": version, "changes": changes}
+            {"version": version.capitalize(), "changes": changes}
             for version, changes in data.items()
         ]
 
@@ -318,7 +318,7 @@ class ChangeLogPlugin(ExecutablePlugin):
 
             for change_type in CHANGELOG_SECTIONS:
                 if change_type in sections:
-                    out.append("### {}".format(change_type))
+                    out.append("### {}".format(change_type.capitalize()))
                     out.extend(sections[change_type])
 
         return "\n".join(out)
