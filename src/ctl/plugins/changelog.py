@@ -358,7 +358,7 @@ class ChangeLogPlugin(ExecutablePlugin):
                 version_container = changelog[match_version.group(1)] = {}
                 continue
             elif match_title:
-                change_list = version_container[match_title.group(1)] = []
+                change_list = version_container[match_title.group(1).lower()] = []
                 continue
             elif match_change:
                 change_list.append(match_change.group(1))
