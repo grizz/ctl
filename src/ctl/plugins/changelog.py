@@ -350,10 +350,9 @@ class ChangeLogPlugin(ExecutablePlugin):
         change_list = None
 
         for line in changelog_md:
-            line = line.lower()
-            match_version = re.match(version_regex, line)
-            match_title = re.match(change_title_regex, line)
-            match_change = re.match(change_regex, line)
+            match_version = re.match(version_regex, line, re.IGNORECASE)
+            match_title = re.match(change_title_regex, line, re.IGNORECASE)
+            match_change = re.match(change_regex, line, re.IGNORECASE)
 
             if match_version:
                 version_container = changelog[match_version.group(1)] = {}
