@@ -172,7 +172,7 @@ class ChangeLogPlugin(ExecutablePlugin):
 
         release_section = {}
 
-        for change_type, changes in changelog.get("unreleased", {}).items():
+        for change_type, changes in changelog.get("Unreleased", {}).items():
             if changes:
                 release_section[change_type] = [change for change in changes]
 
@@ -180,7 +180,7 @@ class ChangeLogPlugin(ExecutablePlugin):
             raise ValueError("No items exist in unreleased to be moved")
 
         changelog[version] = release_section
-        changelog["unreleased"] = dict(
+        changelog["Unreleased"] = dict(
             [(section, []) for section in CHANGELOG_SECTIONS]
         )
 
@@ -241,7 +241,7 @@ class ChangeLogPlugin(ExecutablePlugin):
             raise ValueError("File already exists: {}".format(data_file))
 
         changelog = {
-            "unreleased": dict([(section, []) for section in CHANGELOG_SECTIONS])
+            "Unreleased": dict([(section, []) for section in CHANGELOG_SECTIONS])
         }
 
         codec = os.path.splitext(data_file)[1][1:]

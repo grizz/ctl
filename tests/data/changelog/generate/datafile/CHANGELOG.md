@@ -1,7 +1,7 @@
 # Changelog
 
 
-## unreleased
+## Unreleased
 ### Added
 - first feature added
 ### Changed
