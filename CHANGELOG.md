@@ -8,6 +8,7 @@
 - `changelog` plugin`
 - `version` plugin: changelog validation
 ### Fixed
+- fix #13: plugin.expose_vars: don't raise on io error
 - fix #5: fix config error handling for errors that happen outside of plugin config
 - fix #6: fix semantic version bumping when the current version is truncated
 
