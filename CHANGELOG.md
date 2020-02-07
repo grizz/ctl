@@ -2,6 +2,9 @@
 
 
 ## Unreleased
+
+
+## 0.3.0
 ### Added
 - `venv` plugin: `sync_setup` operation added
 - `confuargparserouter`: better way to route confu generated cli parameters to sub parsers
