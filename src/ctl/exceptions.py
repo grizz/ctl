@@ -17,6 +17,7 @@ class UsageError(ValueError):
     """
 	ctl operation usage error
 	"""
+
     pass
 
 
@@ -29,6 +30,7 @@ class PluginOperationStopped(ValueError):
     Can be raised during plugin operation for a clean exit that logs
     an error message
     """
+
     def __init__(self, plugin, details):
         """
         **Arguments**

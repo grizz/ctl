@@ -9,16 +9,12 @@ from ctl.plugins.changelog import ChangeLogPlugin, ChangelogVersionMissing
 
 from util import instantiate_test_plugin
 
+
 def instantiate(tmpdir, ctlr=None, **kwargs):
     dirpath = "{}".format(tmpdir)
     md_file = os.path.join(dirpath, "CHANGELOG.md")
     data_file = os.path.join(dirpath, "CHANGELOG.yml")
-    config = {
-        "config": {
-            "md_file": md_file,
-            "data_file": data_file,
-        }
-    }
+    config = {"config": {"md_file": md_file, "data_file": data_file,}}
     config["config"].update(kwargs)
     plugin = instantiate_test_plugin("changelog", "test_changelog", _ctl=ctlr, **config)
     return plugin
@@ -45,9 +41,10 @@ def test_generate(tmpdir, ctlr, data_changelog_generate):
     md_file = plugin.get_config("md_file")
     plugin.generate(md_file, data_file)
 
-    with open(md_file,"r") as fh:
+    with open(md_file, "r") as fh:
         content = fh.read()
         assert content.strip() == data_changelog_generate.md.strip()
+
 
 def test_generate_datafile(tmpdir, ctlr, data_changelog_generate_datafile):
     md_file = os.path.join(data_changelog_generate_datafile.path, "CHANGELOG.md")
@@ -55,7 +52,7 @@ def test_generate_datafile(tmpdir, ctlr, data_changelog_generate_datafile):
     data_file = plugin.get_config("data_file")
     plugin.generate_datafile(md_file, data_file)
 
-    with open(data_file,"r") as fh:
+    with open(data_file, "r") as fh:
         content = fh.read()
         print(content)
         assert content.strip() == data_changelog_generate_datafile.yml.strip()
@@ -72,11 +69,9 @@ def test_release(tmpdir, ctlr, data_changelog_release):
     plugin.generate_datafile(md_file, data_file)
     plugin.release("1.1.0", data_file)
 
-
-    with open(data_file,"r") as fh:
+    with open(data_file, "r") as fh:
         content = fh.read()
         assert content.strip() == data_changelog_release.yml.strip()
-
 
 
 def test_validate(tmpdir, ctlr, data_changelog_generate):
@@ -88,6 +83,3 @@ def test_validate(tmpdir, ctlr, data_changelog_generate):
 
     with pytest.raises(ChangelogVersionMissing):
         plugin.validate(data_file, "1.1.0")
-
-
-

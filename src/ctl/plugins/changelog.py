@@ -68,6 +68,7 @@ class ChangeLogPluginConfig(confu.schema.Schema):
     """
     Config schema for the ChangeLogPlugin plugin
     """
+
     data_file = confu.schema.Str(
         default="CHANGELOG.yaml", help="path to a changelog data file"
     )
@@ -310,7 +311,7 @@ class ChangeLogPlugin(ExecutablePlugin):
         releases = sorted(releases, key=lambda i: i.get("version"), reverse=True)
 
         for release in releases:
-            out.extend(["","", "## {version}".format(**release)])
+            out.extend(["", "", "## {version}".format(**release)])
             sections = {}
             for change_type, items in release.get("changes", {}).items():
                 if len(items):
