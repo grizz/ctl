@@ -385,7 +385,7 @@ class Ctl(object):
             if hasattr(plugin_class, "expose_vars"):
                 env = self.ctx.tmpl["env"]["plugin"].get(name, {})
                 errors = plugin_class.expose_vars(env, plugin_config.get("config", {}))
-                for filepath, error in list(io_errors.items()):
+                for filepath, error in list(errors.items()):
                     self.log.debug("expose_vars: {}: {}".format(filepath, error))
                 self.ctx.tmpl["env"]["plugin"][name] = env
 
