@@ -74,7 +74,13 @@ class TemplatePlugin(CopyPlugin):
 
         - env (`dict`): template environment
         - plugin_config (`dict`)
+
+        **Returns**
+
+        `dict<filepath, error>`: dict of ioerrors mapped to filepath
         """
+
+        errors = {}
 
         for filepath in plugin_config.get("vars", []):
             ext = os.path.splitext(filepath)[1][1:]
@@ -84,10 +90,8 @@ class TemplatePlugin(CopyPlugin):
                     data = codec().load(fh)
                 update(env, data)
             except IOError as exc:
-                # print("Could not load vars file {}".format(filepath))
-                # TODO: not sure why this shouldn't always raise, if the
-                # vars file is missing, its probably bad.
-                raise
+                errors[filepath] = exc
+        return errors
 
     @property
     def tmpl_env(self):

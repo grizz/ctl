@@ -45,5 +45,5 @@ def test_expose_vars(tmpdir, ctlr):
 def test_invalid_vars(tmpdir, ctlr):
     plugin = instantiate(tmpdir, ctlr, vars=["does.not.exist.json"])
     env = {}
-    with pytest.raises(IOError):
-        plugin.expose_vars(env, plugin.config)
+    errors = plugin.expose_vars(env, plugin.config)
+    assert "does.not.exist.json" in errors
