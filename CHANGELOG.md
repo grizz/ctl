@@ -2,6 +2,8 @@
 
 
 ## Unreleased
+### Changed
+- switch to confu package, away from cfu
 
 
 ## 0.3.0

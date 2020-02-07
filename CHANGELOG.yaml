@@ -15,7 +15,8 @@
   - 'fix #6: fix semantic version bumping when the current version is truncated'
 Unreleased:
   added: []
-  changed: []
+  changed:
+  - 'switch to confu package, away from cfu'
   deprecated: []
   fixed: []
   removed: []
