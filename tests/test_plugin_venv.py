@@ -54,7 +54,7 @@ def test_sync(tmpdir, ctlr):
         ["source {}/bin/activate; pip freeze;".format(path)], shell=True
     )
 
-    assert u"{}".format(output).find(u"cfu==") > -1
+    assert u"{}".format(output).find(u"confu==") > -1
 
 
 def test_copy(tmpdir, ctlr):
@@ -107,4 +107,4 @@ def test_sync_setup(tmpdir, ctlr):
 
     with open(setup_file, "r") as fh:
         setup_file_data = fh.read()
-        assert re.search("install_requires=\[.*cfu==", setup_file_data)
+        assert re.search("install_requires=\[.*confu==", setup_file_data)
