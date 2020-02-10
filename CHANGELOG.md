@@ -3,7 +3,8 @@
 
 ## Unreleased
 ### Changed
-- switch to confu package, away from cfu
+- switch to confu package, away from cfu (same version and codebase, different package name)
+- update test requirements for pyaml according to python version
 
 
 ## 0.3.0
