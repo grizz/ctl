@@ -2,6 +2,8 @@
 
 
 ## Unreleased
+### Added
+- python 3.7 support (#15)
 ### Fixed
 - version plugin: bump needs to do a pull before changelog validation (#14)
 
