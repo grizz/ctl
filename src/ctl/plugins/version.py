@@ -311,6 +311,7 @@ class VersionPlugin(ExecutablePlugin):
         """
 
         repo_plugin = self.repository(repo)
+        repo_plugin.pull()
 
         if version not in ["major", "minor", "patch", "dev"]:
             raise ValueError("Invalid semantic version: {}".format(version))

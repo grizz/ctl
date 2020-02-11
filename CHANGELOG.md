@@ -2,6 +2,8 @@
 
 
 ## Unreleased
+### Fixed
+- version plugin: bump needs to do a pull before changelog validation (#14)
 
 
 ## 0.3.1

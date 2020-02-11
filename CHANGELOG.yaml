@@ -15,13 +15,14 @@
   - 'fix #6: fix semantic version bumping when the current version is truncated'
 0.3.1:
   changed:
-  - switch to confu package, away from cfu (same version and codebase, different package
-    name)
-  - update test requirements for pyaml according to python version
+  - 'switch to confu package, away from cfu (same version and codebase, different package
+    name)'
+  - 'update test requirements for pyaml according to python version'
 Unreleased:
   added: []
   changed: []
   deprecated: []
-  fixed: []
+  fixed:
+  - 'version plugin: bump needs to do a pull before changelog validation (#14)'
   removed: []
   security: []
