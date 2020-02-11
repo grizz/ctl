@@ -19,7 +19,8 @@
     name)'
   - 'update test requirements for pyaml according to python version'
 Unreleased:
-  added: []
+  added:
+  - 'python 3.7 support (#15)'
   changed: []
   deprecated: []
   fixed:
