@@ -10,4 +10,7 @@ rsync -a --delete $src/* $dest
 echo "Replacing paths ..."
 find $dest -type f -exec sed --in-place -e "s,$src,$dest,g" {} \;
 
+echo "Clean up ..."
+find $dest -name "*.pyc" -type f -delete
+
 echo "Done!"
