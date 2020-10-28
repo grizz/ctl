@@ -26,8 +26,8 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     include_package_data=True,
-    url='https://github.com/getctl/ctl',
-    download_url='https://github.com/getctl/ctl/%s' % version,
+    url='https://github.com/20c/ctl',
+    download_url='https://github.com/20c/ctl/%s' % version,
 
     install_requires=requirements,
     test_requires=test_requirements,

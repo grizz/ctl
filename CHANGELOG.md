@@ -7,6 +7,7 @@
 ### Fixed
 - version plugin: bump needs to do a pull before changelog validation (#14)
 - venv plugin: copy: remove *.pyc files after copying a venv (#17)
+- issue in setup.py with download_url and url (#18)
 
 
 ## 0.3.1
