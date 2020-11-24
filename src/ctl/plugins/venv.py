@@ -97,6 +97,8 @@ class VenvPlugin(command.CommandPlugin):
             help="location of the setup.py file you want to sync",
         )
         op_sync_setup_parser.add_argument(
+            "--freeze", action="store_true", help="Do a frozen sync with pinned versions from Pipfile.lock")
+        op_sync_setup_parser.add_argument(
             "--dry", action="store_true", help="Do a dry run"
         )
 
@@ -189,7 +191,7 @@ class VenvPlugin(command.CommandPlugin):
         self._run_commands(command, **kwargs)
 
     @expose("ctl.{plugin_name}.sync_setup")
-    def sync_setup(self, setup_file=".", dry=False, **kwargs):
+    def sync_setup(self, setup_file=".", dry=False, freeze=False, **kwargs):
         """
         Syncs setup.py requirements from Pipfile
 
@@ -199,6 +201,8 @@ class VenvPlugin(command.CommandPlugin):
           will check in `.` instead
         - dry (`bool`=`False`): if `True` do a dry run and report what
           updates would be done to `setup.py`
+        - freeze (`bool`=`False`): if `True` do frozen pinned versions
+          from Pipfile.lock
         """
 
         if not pipenv_setup:
@@ -212,5 +216,7 @@ class VenvPlugin(command.CommandPlugin):
             sub_command = "sync"
 
         with self.cwd_ctx(os.path.dirname(setup_file) or "."):
-            command = ["pipenv-setup {}".format(sub_command)]
-            self._run_commands(command, **kwargs)
+            command = "pipenv-setup {}".format(sub_command)
+            if not freeze:
+                command = "{} --pipfile".format(command)
+            self._run_commands([command], **kwargs)
