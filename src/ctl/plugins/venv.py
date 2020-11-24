@@ -191,7 +191,7 @@ class VenvPlugin(command.CommandPlugin):
         self._run_commands(command, **kwargs)
 
     @expose("ctl.{plugin_name}.sync_setup")
-    def sync_setup(self, setup_file=".", dry=False, freeze=False, **kwargs):
+    def sync_setup(self, setup_file=".", dry=False, freeze=False, dev=True, **kwargs):
         """
         Syncs setup.py requirements from Pipfile
 
@@ -203,6 +203,8 @@ class VenvPlugin(command.CommandPlugin):
           updates would be done to `setup.py`
         - freeze (`bool`=`False`): if `True` do frozen pinned versions
           from Pipfile.lock
+        - dev (`bool`=`True`): Also fill extras_require with Pipfile dev
+          entries
         """
 
         if not pipenv_setup:
@@ -216,7 +218,9 @@ class VenvPlugin(command.CommandPlugin):
             sub_command = "sync"
 
         with self.cwd_ctx(os.path.dirname(setup_file) or "."):
-            command = "pipenv-setup {}".format(sub_command)
+            command = "pipenv-setup {} --dev".format(sub_command)
+            if dev:
+                command = "{} --dev".format(command)
             if not freeze:
                 command = "{} --pipfile".format(command)
             self._run_commands([command], **kwargs)
