@@ -1,7 +1,7 @@
 """
 Plugin interface for plugins that handle software releases
 """
-from __future__ import absolute_import, division, print_function
+
 
 import os
 import subprocess
@@ -99,7 +99,7 @@ class ReleasePlugin(command.CommandPlugin):
 
         if self.dry_run:
             self.log.info("Doing dry run...")
-        self.log.info("Release repository: {}".format(self.repository))
+        self.log.info(f"Release repository: {self.repository}")
 
         try:
             self.repository.checkout(self.version)
@@ -136,14 +136,14 @@ class ReleasePlugin(command.CommandPlugin):
         except KeyError:
             self.repository = os.path.abspath(repository)
             if not os.path.exists(self.repository):
-                raise IOError(
+                raise OSError(
                     "Target is neither a configured repository "
                     "plugin nor a valid file path: "
                     "{}".format(self.repository)
                 )
 
             self.repository = ctl.plugins.git.temporary_plugin(
-                self.ctl, "{}__tmp_repo".format(self.plugin_name), self.repository
+                self.ctl, f"{self.plugin_name}__tmp_repo", self.repository
             )
 
         self.cwd = self.repository.checkout_path

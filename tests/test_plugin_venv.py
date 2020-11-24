@@ -51,10 +51,12 @@ def test_sync(tmpdir, ctlr):
     plugin.execute(op="sync", output=path)
 
     output = subprocess.check_output(
-        ["source {}/bin/activate; pip freeze;".format(path)], shell=True
+        [f"source {path}/bin/activate; pip freeze;"], shell=True
     )
 
-    assert u"{}".format(output).find(u"confu==") > -1
+    print(f"{output}")
+
+    assert f"{output}".find("confu==") > -1
 
 
 def test_copy(tmpdir, ctlr):
@@ -105,6 +107,6 @@ def test_sync_setup(tmpdir, ctlr):
     # sync_setup
     plugin.execute(op="sync_setup", setup_file=setup_file)
 
-    with open(setup_file, "r") as fh:
+    with open(setup_file) as fh:
         setup_file_data = fh.read()
-        assert re.search("install_requires=\[.*confu==", setup_file_data)
+        assert re.search(r"install_requires=\[.*confu>=", setup_file_data)

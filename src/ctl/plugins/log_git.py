@@ -43,7 +43,7 @@ class LogGitPlugin(LogUserPlugin):
             if filepath and filepath[0] != "/":
                 logger["file"] = os.path.join(self.git.checkout_path, filepath)
 
-        super(LogGitPlugin, self).init()
+        super().init()
 
     def apply(self, message, level):
 
@@ -55,7 +55,7 @@ class LogGitPlugin(LogUserPlugin):
         - message (`str`): log message
         - level (`str`): log severity level
         """
-        message = super(LogGitPlugin, self).apply(message)
+        message = super().apply(message)
         return "{uuid}:{version} {message}".format(
             uuid=self.git.uuid, version=self.git.version, message=message
         )

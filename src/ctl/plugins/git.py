@@ -2,7 +2,7 @@
 Plugin that allows you to manage a git repository
 """
 
-from __future__ import absolute_import
+
 import os
 import re
 import argparse
@@ -18,7 +18,7 @@ from ctl.plugins.repository import RepositoryPlugin
 try:
     import urllib.parse as urlparse
 except ImportError:
-    import urlparse
+    import urllib.parse
 
 
 def temporary_plugin(ctl, name, path, **config):
@@ -104,7 +104,7 @@ class GitPlugin(RepositoryPlugin):
         try:
             result = self.run_git_command(get_branch)
         except Exception as exc:
-            if "{}".format(exc).find("fatal: Needed a single revision") > -1:
+            if f"{exc}".find("fatal: Needed a single revision") > -1:
                 return False
             raise
         return True
@@ -150,7 +150,7 @@ class GitPlugin(RepositoryPlugin):
         *overrides and calls `RepositoryPlugin.execute`*
         """
 
-        super(GitPlugin, self).execute(**kwargs)
+        super().execute(**kwargs)
 
         op = kwargs.get("op")
 
@@ -253,7 +253,7 @@ class GitPlugin(RepositoryPlugin):
         # TODO: do we still need this in some situations ?
         # files = [os.path.join(self.checkout_path, f) for f in files]
 
-        self.log.debug("COMMIT {} : {}".format(files, message))
+        self.log.debug(f"COMMIT {files} : {message}")
 
         command_add = self.command("add", *files)
         self.run_git_command(command_add)
@@ -261,7 +261,7 @@ class GitPlugin(RepositoryPlugin):
         command_commit = self.command("commit", *files) + ["-m", message]
         self.run_git_command(command_commit)
 
-        self.log.debug("COMMIT COMPLETE".format(files))
+        self.log.debug(f"COMMIT COMPLETE")
         if kwargs.get("push"):
             self.push()
 
@@ -277,7 +277,7 @@ class GitPlugin(RepositoryPlugin):
         if self.is_cloned:
             return
 
-        self.log.debug("Cloning {s.repo_url}".format(s=self))
+        self.log.debug(f"Cloning {self.repo_url}")
         command = ["git", "clone", self.repo_url, self.checkout_path]
 
         self.run_git_command(command)
@@ -289,21 +289,21 @@ class GitPlugin(RepositoryPlugin):
         """
         Pull the repo
         """
-        self.log.debug("PULL {}".format(self.checkout_path))
+        self.log.debug(f"PULL {self.checkout_path}")
         command_pull = self.command("pull")
         self.run_git_command(command_pull)
-        self.log.debug("PULL {} complete".format(self.checkout_path))
+        self.log.debug(f"PULL {self.checkout_path} complete")
 
     def push(self, **kwargs):
         """
         Push commits
         """
-        self.log.debug("PUSH {}".format(self.checkout_path))
+        self.log.debug(f"PUSH {self.checkout_path}")
         command_push = self.command("push", "origin", self.branch)
         if kwargs.get("tags"):
             command_push += ["--tags"]
         self.run_git_command(command_push)
-        self.log.debug("PUSH {} complete".format(self.checkout_path))
+        self.log.debug(f"PUSH {self.checkout_path} complete")
 
     def tag(self, version, message, **kwargs):
         """

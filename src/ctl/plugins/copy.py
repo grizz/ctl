@@ -2,7 +2,6 @@
 A plugin that allows you to copy files
 """
 
-from __future__ import absolute_import
 
 import os
 import shutil
@@ -39,7 +38,7 @@ class CopyPlugin(WalkDirPlugin):
         *overrides and calls `WalkDirPlugin.prepare`*
         """
 
-        super(CopyPlugin, self).prepare()
+        super().prepare()
         self.requires_output = True
         self.debug_info["copied"] = []
         self.copy_metadata = self.get_config("copy_metadata")
@@ -52,7 +51,7 @@ class CopyPlugin(WalkDirPlugin):
         """
 
         r = self.copy_file(path, dirpath)
-        super(CopyPlugin, self).process_file(path, dirpath)
+        super().process_file(path, dirpath)
         return r
 
     def copy_file(self, path, dirpath):

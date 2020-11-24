@@ -1,7 +1,7 @@
 import confu.schema
 
 
-class pymdgen_confu_types(object):
+class pymdgen_confu_types:
     """
     Decorates a confu schema class to show pretty
     class attribute types when generating docs with
@@ -23,5 +23,5 @@ class pymdgen_confu_types(object):
     def confu_type_info(self, attr):
         attr_name = attr.__class__.__name__
         if getattr(attr, "item", None):
-            return u"{}<{}>".format(attr_name, self.confu_type_info(attr.item))
+            return "{}<{}>".format(attr_name, self.confu_type_info(attr.item))
         return attr_name

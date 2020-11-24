@@ -11,13 +11,13 @@ try:
 
         def __init__(self, name, *args, **kwargs):
             self.name = name
-            super(VariableString, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
 
         def __getattr__(self, k):
             try:
-                return super(VariableString, self).__getattr__(k)
+                return super().__getattr__(k)
             except AttributeError:
-                return VariableString("{}.{}".format(self.name, k))
+                return VariableString(f"{self.name}.{k}")
 
         def __str__(self):
             return "{{ " + self.name + " }}"
@@ -34,16 +34,14 @@ try:
 
         def __getattr__(self, k):
             if self._undefined_name in self.names:
-                return VariableString("{}.{}".format(self._undefined_name, k))
-            return super(IgnoreUndefined, self).__getattr__(k)
+                return VariableString(f"{self._undefined_name}.{k}")
+            return super().__getattr__(k)
 
         def _fail_with_undefined_error(self, *args, **kwargs):
             if self._undefined_name in self.names:
                 return VariableString(self._undefined_name)
-            print("_undefined", self._undefined_name, self.names)
-            return super(IgnoreUndefined, self)._fail_with_undefined_error(
-                *args, **kwargs
-            )
+            print(("_undefined", self._undefined_name, self.names))
+            return super()._fail_with_undefined_error(*args, **kwargs)
 
         __add__ = (
             __radd__
@@ -94,7 +92,7 @@ try:
 
 except ImportError:
 
-    class IgnoreUndefined(object):
+    class IgnoreUndefined:
         pass
 
 

@@ -2,7 +2,6 @@
 A plugin that allows you to run one or several shell commands
 """
 
-from __future__ import absolute_import, division, print_function
 
 import sys
 import os
@@ -17,7 +16,7 @@ from ctl.auth import expose
 from ctl.docs import pymdgen_confu_types
 
 
-class CwdContext(object):
+class CwdContext:
     """
     A context manager that allows you to temporarily
     execute commands in a different working directory
@@ -135,7 +134,7 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
         *overrides and calls `ExecutablePlugin.execute`*
         """
 
-        super(CommandPlugin, self).execute(**kwargs)
+        super().execute(**kwargs)
         command = self.get_config("command")
         self._run_commands(command, **kwargs)
 
@@ -157,11 +156,11 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
 
         for cmd in command:
             cmd = self.render_tmpl(cmd, kwargs)
-            self.log.debug("running command: {}".format(cmd))
+            self.log.debug(f"running command: {cmd}")
             rc = self._exec(cmd)
-            self.log.debug("done with {}, returned {}".format(cmd, rc))
+            self.log.debug(f"done with {cmd}, returned {rc}")
             if rc:
-                self.log.error("command {} failed with {}".format(cmd, rc))
+                self.log.error(f"command {cmd} failed with {rc}")
                 return False
 
         # TODO: should return True here?
@@ -207,10 +206,10 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
                 stderr.append(line)
 
         for line in stdout:
-            self.stdout.write(u"{}".format(line))
+            self.stdout.write(f"{line}")
 
         for line in stderr:
-            self.stderr.write(u"{}".format(line))
+            self.stderr.write(f"{line}")
 
         return proc.returncode
 

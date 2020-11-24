@@ -3,7 +3,6 @@ A plugin that lets you traverse a directory and process it's files
 and sub-directories
 """
 
-from __future__ import absolute_import
 
 import os
 import shutil
@@ -98,7 +97,7 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
         self.walk_dirs = self.get_config("walk_dirs")
         self.skip_dotfiles = self.get_config("skip_dotfiles")
 
-        self.log.info("Skip dotfiles: {}".format(self.skip_dotfiles))
+        self.log.info(f"Skip dotfiles: {self.skip_dotfiles}")
 
         if not os.path.exists(self._output):
             os.makedirs(self._output)
@@ -155,7 +154,7 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
         *overrides and calls `ExecutablePlugin.execute`*
         """
 
-        super(WalkDirPlugin, self).execute(**kwargs)
+        super().execute(**kwargs)
 
         if not self._output and self.requires_output:
             raise ValueError("No output directory specified")
@@ -168,7 +167,7 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
 
         self._source = self.render_tmpl(self._source)
 
-        self.source_regex = r"^{}/".format(self.source())
+        self.source_regex = fr"^{self.source()}/"
 
         self.process_files()
 

@@ -39,13 +39,13 @@ def set_pylogger_config(config=None):
 ATTACHED = {}
 
 
-class Log(object):
+class Log:
     def __init__(self, name="ctl"):
         self._log = logging.getLogger(name)
         self.name = name
 
     def log(self, level, msg, typ=None):
-        common_events.trigger("{}-log-write-before".format(self.name))
+        common_events.trigger(f"{self.name}-log-write-before")
         plugins = []
 
         plugins = ATTACHED.get(typ or self.name, [])
@@ -53,14 +53,14 @@ class Log(object):
         for plugin in plugins:
             msg = plugin.apply(msg, level)
 
-        msg = "[{}] {}".format(self.name, msg)
+        msg = f"[{self.name}] {msg}"
         fn = getattr(self._log, level)
         fn(msg)
 
         for plugin in plugins:
             plugin.finalize(msg, level)
 
-        common_events.trigger("{}-log-write-after".format(self.name))
+        common_events.trigger(f"{self.name}-log-write-after")
 
     def debug(self, msg, typ=None):
         self.log("debug", msg, typ=typ)

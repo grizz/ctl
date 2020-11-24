@@ -65,7 +65,7 @@ class DummyRepositoryPlugin(RepositoryPlugin):
         self._tag = version
 
     def checkout(self, branch, **kwargs):
-        print("SETTING BRANCH", branch)
+        print(("SETTING BRANCH", branch))
         self._branch = branch
 
     def merge(self, a, b, **kwargs):

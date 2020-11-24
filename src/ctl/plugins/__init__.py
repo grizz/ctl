@@ -2,7 +2,6 @@
 Base classes for ctl plugins
 """
 
-from __future__ import absolute_import, division, print_function
 
 import pluginmgr.config
 import confu.schema
@@ -12,11 +11,12 @@ import ctl
 from ctl.log import Log
 from ctl.events import common_events
 from ctl.exceptions import ConfigError, UsageError, OperationNotExposed
+import collections
 
 __all__ = ["command", "config"]
 
 
-class ConfuArgparseRouter(object):
+class ConfuArgparseRouter:
     """
     An instance of this will be passed to plugin's `add_arguments`
     class method and can be used to route cli parameters
@@ -152,7 +152,7 @@ class PluginBase(pluginmgr.config.PluginBase):
         """
 
         if not getattr(self, "_logger", None):
-            self._logger = Log("ctl.plugins.{}".format(self.plugin_type))
+            self._logger = Log(f"ctl.plugins.{self.plugin_type}")
         return self._logger
 
     @property
@@ -167,7 +167,7 @@ class PluginBase(pluginmgr.config.PluginBase):
         """
         attach plugin events
         """
-        for event_name, event_config in events.items():
+        for event_name, event_config in list(events.items()):
             self.attach_event(event_name, event_config)
 
     def attach_event(self, name, config):
@@ -181,7 +181,7 @@ class PluginBase(pluginmgr.config.PluginBase):
         - config(dict): event config
         """
 
-        for handler_name, instances in config.items():
+        for handler_name, instances in list(config.items()):
             handler = getattr(self, handler_name, None)
 
             if not handler:
@@ -222,7 +222,7 @@ class PluginBase(pluginmgr.config.PluginBase):
 
         other = ctl.plugin._instance.get(name)
         if not other:
-            raise KeyError("Plugin instance with name `{}` does not exist".format(name))
+            raise KeyError(f"Plugin instance with name `{name}` does not exist")
         return other
 
     def render_tmpl(self, content, env=None):
@@ -243,7 +243,7 @@ class PluginBase(pluginmgr.config.PluginBase):
         if not op:
             # TODO UsageError
             raise ValueError("operation not defined")
-        elif not callable(getattr(self, op, None)):
+        elif not isinstance(getattr(self, op, None), collections.Callable):
             # TODO Usage Error
             raise ValueError("invalid operation")
 

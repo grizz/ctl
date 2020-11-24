@@ -20,7 +20,7 @@ class LogAlertPlugin(LogPlugin):
     """
 
     def init(self):
-        super(LogAlertPlugin, self).init()
+        super().init()
         self.messages = []
 
     def alert(self, **kwargs):
@@ -47,10 +47,10 @@ class LogAlertPlugin(LogPlugin):
 
         plugin = self.other_plugin(plugin_name)
         if not plugin:
-            raise Exception("Plugin instance not found: {}".format(plugin_name))
+            raise Exception(f"Plugin instance not found: {plugin_name}")
 
         if not hasattr(plugin, "alert"):
-            raise Exception("{} Plugin has no `alert` method".format(plugin_name))
+            raise Exception(f"{plugin_name} Plugin has no `alert` method")
 
         # collect messages into here
         collected = []

@@ -1,7 +1,7 @@
 """
 Plugin interface for plugins that manage software repositories
 """
-from __future__ import absolute_import
+
 import ctl
 import os
 import confu.schema
@@ -15,7 +15,7 @@ from ctl.docs import pymdgen_confu_types
 try:
     import urllib.parse as urlparse
 except ImportError:
-    import urlparse
+    import urllib.parse
 
 
 @pymdgen_confu_types()
@@ -46,7 +46,7 @@ class RepositoryPlugin(ExecutablePlugin):
         config = PluginConfig()
 
     def __repr__(self):
-        return "Repository `{}`".format(self.plugin_name)
+        return f"Repository `{self.plugin_name}`"
 
     @property
     def uuid(self):
@@ -57,11 +57,11 @@ class RepositoryPlugin(ExecutablePlugin):
     def version(self):
         """ current version as it exists in `version_file` """
         try:
-            print("Reading version from", self.version_file)
-            with open(self.version_file, "r") as fh:
+            print(("Reading version from", self.version_file))
+            with open(self.version_file) as fh:
                 version = version_tuple(fh.read().strip())
         except FileNotFoundError:
-            self.log.debug("No version file found at {}".format(self.version_file))
+            self.log.debug(f"No version file found at {self.version_file}")
             return (0, 0, 0)
         return version
 

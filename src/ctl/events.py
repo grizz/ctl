@@ -1,4 +1,4 @@
-class Events(object):
+class Events:
 
     """
     Events handler that works similarly to jquery events

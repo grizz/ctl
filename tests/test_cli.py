@@ -10,5 +10,5 @@ def test_cli(config_dir):
         ["ctl ls --home {}".format(os.path.join(config_dir, "standard"))], shell=True
     )
 
-    output = u"{}".format(output)
-    assert output.find(u"[usage] ran command: `ls --home") > -1
+    output = f"{output}"
+    assert output.find("[usage] ran command: `ls --home") > -1

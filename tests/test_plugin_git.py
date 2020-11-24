@@ -7,15 +7,13 @@ def init_tmp_repo(tmpdir):
     repo_path = str(tmpdir.mkdir("git_repo_src.git"))
     repo_path_clone = str(tmpdir.mkdir("git_repo_clone"))
 
-    subprocess.call(["cd {path}; git init --bare;".format(path=repo_path)], shell=True)
+    subprocess.call([f"cd {repo_path}; git init --bare;"], shell=True)
     subprocess.call(
-        ["git clone {src} {path}".format(src=repo_path, path=repo_path_clone)],
+        [f"git clone {repo_path} {repo_path_clone}"],
         shell=True,
     )
 
-    subprocess.call(
-        ["echo empty > {path}/README.md".format(path=repo_path_clone)], shell=True
-    )
+    subprocess.call([f"echo empty > {repo_path_clone}/README.md"], shell=True)
     subprocess.call(
         [
             "cd {path}; git config user.name pytest; git config user.email pytest@localhost; git add *; git commit -am initial;".format(
@@ -33,16 +31,14 @@ def init_tmp_repo(tmpdir):
         shell=True,
     )
 
-    subprocess.call(
-        ["cd {path}; git branch test;".format(path=repo_path_clone)], shell=True
-    )
+    subprocess.call([f"cd {repo_path_clone}; git branch test;"], shell=True)
 
     return repo_path, repo_path_clone
 
 
 def instantiate(tmpdir, ctlr=None, **kwargs):
     repo_path, repo_path_clone = init_tmp_repo(tmpdir)
-    print(repo_path, repo_path_clone)
+    print((repo_path, repo_path_clone))
     config = {
         "config": {
             "repo_url": repo_path,
@@ -82,20 +78,18 @@ def test_pull(tmpdir, ctlr):
         shell=True,
     )
     plugin.execute(op="pull")
-    with open("{}/README.md".format(plugin.checkout_path), "r") as fh:
+    with open(f"{plugin.checkout_path}/README.md") as fh:
         assert fh.read() == "changed\n"
 
 
 def test_commit_and_push(tmpdir, ctlr):
     plugin, repo_path = instantiate(tmpdir, ctlr)
-    subprocess.call(
-        ["echo abcdef > {path}/README.md".format(path=plugin.checkout_path)], shell=True
-    )
+    subprocess.call([f"echo abcdef > {plugin.checkout_path}/README.md"], shell=True)
     plugin.commit(files=["README.md"], message="updated", push=True)
 
-    subprocess.call(["cd {path}; git pull;".format(path=repo_path)], shell=True)
+    subprocess.call([f"cd {repo_path}; git pull;"], shell=True)
 
-    with open("{}/README.md".format(repo_path), "r") as fh:
+    with open(f"{repo_path}/README.md") as fh:
         assert fh.read() == "abcdef\n"
 
 
@@ -103,13 +97,11 @@ def test_tag(tmpdir, ctlr):
     plugin, repo_path = instantiate(tmpdir, ctlr)
     plugin.tag("0.0.1", "0.0.1", push=True)
 
-    subprocess.call(["cd {path}; git pull;".format(path=repo_path)], shell=True)
+    subprocess.call([f"cd {repo_path}; git pull;"], shell=True)
 
-    out = subprocess.check_output(
-        ["cd {path}; git tag;".format(path=repo_path)], shell=True
-    )
+    out = subprocess.check_output([f"cd {repo_path}; git tag;"], shell=True)
 
-    assert u"{}".format(out).find("0.0.1") > -1
+    assert f"{out}".find("0.0.1") > -1
 
 
 def test_branch_and_merge(tmpdir, ctlr):
@@ -120,14 +112,14 @@ def test_branch_and_merge(tmpdir, ctlr):
 
     # update README.md on test brach and commit
     subprocess.call(
-        ["echo abcdeftest > {path}/README.md".format(path=plugin.checkout_path)],
+        [f"echo abcdeftest > {plugin.checkout_path}/README.md"],
         shell=True,
     )
     plugin.commit(files=["README.md"], message="test")
 
     # switch back to master and check file was reverted
     plugin.checkout("master")
-    with open("{}/README.md".format(plugin.checkout_path), "r") as fh:
+    with open(f"{plugin.checkout_path}/README.md") as fh:
         assert fh.read() == "empty\n"
 
     # merge test
@@ -135,5 +127,5 @@ def test_branch_and_merge(tmpdir, ctlr):
     assert plugin.branch == "master"
 
     # check that master is now on the new file
-    with open("{}/README.md".format(plugin.checkout_path), "r") as fh:
+    with open(f"{plugin.checkout_path}/README.md") as fh:
         assert fh.read() == "abcdeftest\n"

@@ -3,6 +3,10 @@ coverage>=4.1
 pytest-cov>=2.3,<3
 tox>=3,<4
 Jinja2>=2.10,<3
-#twine>=1.14.0,<2
 tmpl>=0.3,<1
 pytest-filedata<1
+pytest>=6,<7
+twine>=2,<3
+pipenv-setup>=2,<4
+pyyaml>=4,<6
+

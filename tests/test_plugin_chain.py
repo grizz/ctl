@@ -15,7 +15,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
         "command",
         "echo_1",
         _ctl=ctlr,
-        config={"command": ["echo 'echo 1 ran' > {}".format(path_1)], "shell": True},
+        config={"command": [f"echo 'echo 1 ran' > {path_1}"], "shell": True},
     )
 
     path_2 = os.path.join(path_dir, "test2")
@@ -25,7 +25,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
         "echo_2",
         _ctl=ctlr,
         config={
-            "command": ["echo '{{ kwargs.content }}' " + " > {}".format(path_2)],
+            "command": ["echo '{{ kwargs.content }}' " + f" > {path_2}"],
             "shell": True,
         },
     )
@@ -57,10 +57,10 @@ def test_init():
 def test_run_full(tmpdir, ctlr):
     plugin, outfile_1, outfile_2 = instantiate(tmpdir, ctlr)
     plugin.execute()
-    with open(outfile_1, "r") as fh:
+    with open(outfile_1) as fh:
         assert (fh.read()) == "echo 1 ran\n"
 
-    with open(outfile_2, "r") as fh:
+    with open(outfile_2) as fh:
         assert (fh.read()) == "echo 2 ran\n"
 
 
@@ -68,9 +68,9 @@ def test_run_end(tmpdir, ctlr):
     plugin, outfile_1, outfile_2 = instantiate(tmpdir, ctlr)
     plugin.execute(end="first")
     with pytest.raises(IOError) as exc:
-        open(outfile_2, "r")
+        open(outfile_2)
 
-    with open(outfile_1, "r") as fh:
+    with open(outfile_1) as fh:
         assert (fh.read()) == "echo 1 ran\n"
 
 
@@ -78,7 +78,7 @@ def test_run_start(tmpdir, ctlr):
     plugin, outfile_1, outfile_2 = instantiate(tmpdir, ctlr)
     plugin.execute(start="second")
     with pytest.raises(IOError) as exc:
-        open(outfile_1, "r")
+        open(outfile_1)
 
-    with open(outfile_2, "r") as fh:
+    with open(outfile_2) as fh:
         assert (fh.read()) == "echo 2 ran\n"

@@ -1,7 +1,7 @@
 """
 Plugin that allows you to handle repository versioning
 """
-from __future__ import absolute_import
+
 import os
 import ctl
 import confu.schema
@@ -176,7 +176,7 @@ class VersionPlugin(ExecutablePlugin):
 
     def execute(self, **kwargs):
 
-        super(VersionPlugin, self).execute(**kwargs)
+        super().execute(**kwargs)
 
         branch_dev = self.get_config("branch_dev")
         branch_release = self.get_config("branch_release")
@@ -222,7 +222,7 @@ class VersionPlugin(ExecutablePlugin):
             if target:
                 target = os.path.abspath(target)
             if not target or not os.path.exists(target):
-                raise IOError(
+                raise OSError(
                     "Target is neither a configured repository "
                     "plugin nor a valid file path: "
                     "{}".format(target)
@@ -255,9 +255,7 @@ class VersionPlugin(ExecutablePlugin):
             return
 
         repo_plugin = self.repository(repo)
-        self.log.info(
-            "Merging branch '{}' into branch '{}'".format(from_branch, to_branch)
-        )
+        self.log.info(f"Merging branch '{from_branch}' into branch '{to_branch}'")
         repo_plugin.merge(from_branch, to_branch)
         repo_plugin.push()
 
@@ -285,9 +283,7 @@ class VersionPlugin(ExecutablePlugin):
             self.merge_release(repo=repo)
             repo_plugin.checkout(self.get_config("branch_release") or "master")
 
-        self.log.info(
-            "Preparing to tag {} as {}".format(repo_plugin.checkout_path, version)
-        )
+        self.log.info(f"Preparing to tag {repo_plugin.checkout_path} as {version}")
         if not os.path.exists(repo_plugin.repo_ctl_dir):
             os.makedirs(repo_plugin.repo_ctl_dir)
 
@@ -295,7 +291,7 @@ class VersionPlugin(ExecutablePlugin):
             fh.write(version)
 
         repo_plugin.commit(
-            files=["Ctl/VERSION"], message="Version {}".format(version), push=True
+            files=["Ctl/VERSION"], message=f"Version {version}", push=True
         )
         repo_plugin.tag(version, message=version, push=True)
 
@@ -314,7 +310,7 @@ class VersionPlugin(ExecutablePlugin):
         repo_plugin.pull()
 
         if version not in ["major", "minor", "patch", "dev"]:
-            raise ValueError("Invalid semantic version: {}".format(version))
+            raise ValueError(f"Invalid semantic version: {version}")
 
         is_dev = version == "dev"
 
@@ -361,12 +357,10 @@ class VersionPlugin(ExecutablePlugin):
             return
 
         changelog_plugin = temporary_changelog_plugin(
-            self.ctl, "{}_changelog".format(self.plugin_name), data_file=changelog_path
+            self.ctl, f"{self.plugin_name}_changelog", data_file=changelog_path
         )
 
-        self.log.info(
-            "Found changelog data file at {} - validating ...".format(changelog_path)
-        )
+        self.log.info(f"Found changelog data file at {changelog_path} - validating ...")
 
         try:
             changelog_plugin.validate(changelog_path, version)

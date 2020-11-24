@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function
-
 import os
 from pkg_resources import get_distribution
 
@@ -35,7 +33,7 @@ class PluginManager(pluginmgr.config.ConfigPluginManager):
     """
 
     def __init__(self, *args, **kwargs):
-        super(PluginManager, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 plugin = PluginManager("ctl.plugins")
@@ -79,7 +77,7 @@ def read_config(schema, config_dir, config_name="config", ctx=None):
     """
     conf_path = os.path.expanduser(config_dir)
     if not os.path.exists(conf_path):
-        raise IOError("config dir not found at {}".format(conf_path))
+        raise OSError(f"config dir not found at {conf_path}")
 
     for codec, filename in munge.find_datafile(config_name, conf_path):
 
@@ -102,10 +100,10 @@ def read_config(schema, config_dir, config_name="config", ctx=None):
         meta = dict(config_dir=config_dir, config_file=filename)
         return confu.config.Config(schema, data, meta)
 
-    raise IOError("config dir not found at {}".format(conf_path))
+    raise OSError(f"config dir not found at {conf_path}")
 
 
-class Context(object):
+class Context:
     """
     class to hold current context, debug, logging, sandbox, etc
     also holds master config
@@ -208,7 +206,7 @@ class Context(object):
             try:
                 return self._new_home(path)
 
-            except IOError:
+            except OSError:
                 pass
 
     def _new_home(self, home):
@@ -257,7 +255,7 @@ def argv_to_grainy_namespace(operation, args=[]):
     return grainy.core.Namespace(namespace)
 
 
-class Ctl(object):
+class Ctl:
     """
     main controller object
     """
@@ -272,7 +270,7 @@ class Ctl(object):
                 return plugin
         if self.config.errors:
             self.log_config_issues()
-        raise ValueError("unknown plugin: {}".format(name))
+        raise ValueError(f"unknown plugin: {name}")
 
     # don't allow updating the config, there's too many undefined
     # things that could happen
@@ -347,12 +345,10 @@ class Ctl(object):
         """
         # TODO: load permissions from db?
         self.permissions = PermissionSet(
-            dict(
-                [
-                    (row.get("namespace"), int_flags(row.get("permission")))
-                    for row in self.ctx.config.get_nested("ctl", "permissions")
-                ]
-            )
+            {
+                row.get("namespace"): int_flags(row.get("permission"))
+                for row in self.ctx.config.get_nested("ctl", "permissions")
+            }
         )
 
     def init_plugins(self):
@@ -386,7 +382,7 @@ class Ctl(object):
                 env = self.ctx.tmpl["env"]["plugin"].get(name, {})
                 errors = plugin_class.expose_vars(env, plugin_config.get("config", {}))
                 for filepath, error in list(errors.items()):
-                    self.log.debug("expose_vars: {}: {}".format(filepath, error))
+                    self.log.debug(f"expose_vars: {filepath}: {error}")
                 self.ctx.tmpl["env"]["plugin"][name] = env
 
     def validate_config(self):
@@ -397,11 +393,11 @@ class Ctl(object):
     def log_config_issues(self):
         if self.config.errors:
             for err in self.config.errors:
-                self.log.error("[config error] {}".format(err.pretty))
+                self.log.error(f"[config error] {err.pretty}")
             raise ConfigError("config invalid")
 
         for warn in self.config.warnings:
-            self.log.info("[config warning] {}".format(warn.pretty))
+            self.log.info(f"[config warning] {warn.pretty}")
 
     def check_permissions(self, namespace, perm):
         # self.log.debug("checking permissions namespace '{}' for '{}'".format(namespace, perm))

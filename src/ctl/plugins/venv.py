@@ -7,7 +7,7 @@ Plugin that allows you to manage a python virtual env
 - `pipenv-setup` if you want to run the `sync_setup` operation
 
 """
-from __future__ import absolute_import, division, print_function
+
 
 import os
 import sys
@@ -97,7 +97,10 @@ class VenvPlugin(command.CommandPlugin):
             help="location of the setup.py file you want to sync",
         )
         op_sync_setup_parser.add_argument(
-            "--freeze", action="store_true", help="Do a frozen sync with pinned versions from Pipfile.lock")
+            "--freeze",
+            action="store_true",
+            help="Do a frozen sync with pinned versions from Pipfile.lock",
+        )
         op_sync_setup_parser.add_argument(
             "--dry", action="store_true", help="Do a dry run"
         )
@@ -147,7 +150,7 @@ class VenvPlugin(command.CommandPlugin):
 
         output = self.get_config("output") or ""
 
-        self.log.info("Pipfile: {}".format(self.pipfile))
+        self.log.info(f"Pipfile: {self.pipfile}")
 
         self.output = os.path.abspath(self.render_tmpl(output))
         self.binpath = os.path.join(os.path.dirname(__file__), "..", "bin")
@@ -163,7 +166,7 @@ class VenvPlugin(command.CommandPlugin):
         """
         build a fresh virtualenv
         """
-        command = ["ctl_venv_build {} {}".format(self.output, self.python_version)]
+        command = [f"ctl_venv_build {self.output} {self.python_version}"]
         self._run_commands(command, **kwargs)
 
     @expose("ctl.{plugin_name}.sync")
@@ -175,7 +178,7 @@ class VenvPlugin(command.CommandPlugin):
         """
         if not self.venv_exists():
             self.build(**kwargs)
-        command = ["ctl_venv_sync {} {}".format(self.output, self.pipfile)]
+        command = [f"ctl_venv_sync {self.output} {self.pipfile}"]
         self._run_commands(command, **kwargs)
 
     @expose("ctl.{plugin_name}.copy")
@@ -186,7 +189,7 @@ class VenvPlugin(command.CommandPlugin):
         source = os.path.abspath(self.render_tmpl(source))
         self.venv_validate(source)
 
-        command = ["ctl_venv_copy {} {}".format(source, self.output)]
+        command = [f"ctl_venv_copy {source} {self.output}"]
 
         self._run_commands(command, **kwargs)
 
@@ -218,9 +221,9 @@ class VenvPlugin(command.CommandPlugin):
             sub_command = "sync"
 
         with self.cwd_ctx(os.path.dirname(setup_file) or "."):
-            command = "pipenv-setup {} --dev".format(sub_command)
+            command = f"pipenv-setup {sub_command} --dev"
             if dev:
-                command = "{} --dev".format(command)
+                command = f"{command} --dev"
             if not freeze:
-                command = "{} --pipfile".format(command)
+                command = f"{command} --pipfile"
             self._run_commands([command], **kwargs)

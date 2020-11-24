@@ -2,7 +2,7 @@
 Plugin that allows you to manipulate logging functionality
 """
 
-from __future__ import absolute_import
+
 import logging
 import copy
 import ctl

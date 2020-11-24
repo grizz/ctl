@@ -30,7 +30,7 @@ def test_process(tmpdir, ctlr):
 
     assert len(plugin.debug_info["rendered"]) == 2
     for processed in plugin.debug_info["rendered"]:
-        with open(processed, "r") as fh:
+        with open(processed) as fh:
             assert fh.read() == "some content first variable\n"
 
 

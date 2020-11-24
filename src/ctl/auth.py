@@ -3,9 +3,10 @@ from functools import wraps
 
 from ctl.exceptions import PermissionDenied
 from grainy.core import int_flags
+import collections
 
 
-class expose(object):
+class expose:
 
     """
     Decorator to expose a ctl plugin's method - permissions will be checked before
@@ -56,7 +57,7 @@ class expose(object):
                 # level is not specified at all in the decorator,
                 # in which case we obtain from plugin config and default to 'r'
                 permissions = self.config.get("permissions", {}).get(fn.__name__, "r")
-            elif callable(level):
+            elif isinstance(level, collections.Callable):
                 # level is specified and a function, call it and set from there
                 permissions = level(self)
             else:
@@ -80,14 +81,14 @@ class expose(object):
 
         if fn.__doc__:
             doc.append(fn.__doc__)
-            m = re.search("(\s+)", fn.__doc__)
+            m = re.search(r"(\s+)", fn.__doc__)
             if m:
                 doc_indent = m.group(1)
 
         doc.extend(
             [
-                '{}!!! note "Exposed to CLI"'.format(doc_indent),
-                "{}    namespace: `{}`".format(doc_indent, namespace_),
+                f'{doc_indent}!!! note "Exposed to CLI"',
+                f"{doc_indent}    namespace: `{namespace_}`",
             ]
         )
 

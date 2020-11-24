@@ -1,7 +1,7 @@
 # TODO py3 implements PermissionError, probably extend that?
 class PermissionDenied(Exception):
     def __init__(self, grainy_namespace, level):
-        super(PermissionDenied, self).__init__(
+        super().__init__(
             "You do not have '{}' permission to this namespace: {}".format(
                 level, grainy_namespace
             )
@@ -10,13 +10,13 @@ class PermissionDenied(Exception):
 
 class OperationNotExposed(Exception):
     def __init__(self, op):
-        super(OperationNotExposed, self).__init__("{} is not exposed".format(op))
+        super().__init__(f"{op} is not exposed")
 
 
 class UsageError(ValueError):
     """
-	ctl operation usage error
-	"""
+    ctl operation usage error
+    """
 
     pass
 
@@ -38,9 +38,9 @@ class PluginOperationStopped(ValueError):
         - plugin: plugin instance
         - details(`str`): error message
         """
-        super(PluginOperationStopped, self).__init__(details)
+        super().__init__(details)
         self.details = details
         self.plugin = plugin
 
     def __str__(self):
-        return u"Plugin operation stopped: {}".format(self.details)
+        return f"Plugin operation stopped: {self.details}"
