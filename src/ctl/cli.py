@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function
-
 import argparse
 import munge
 import sys
@@ -82,12 +80,12 @@ def exit_full_help(ctlr, exit=1):
     parser.print_help()
 
     print("\nPlugins")
-    for name, cls in plugin.registry.items():
+    for name, cls in list(plugin.registry.items()):
         if cls.__doc__:
             descr = cls.__doc__.lstrip().splitlines()[0]
         else:
             descr = ""
-        print("  {}\t{}".format(name, descr))
+        print(f"  {name}\t{descr}")
 
     if exit:
         sys.exit(exit)
@@ -102,7 +100,7 @@ def main(argv=sys.argv, run=True):
         args, unknown = parser.parse_known_args(args=argv[1:])
 
     except Exception as e:
-        ctlr.log.error("unknown arg error: {}".format(e))
+        ctlr.log.error(f"unknown arg error: {e}")
         raise
 
     # update cli context with options/arguments before
@@ -133,8 +131,8 @@ def main(argv=sys.argv, run=True):
         )
 
     except ValueError as exc:
-        if "{}".format(exc).find("unknown plugin") > -1:
-            ctlr.log.error("unknown operation: {}".format(operation))
+        if f"{exc}".find("unknown plugin") > -1:
+            ctlr.log.error(f"unknown operation: {operation}")
             exit_full_help(ctlr)
         else:
             raise
@@ -146,7 +144,7 @@ def main(argv=sys.argv, run=True):
         # ctlr.log.debug("unknown args {}".format(unknown))
 
     except Exception as e:
-        ctlr.log.error("argparser {}".format(e))
+        ctlr.log.error(f"argparser {e}")
         if ctx.debug:
             raise
         return 1
@@ -170,7 +168,7 @@ def main(argv=sys.argv, run=True):
         plugin_obj = ctlr.get_plugin(operation)
 
     except Exception as e:
-        ctlr.log.error("operation `{}` raised exception: {}".format(operation, e))
+        ctlr.log.error(f"operation `{operation}` raised exception: {e}")
         if ctx.debug:
             raise
         return 1
@@ -181,10 +179,10 @@ def main(argv=sys.argv, run=True):
         ctlr.usage_log.info("ran command: `{}`".format(" ".join(argv[1:])), typ="usage")
         plugin_obj.execute(**vars(args))
     except PluginOperationStopped as exc:
-        exc.plugin.log.error(u"{}".format(exc))
+        exc.plugin.log.error(f"{exc}")
         sys.exit(1)
     except Exception as e:
-        ctlr.log.error("command error {}".format(e))
+        ctlr.log.error(f"command error {e}")
         ctlr.log.error(traceback.format_exc())
         if ctx.debug:
             raise

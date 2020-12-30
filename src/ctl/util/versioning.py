@@ -5,7 +5,7 @@ def version_tuple(version):
 
 def version_string(version):
     """ Returns a string from version tuple or list """
-    return ".".join(["{}".format(v) for v in version])
+    return ".".join([f"{v}" for v in version])
 
 
 def validate_semantic(version, pad=0):

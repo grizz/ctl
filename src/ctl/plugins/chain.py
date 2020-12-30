@@ -2,7 +2,7 @@
 A plugin that allows you to execute other plugins in a chain
 """
 
-from __future__ import absolute_import
+
 import argparse
 
 import copy
@@ -11,6 +11,7 @@ import ctl
 import ctl.config
 
 from ctl.docs import pymdgen_confu_types
+import collections
 
 
 @pymdgen_confu_types()
@@ -107,7 +108,7 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
         *overrides and calls `ExecutablePlugin.execute`*
         """
 
-        super(ChainPlugin, self).execute(**kwargs)
+        super().execute(**kwargs)
         self.chain = chain = self.get_config("chain")
         self.end = kwargs.get("end")
         self.start = kwargs.get("start")
@@ -141,10 +142,10 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
             self.execute_stage(stage, num, total)
             num += 1
             if self.end == stage["stage"]:
-                self.log.info("end {}".format(self.end))
+                self.log.info(f"end {self.end}")
                 return
 
-        self.log.info("completed chain `{}`".format(self.plugin_name))
+        self.log.info(f"completed chain `{self.plugin_name}`")
 
     def execute_stage(self, stage, num=1, total=1):
 
@@ -163,7 +164,7 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
         )
         plugin = self.other_plugin(stage["plugin"])
         fn = getattr(plugin, stage["action"]["name"], None)
-        if not callable(fn):
+        if not isinstance(fn, collections.Callable):
             raise AttributeError(
                 "Action `{action.name}` does not exist in plugin `{plugin}".format(
                     **stage
@@ -171,7 +172,7 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
             )
 
         kwargs = {}
-        for name, value in stage["action"].get("arguments", {}).items():
+        for name, value in list(stage["action"].get("arguments", {}).items()):
             kwargs[name] = self.render_tmpl(value)
 
         fn(**kwargs)
@@ -191,4 +192,4 @@ class ChainPlugin(ctl.plugins.ExecutablePlugin):
         for stage in self.chain:
             if stage.get("stage") == name:
                 return
-        raise ValueError("Invalid stage speciefied - does not exist: {}".format(name))
+        raise ValueError(f"Invalid stage speciefied - does not exist: {name}")

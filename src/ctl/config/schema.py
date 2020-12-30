@@ -1,5 +1,3 @@
-from __future__ import division
-
 import re
 import copy
 
@@ -15,7 +13,7 @@ class Permission(confu.schema.Str):
     """
 
     def validate(self, value, path, **kwargs):
-        value = super(Permission, self).validate(value, path, **kwargs)
+        value = super().validate(value, path, **kwargs)
         if not grainy.core.int_flags(value):
             raise confu.exceptions.ValidationError(
                 self, path, value, "valid permission flags required"

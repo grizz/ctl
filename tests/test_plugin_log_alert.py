@@ -43,10 +43,8 @@ def test_init_and_collect(logged, alerted, levels, output_levels):
     for fn in logged:
         getattr(log, fn)(fn.upper())
 
-    collected = [
-        (level, "[{}] {}".format(logger_name, level.upper())) for level in logged
-    ]
-    alerted = ["[{}] {}".format(logger_name, level.upper()) for level in alerted]
+    collected = [(level, f"[{logger_name}] {level.upper()}") for level in logged]
+    alerted = [f"[{logger_name}] {level.upper()}" for level in alerted]
 
     assert plugin.messages == collected
 

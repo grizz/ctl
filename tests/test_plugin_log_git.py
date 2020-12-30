@@ -22,4 +22,4 @@ def test_apply():
 
     plugin = instantiate_test_plugin("log_git", "test_log_git", **config)
 
-    assert plugin.apply("test", "error") == "deadbeef:123 {} - test".format(username)
+    assert plugin.apply("test", "error") == f"deadbeef:123 {username} - test"

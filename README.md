@@ -5,8 +5,6 @@
 [![PyPI](https://img.shields.io/pypi/pyversions/ctl.svg?maxAge=600)](https://pypi.python.org/pypi/ctl)
 [![Travis CI](https://img.shields.io/travis/20c/ctl.svg?maxAge=60)](https://travis-ci.org/20c/ctl)
 [![Codecov](https://img.shields.io/codecov/c/github/20c/ctl/master.svg?maxAge=60)](https://codecov.io/github/20c/ctl)
-[![Requires.io](https://img.shields.io/requires/github/20c/ctl.svg?maxAge=60)](https://requires.io/github/20c/ctl/requirements)
-
 
 Full control of your environment
 
@@ -16,7 +14,7 @@ Full control of your environment
 
 ## License
 
-Copyright 2016-2019 20C, LLC
+Copyright 2016-2020 20C, LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this softare except in compliance with the License.

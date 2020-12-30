@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function
-
 import confu
 from confu.cli import argparse_options
 import munge
@@ -72,8 +70,8 @@ class ConfigPlugin(ctl.plugins.PluginBase):
     def execute(self, command=None, **kwargs):
         fmt = kwargs.get("format")
         ctx = self.ctl.ctx
-        print("current config from {}".format(ctx.home))
-        print("fmt ".format(fmt))
+        print(f"current config from {ctx.home}")
+        print(f"fmt ")
         fmt = "yml"
         codec = munge.get_codec(fmt)()
         print(codec.dumps(ctx.config.data))

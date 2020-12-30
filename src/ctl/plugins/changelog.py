@@ -56,7 +56,7 @@ class ChangelogVersionMissing(KeyError):
         - version (`str`)
         """
 
-        super(ChangelogVersionMissing, self).__init__(
+        super().__init__(
             "Version {} does not exist in changelog located at {}".format(
                 version, data_file
             )
@@ -141,7 +141,7 @@ class ChangeLogPlugin(ExecutablePlugin):
         return data
 
     def execute(self, **kwargs):
-        super(ChangeLogPlugin, self).execute(**kwargs)
+        super().execute(**kwargs)
 
         if "data_file" in kwargs:
             kwargs["data_file"] = os.path.abspath(kwargs["data_file"])
@@ -167,13 +167,11 @@ class ChangeLogPlugin(ExecutablePlugin):
         """
         changelog = self.load(data_file)
         if version in changelog:
-            raise ValueError(
-                "Release {} already exists in {}".format(version, data_file)
-            )
+            raise ValueError(f"Release {version} already exists in {data_file}")
 
         release_section = {}
 
-        for change_type, changes in changelog.get("Unreleased", {}).items():
+        for change_type, changes in list(changelog.get("Unreleased", {}).items()):
             if changes:
                 release_section[change_type] = [change for change in changes]
 
@@ -181,9 +179,7 @@ class ChangeLogPlugin(ExecutablePlugin):
             raise ValueError("No items exist in unreleased to be moved")
 
         changelog[version] = release_section
-        changelog["Unreleased"] = dict(
-            [(section, []) for section in CHANGELOG_SECTIONS]
-        )
+        changelog["Unreleased"] = {section: [] for section in CHANGELOG_SECTIONS}
 
         ext = os.path.splitext(data_file)[1][1:]
         codec = munge.get_codec(ext)
@@ -191,7 +187,7 @@ class ChangeLogPlugin(ExecutablePlugin):
         with open(data_file, "w+") as fh:
             codec().dump(changelog, fh)
 
-        self.log.info("Updated {}".format(data_file))
+        self.log.info(f"Updated {data_file}")
 
         self.generate(self.get_config("md_file"), data_file)
 
@@ -215,7 +211,7 @@ class ChangeLogPlugin(ExecutablePlugin):
         """
 
         changelog = self.datafile_to_md(data_file)
-        self.log.info("Generating {}".format(md_file))
+        self.log.info(f"Generating {md_file}")
 
         if kwargs.get("print"):
             print(changelog)
@@ -239,15 +235,13 @@ class ChangeLogPlugin(ExecutablePlugin):
         """
 
         if os.path.exists(data_file):
-            raise ValueError("File already exists: {}".format(data_file))
+            raise ValueError(f"File already exists: {data_file}")
 
-        changelog = {
-            "Unreleased": dict([(section, []) for section in CHANGELOG_SECTIONS])
-        }
+        changelog = {"Unreleased": {section: [] for section in CHANGELOG_SECTIONS}}
 
         codec = os.path.splitext(data_file)[1][1:]
         codec = munge.get_codec(codec)
-        self.log.info("Generating {}".format(data_file))
+        self.log.info(f"Generating {data_file}")
         with open(data_file, "w+") as fh:
             codec().dump(changelog, fh)
 
@@ -273,7 +267,7 @@ class ChangeLogPlugin(ExecutablePlugin):
         changelog = self.md_to_dict(md_file)
         codec = os.path.splitext(data_file)[1][1:]
         codec = munge.get_codec(codec)
-        self.log.info("Generating {}".format(data_file))
+        self.log.info(f"Generating {data_file}")
 
         if kwargs.get("print"):
             print(codec().dumps(changelog))
@@ -305,7 +299,7 @@ class ChangeLogPlugin(ExecutablePlugin):
 
         releases = [
             {"version": version.capitalize(), "changes": changes}
-            for version, changes in data.items()
+            for version, changes in list(data.items())
         ]
 
         releases = sorted(releases, key=lambda i: i.get("version"), reverse=True)
@@ -313,13 +307,13 @@ class ChangeLogPlugin(ExecutablePlugin):
         for release in releases:
             out.extend(["", "", "## {version}".format(**release)])
             sections = {}
-            for change_type, items in release.get("changes", {}).items():
+            for change_type, items in list(release.get("changes", {}).items()):
                 if len(items):
-                    sections[change_type] = ["- {}".format(item) for item in items]
+                    sections[change_type] = [f"- {item}" for item in items]
 
             for change_type in CHANGELOG_SECTIONS:
                 if change_type in sections:
-                    out.append("### {}".format(change_type.capitalize()))
+                    out.append(f"### {change_type.capitalize()}")
                     out.extend(sections[change_type])
 
         return "\n".join(out)
@@ -339,10 +333,10 @@ class ChangeLogPlugin(ExecutablePlugin):
         changelog `dict`
         """
 
-        with open(changelog_filepath, "r") as fh:
+        with open(changelog_filepath) as fh:
             changelog_md = fh.readlines()
 
-        version_regex = "##\D+([\d\.]+|unreleased).?"
+        version_regex = r"##\D+([\d\.]+|unreleased).?"
         change_title_regex = "### (.+)"
         change_regex = "- (.+)"
 

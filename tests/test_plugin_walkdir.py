@@ -51,7 +51,7 @@ def test_process(tmpdir, ctlr):
 
     assert len(plugin.debug_info["processed"]) == 2
     for processed in plugin.debug_info["processed"]:
-        with open(processed["output"], "r") as fh:
+        with open(processed["output"]) as fh:
             assert fh.read() == "processed\n"
 
 

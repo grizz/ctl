@@ -2,7 +2,6 @@
 A plugin for sending emails
 """
 
-from __future__ import absolute_import
 
 import ctl
 import confu.schema
@@ -103,7 +102,7 @@ class EmailPlugin(PluginBase):
         msg["From"] = sender
         msg["To"] = recipient
 
-        self.log.debug("SENDING {} from {} to {}".format(subject, sender, recipient))
+        self.log.debug(f"SENDING {subject} from {sender} to {recipient}")
         if kwargs.get("test_mode"):
             return msg
 

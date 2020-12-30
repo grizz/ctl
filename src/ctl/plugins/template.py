@@ -6,7 +6,6 @@ Plugin that allows you to render templates
 `pip install tmpl jinja`
 """
 
-from __future__ import absolute_import
 
 import os
 import collections
@@ -86,10 +85,10 @@ class TemplatePlugin(CopyPlugin):
             ext = os.path.splitext(filepath)[1][1:]
             codec = munge.get_codec(ext)
             try:
-                with open(filepath, "r") as fh:
+                with open(filepath) as fh:
                     data = codec().load(fh)
                 update(env, data)
-            except IOError as exc:
+            except OSError as exc:
                 errors[filepath] = exc
         return errors
 
@@ -112,13 +111,13 @@ class TemplatePlugin(CopyPlugin):
         return self._engine
 
     def prepare(self, **kwargs):
-        super(TemplatePlugin, self).prepare(**kwargs)
+        super().prepare(**kwargs)
         self.debug_info["rendered"] = []
         self._tmpl_env = {}
         self.load_vars()
 
     def execute(self, **kwargs):
-        super(TemplatePlugin, self).execute(**kwargs)
+        super().execute(**kwargs)
 
     def load_vars(self):
         """
@@ -130,7 +129,7 @@ class TemplatePlugin(CopyPlugin):
         for filepath in self.get_config("vars"):
             ext = os.path.splitext(filepath)[1][1:]
             codec = munge.get_codec(ext)
-            with open(self.render_tmpl(filepath), "r") as fh:
+            with open(self.render_tmpl(filepath)) as fh:
                 data = codec().load(fh)
             update(self._tmpl_env, data)
 

@@ -20,7 +20,7 @@ class LogUserPlugin(LogPlugin):
     """
 
     def init(self):
-        super(LogUserPlugin, self).init()
+        super().init()
         self.username = pwd.getpwuid(os.getuid()).pw_name
 
     def apply(self, message):
@@ -36,5 +36,5 @@ class LogUserPlugin(LogPlugin):
         Augmented log message (`str`)
         """
 
-        prefix = "{who}".format(who=self.username)
-        return "{prefix} - {message}".format(prefix=prefix, message=message)
+        prefix = f"{self.username}"
+        return f"{prefix} - {message}"

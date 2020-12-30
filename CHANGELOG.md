@@ -4,10 +4,18 @@
 ## Unreleased
 ### Added
 - python 3.7 support (#15)
+- python 3.8 support (#19)
+- python 3.9 support (#19)
 ### Fixed
 - version plugin: bump needs to do a pull before changelog validation (#14)
 - venv plugin: copy: remove *.pyc files after copying a venv (#17)
+- venv plugin: sync_setup --freeze option added
+- venv plugin: sync_setup now also generates dev packages into extra_requires
 - issue in setup.py with download_url and url (#18)
+### Removed
+- python2.7 support (#21)
+- python3.4 support (#21)
+- python3.5 support (#21)
 
 
 ## 0.3.1

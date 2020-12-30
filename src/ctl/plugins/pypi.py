@@ -6,7 +6,6 @@ Plugin that allows you to release a python package to pypi
 `pip install twine`
 """
 
-from __future__ import absolute_import, division, print_function
 
 import os.path
 import subprocess
@@ -82,7 +81,7 @@ class PyPIPlugin(release.ReleasePlugin):
         return os.path.join(self.repository.checkout_path, "dist", "*")
 
     def prepare(self):
-        super(PyPIPlugin, self).prepare()
+        super().prepare()
         self.shell = True
         self.pypi_repository = self.get_config("pypi_repository")
         self.pypirc_path = os.path.expanduser(self.config.get("config_file"))
@@ -137,7 +136,7 @@ class PyPIPlugin(release.ReleasePlugin):
         Upload to pypi
         """
 
-        self.log.info("Using pypi config from {}".format(self.pypirc_path))
+        self.log.info(f"Using pypi config from {self.pypirc_path}")
 
         if not self.dry_run:
             twine_upload(self.twine_settings, [self.dist_path])

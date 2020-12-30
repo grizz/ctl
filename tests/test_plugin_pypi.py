@@ -13,7 +13,7 @@ from test_plugin_git import init_tmp_repo, instantiate as instantiate_git
 
 
 def package_repo(package_path, repo_path):
-    subprocess.call(["cp {}/* {} -r".format(package_path, repo_path)], shell=True)
+    subprocess.call([f"cp {package_path}/* {repo_path} -r"], shell=True)
     subprocess.call(
         ["git add *; git commit -am initial; git push;"], cwd=repo_path, shell=True
     )
