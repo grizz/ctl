@@ -4,14 +4,14 @@ A plugin that allows you to execute other plugins in a chain
 
 
 import argparse
-
+import collections
 import copy
+
 import confu.schema
+
 import ctl
 import ctl.config
-
 from ctl.docs import pymdgen_confu_types
-import collections
 
 
 @pymdgen_confu_types()

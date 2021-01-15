@@ -1,9 +1,10 @@
+import collections
 import re
 from functools import wraps
 
-from ctl.exceptions import PermissionDenied
 from grainy.core import int_flags
-import collections
+
+from ctl.exceptions import PermissionDenied
 
 
 class expose:

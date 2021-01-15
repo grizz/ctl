@@ -1,13 +1,12 @@
 import os
+
 import pytest
+from util import instantiate_test_plugin
 
 import ctl
-
+from ctl.exceptions import PermissionDenied
 from ctl.plugins.repository import RepositoryPlugin
 from ctl.plugins.version import VersionPlugin
-from ctl.exceptions import PermissionDenied
-
-from util import instantiate_test_plugin
 
 
 class DummyRepositoryPlugin(RepositoryPlugin):

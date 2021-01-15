@@ -4,14 +4,14 @@ A plugin that allows you to copy files
 
 
 import os
-import shutil
 import re
+import shutil
 
 import confu.schema
-import ctl
 
-from ctl.plugins.walk_dir import WalkDirPlugin, WalkDirPluginConfig
+import ctl
 from ctl.docs import pymdgen_confu_types
+from ctl.plugins.walk_dir import WalkDirPlugin, WalkDirPluginConfig
 
 
 @pymdgen_confu_types()

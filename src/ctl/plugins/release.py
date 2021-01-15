@@ -3,22 +3,21 @@ Plugin interface for plugins that handle software releases
 """
 
 
-import os
-import subprocess
 import argparse
+import os
+import select
+import subprocess
+
+import confu.schema
 
 import ctl
 import ctl.config
-import select
-import confu.schema
-
-from ctl.auth import expose
-from ctl.plugins import command
-from ctl.exceptions import UsageError
-from ctl.docs import pymdgen_confu_types
-
-import ctl.plugins.repository
 import ctl.plugins.git
+import ctl.plugins.repository
+from ctl.auth import expose
+from ctl.docs import pymdgen_confu_types
+from ctl.exceptions import UsageError
+from ctl.plugins import command
 
 
 @pymdgen_confu_types()

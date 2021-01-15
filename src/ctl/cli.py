@@ -1,15 +1,15 @@
 import argparse
-import munge
 import sys
 import traceback
 
 import grainy.core
+import munge
 
 import ctl
 import ctl.plugins.all
 from ctl import Context, Ctl, plugin
-from ctl.exceptions import PermissionDenied, ConfigError, PluginOperationStopped
 from ctl.events import common_events
+from ctl.exceptions import ConfigError, PermissionDenied, PluginOperationStopped
 
 
 # <release env> moving after deploy

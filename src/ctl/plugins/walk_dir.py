@@ -5,12 +5,12 @@ and sub-directories
 
 
 import os
-import shutil
 import re
+import shutil
 
 import confu.schema
-import ctl
 
+import ctl
 from ctl.docs import pymdgen_confu_types
 
 

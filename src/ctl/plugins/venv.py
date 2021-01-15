@@ -9,21 +9,21 @@ Plugin that allows you to manage a python virtual env
 """
 
 
-import os
-import sys
 import argparse
+import os
 import re
+import select
+import subprocess
+import sys
+
+import confu.schema
 
 import ctl
 import ctl.config
-import subprocess
-import select
-import confu.schema
-
 from ctl.auth import expose
-from ctl.plugins import command
-from ctl.exceptions import UsageError
 from ctl.docs import pymdgen_confu_types
+from ctl.exceptions import UsageError
+from ctl.plugins import command
 
 try:
     import pipenv_setup

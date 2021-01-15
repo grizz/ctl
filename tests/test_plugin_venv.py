@@ -1,15 +1,14 @@
-import sys
 import os
-import subprocess
-import shutil
 import re
+import shutil
+import subprocess
+import sys
 
 import pytest
+from util import instantiate_test_plugin
 
 import ctl
 from ctl.exceptions import UsageError
-
-from util import instantiate_test_plugin
 
 
 def instantiate(tmpdir, ctlr=None, **kwargs):

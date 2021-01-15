@@ -2,10 +2,10 @@
 Plugin that allows you send notification for log events
 """
 
-import ctl
-
-from ctl.plugins.log import LogPlugin
 from datetime import datetime
+
+import ctl
+from ctl.plugins.log import LogPlugin
 
 
 @ctl.plugin.register("log_alert")

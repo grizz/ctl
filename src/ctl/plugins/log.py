@@ -3,15 +3,16 @@ Plugin that allows you to manipulate logging functionality
 """
 
 
-import logging
 import copy
-import ctl
-import confu.schema
-import confu.generator
+import logging
 
+import confu.generator
+import confu.schema
+
+import ctl
 from ctl import plugin
-from ctl.log import ATTACHED
 from ctl.docs import pymdgen_confu_types
+from ctl.log import ATTACHED
 
 
 @pymdgen_confu_types()

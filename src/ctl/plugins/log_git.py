@@ -2,12 +2,13 @@
 Plugin that appends git reposity commit hash and tag version to log messages
 """
 import os
-import ctl
-import confu.schema
-from ctl import plugin
-from ctl.plugins.log_user import LogUserPlugin
 
+import confu.schema
+
+import ctl
+from ctl import plugin
 from ctl.docs import pymdgen_confu_types
+from ctl.plugins.log_user import LogUserPlugin
 
 
 @pymdgen_confu_types()

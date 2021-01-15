@@ -2,21 +2,21 @@
 Plugin that allows you to handle repository versioning
 """
 
-import os
-import ctl
-import confu.schema
 import argparse
-from ctl.plugins import ExecutablePlugin
-from ctl.plugins.repository import RepositoryPlugin
-from ctl.plugins.git import temporary_plugin as temporary_git_plugin
-from ctl.plugins.changelog import (
-    temporary_plugin as temporary_changelog_plugin,
-    ChangelogVersionMissing,
-)
-from ctl.util.versioning import bump_semantic, version_string
+import os
+
+import confu.schema
+
+import ctl
 from ctl.auth import expose
-from ctl.exceptions import UsageError, OperationNotExposed, PluginOperationStopped
 from ctl.docs import pymdgen_confu_types
+from ctl.exceptions import OperationNotExposed, PluginOperationStopped, UsageError
+from ctl.plugins import ExecutablePlugin
+from ctl.plugins.changelog import ChangelogVersionMissing
+from ctl.plugins.changelog import temporary_plugin as temporary_changelog_plugin
+from ctl.plugins.git import temporary_plugin as temporary_git_plugin
+from ctl.plugins.repository import RepositoryPlugin
+from ctl.util.versioning import bump_semantic, version_string
 
 
 @pymdgen_confu_types()

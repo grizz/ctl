@@ -3,12 +3,14 @@ Plugin that allows you to manage a git repository
 """
 
 
+import argparse
 import os
 import re
-import argparse
-import ctl
 import subprocess
+
 import confu.schema
+
+import ctl
 from ctl.auth import expose
 from ctl.exceptions import OperationNotExposed
 from ctl.plugins import PluginBase

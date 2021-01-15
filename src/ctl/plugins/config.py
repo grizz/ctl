@@ -1,8 +1,9 @@
-import confu
-from confu.cli import argparse_options
-import munge
-import subprocess
 import select
+import subprocess
+
+import confu
+import munge
+from confu.cli import argparse_options
 
 import ctl
 

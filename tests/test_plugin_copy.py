@@ -1,7 +1,9 @@
-import os
 import json
-import ctl
+import os
+
 from util import instantiate_test_plugin
+
+import ctl
 
 
 def instantiate(tmpdir, ctlr=None, **kwargs):

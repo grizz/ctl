@@ -2,18 +2,18 @@
 Plugin that allows you manage CHANGELOG.(md|yaml|json) files
 """
 
+import argparse
 import os.path
 import re
-import argparse
 from collections import OrderedDict
 
-import munge
 import confu.schema
+import munge
 
 import ctl
 from ctl.auth import expose
-from ctl.plugins import ExecutablePlugin
 from ctl.docs import pymdgen_confu_types
+from ctl.plugins import ExecutablePlugin
 
 CHANGELOG_SECTIONS = ("added", "fixed", "changed", "deprecated", "removed", "security")
 

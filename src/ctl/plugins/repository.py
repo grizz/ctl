@@ -2,15 +2,15 @@
 Plugin interface for plugins that manage software repositories
 """
 
-import ctl
 import os
+
 import confu.schema
 import giturlparse
 
-from ctl.util.versioning import version_tuple
-
-from ctl.plugins import ExecutablePlugin
+import ctl
 from ctl.docs import pymdgen_confu_types
+from ctl.plugins import ExecutablePlugin
+from ctl.util.versioning import version_tuple
 
 try:
     import urllib.parse as urlparse

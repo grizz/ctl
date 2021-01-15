@@ -1,22 +1,21 @@
+import copy
+import logging
 import os
-from pkg_resources import get_distribution
 
 import confu.config
 import confu.exceptions
 import grainy.core
-import copy
-import logging
 import munge
 import pluginmgr.config
 from confu.cli import argparse_options
+from grainy.core import PermissionSet, int_flags
+from pkg_resources import get_distribution
 
 # import to namespace
 from ctl.config import BaseSchema
-from ctl.exceptions import PermissionDenied, ConfigError
-from ctl.log import set_pylogger_config, Log
+from ctl.exceptions import ConfigError, PermissionDenied
+from ctl.log import Log, set_pylogger_config
 from ctl.util.template import IgnoreUndefined, filter_escape_regex
-from grainy.core import PermissionSet, int_flags
-
 
 __version__ = get_distribution("ctl").version
 

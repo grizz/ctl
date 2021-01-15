@@ -3,15 +3,15 @@ A plugin for sending emails
 """
 
 
-import ctl
-import confu.schema
 import smtplib
+from email.mime.text import MIMEText
 
-from ctl.plugins import PluginBase
+import confu.schema
+
+import ctl
 from ctl.config import SMTPConfigSchema
 from ctl.docs import pymdgen_confu_types
-
-from email.mime.text import MIMEText
+from ctl.plugins import PluginBase
 
 
 @pymdgen_confu_types()

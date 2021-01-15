@@ -1,6 +1,8 @@
-import ctl
 import subprocess
+
 from util import instantiate_test_plugin
+
+import ctl
 
 
 def init_tmp_repo(tmpdir):

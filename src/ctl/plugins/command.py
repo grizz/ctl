@@ -3,15 +3,15 @@ A plugin that allows you to run one or several shell commands
 """
 
 
-import sys
 import os
-import ctl
-import ctl.config
-import subprocess
 import select
+import subprocess
+import sys
+
 import confu.schema
 
-
+import ctl
+import ctl.config
 from ctl.auth import expose
 from ctl.docs import pymdgen_confu_types
 

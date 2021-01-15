@@ -1,4 +1,5 @@
 import pytest
+
 import ctl.util.versioning as versioning
 
 
