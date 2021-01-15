@@ -1,7 +1,4 @@
-import smtplib
-
 import ctl
-from ctl.plugins.email import EmailPlugin
 
 
 def plugin_instance():

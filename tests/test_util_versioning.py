@@ -9,7 +9,7 @@ def test_version_tuple(version, tupled):
 
 
 @pytest.mark.parametrize("version,string", [(("1", "0", "0"), "1.0.0")])
-def test_version_tuple(version, string):
+def test_version_string(version, string):
     assert versioning.version_string(version) == string
 
 
