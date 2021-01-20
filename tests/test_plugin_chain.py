@@ -83,4 +83,4 @@ def test_run_start(tmpdir, ctlr):
         open(outfile_1)
 
     with open(outfile_2) as fh:
-        assert (fh.read()) == "echo 2 ran\n"
+        assert str(fh.read()) == "echo 2 ran\n"
