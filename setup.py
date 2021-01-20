@@ -1,19 +1,21 @@
 from setuptools import find_packages, setup
 
 
-version = open('Ctl/VERSION').read().strip()
-requirements = open('Ctl/requirements.txt').read().split("\n")
-test_requirements = open('Ctl/requirements-test.txt').read().split("\n")
+LONG_DESCRIPTION = read_file("README.md")
+VERSION = read_file("facsimile/VERSION")
+REQUIREMENTS = read_file("facsimile/requirements.txt").split("\n")
+TEST_REQUIREMENTS = read_file("facsimile/requirements-test.txt").split("\n")
 
 
 setup(
     name='ctl',
-    version=version,
+    version=VERSION,
     author='20C',
     author_email='code@20c.com',
-    description='Get control of your environment',
-    long_description='',
-    license='LICENSE.txt',
+    description='Control your environment',
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/markdown",
+    license='LICENSE',
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: Apache Software License',
@@ -26,10 +28,10 @@ setup(
     package_dir={"": "src"},
     include_package_data=True,
     url='https://github.com/20c/ctl',
-    download_url='https://github.com/20c/ctl/%s' % version,
+    download_url=f'https://github.com/20c/ctl/{VERSION}',
 
-    install_requires=requirements,
-    test_requires=test_requirements,
+    install_requires=REQUIREMENTS,
+    test_requires=TEST_REQUIREMENTS,
 
     entry_points={
         'console_scripts': [
