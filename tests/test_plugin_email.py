@@ -10,6 +10,7 @@ def test_init():
     plugin = plugin_instance()
     # XXX assert plugin
 
+
 def test_send():
     plugin = plugin_instance()
     msg = plugin._send(
