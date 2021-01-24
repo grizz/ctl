@@ -15,25 +15,30 @@
   - 'fix #6: fix semantic version bumping when the current version is truncated'
 0.3.1:
   changed:
-  - 'switch to confu package, away from cfu (same version and codebase, different package
-    name)'
-  - 'update test requirements for pyaml according to python version'
-Unreleased:
+  - switch to confu package, away from cfu (same version and codebase, different package
+    name)
+  - update test requirements for pyaml according to python version
+1.0.0:
   added:
-  - 'python 3.7 support (#15)'
-  - 'python 3.8 support (#19)'
-  - 'python 3.9 support (#19)'
-  changed: []
-  deprecated: []
+  - python 3.7 support (#15)
+  - python 3.8 support (#19)
+  - python 3.9 support (#19)
   fixed:
   - 'version plugin: bump needs to do a pull before changelog validation (#14)'
   - 'venv plugin: copy: remove *.pyc files after copying a venv (#17)'
   - 'venv plugin: sync_setup --freeze option added'
   - 'venv plugin: sync_setup now also generates dev packages into extra_requires'
-  - 'issue in setup.py with download_url and url (#18)'
+  - issue in setup.py with download_url and url (#18)
   removed:
-  - venv plugin is no longer working (due to poetry not allowing bash scripts and it no longer being used)
-  - 'python2.7 support (#21)'
-  - 'python3.4 support (#21)'
-  - 'python3.5 support (#21)'
+  - venv plugin is no longer working (due to poetry not allowing bash scripts and
+    it no longer being used)
+  - python2.7 support (#21)
+  - python3.4 support (#21)
+  - python3.5 support (#21)
+Unreleased:
+  added: []
+  changed: []
+  deprecated: []
+  fixed: []
+  removed: []
   security: []

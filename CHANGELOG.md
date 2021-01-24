@@ -2,6 +2,9 @@
 
 
 ## Unreleased
+
+
+## 1.0.0
 ### Added
 - python 3.7 support (#15)
 - python 3.8 support (#19)
@@ -13,6 +16,7 @@
 - venv plugin: sync_setup now also generates dev packages into extra_requires
 - issue in setup.py with download_url and url (#18)
 ### Removed
+- venv plugin is no longer working (due to poetry not allowing bash scripts and it no longer being used)
 - python2.7 support (#21)
 - python3.4 support (#21)
 - python3.5 support (#21)

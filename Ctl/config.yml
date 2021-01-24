@@ -4,6 +4,14 @@ ctl:
     - type: changelog
       name: changelog
 
+    - name: version
+      type: version
+      config:
+        branch_dev: master
+        branch_release: master
+        repositories:
+          - this_repo
+
   permissions:
     - namespace: "ctl"
       permission: "crud"
