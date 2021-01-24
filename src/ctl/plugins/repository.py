@@ -7,15 +7,9 @@ import os
 import confu.schema
 import giturlparse
 
-import ctl
 from ctl.docs import pymdgen_confu_types
 from ctl.plugins import ExecutablePlugin
 from ctl.util.versioning import version_tuple
-
-try:
-    import urllib.parse as urlparse
-except ImportError:
-    import urllib.parse
 
 
 @pymdgen_confu_types()

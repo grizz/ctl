@@ -2,8 +2,6 @@ import subprocess
 
 from util import instantiate_test_plugin
 
-import ctl
-
 
 def init_tmp_repo(tmpdir):
     repo_path = str(tmpdir.mkdir("git_repo_src.git"))
@@ -27,7 +25,7 @@ def init_tmp_repo(tmpdir):
     subprocess.call(
         [
             "cd {path}; git push -u origin master;".format(
-                path=repo_path_clone, src=repo_path
+                path=repo_path_clone
             )
         ],
         shell=True,
@@ -64,8 +62,8 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
 
 def test_init_and_clone(tmpdir, ctlr):
     plugin, repo_path = instantiate(tmpdir, ctlr)
-    assert plugin.is_cloned == True
-    assert plugin.is_clean == True
+    assert plugin.is_cloned
+    assert plugin.is_clean
     assert plugin.branch == "master"
     assert len(plugin.uuid) > 0
 

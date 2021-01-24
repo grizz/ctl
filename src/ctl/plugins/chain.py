@@ -3,9 +3,7 @@ A plugin that allows you to execute other plugins in a chain
 """
 
 
-import argparse
 import collections
-import copy
 
 import confu.schema
 

@@ -4,7 +4,6 @@ A plugin that allows you to copy files
 
 
 import os
-import re
 import shutil
 
 import confu.schema
@@ -64,7 +63,7 @@ class CopyPlugin(WalkDirPlugin):
         - dirpath (`str`): relative dirpath being processed
         """
         output_dir = os.path.dirname(self.output(path))
-        self.log.info(self.output(path))
+        self.log.info(output_dir)
 
         self.debug_append("copied", self.output(path))
 

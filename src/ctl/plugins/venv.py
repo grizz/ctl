@@ -11,10 +11,6 @@ Plugin that allows you to manage a python virtual env
 
 import argparse
 import os
-import re
-import select
-import subprocess
-import sys
 
 import confu.schema
 
@@ -67,11 +63,11 @@ class VenvPlugin(command.CommandPlugin):
         # subparser that routes operation
         sub = parser.add_subparsers(title="Operation", dest="op")
 
-        op_build_parser = sub.add_parser(
+        sub.add_parser(
             "build", help="build virtualenv", parents=[install_parser]
         )
 
-        op_sync_parser = sub.add_parser(
+        sub.add_parser(
             "sync",
             help="sync virtualenv using pipenv, "
             "will build venv first if it does not exist",

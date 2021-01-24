@@ -5,7 +5,6 @@ import os
 import pwd
 
 import ctl
-from ctl import plugin
 from ctl.plugins.log import LogPlugin
 
 

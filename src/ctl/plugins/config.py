@@ -1,9 +1,5 @@
-import select
-import subprocess
-
 import confu
 import munge
-from confu.cli import argparse_options
 
 import ctl
 
@@ -72,7 +68,6 @@ class ConfigPlugin(ctl.plugins.PluginBase):
         fmt = kwargs.get("format")
         ctx = self.ctl.ctx
         print(f"current config from {ctx.home}")
-        print(f"fmt ")
         fmt = "yml"
         codec = munge.get_codec(fmt)()
         print(codec.dumps(ctx.config.data))

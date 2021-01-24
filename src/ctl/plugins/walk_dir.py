@@ -6,7 +6,6 @@ and sub-directories
 
 import os
 import re
-import shutil
 
 import confu.schema
 
@@ -233,7 +232,7 @@ class WalkDirPlugin(ctl.plugins.ExecutablePlugin):
             pattern = process_config.get("pattern")
             if re.search(pattern, path) is not None:
                 fn = getattr(plugin, action)
-                r = fn(source=self.source(path), output=self.output(path))
+                fn(source=self.source(path), output=self.output(path))
                 self.debug_append(
                     "processed",
                     {

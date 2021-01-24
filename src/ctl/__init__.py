@@ -1,5 +1,4 @@
 import copy
-import logging
 import os
 
 import confu.config
@@ -7,7 +6,6 @@ import confu.exceptions
 import grainy.core
 import munge
 import pluginmgr.config
-from confu.cli import argparse_options
 from grainy.core import PermissionSet, int_flags
 from pkg_resources import get_distribution
 
@@ -60,7 +58,7 @@ def plugin_cli_arguments(ctlr, parser, plugin_config):
     # add any aditional cli args
 
     if hasattr(plugin_class, "add_arguments"):
-        parsers = plugin_class.add_arguments(
+        plugin_class.add_arguments(
             parser, config.get("config"), confu_cli_args
         )
 

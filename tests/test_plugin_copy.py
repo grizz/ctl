@@ -1,4 +1,3 @@
-import json
 import os
 
 from util import instantiate_test_plugin

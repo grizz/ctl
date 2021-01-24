@@ -1,9 +1,7 @@
 import os
 import subprocess
-import sys
 
 import pytest
-from test_plugin_git import init_tmp_repo
 from test_plugin_git import instantiate as instantiate_git
 from util import instantiate_test_plugin
 

@@ -5,7 +5,6 @@ Plugin that allows you manage CHANGELOG.(md|yaml|json) files
 import argparse
 import os.path
 import re
-from collections import OrderedDict
 
 import confu.schema
 import munge
@@ -105,13 +104,13 @@ class ChangeLogPlugin(ExecutablePlugin):
 
         # operation `generate`
 
-        op_generate_parser = sub.add_parser(
+        sub.add_parser(
             "generate", help="generate CHANGELOG.md", parents=[generate_parser]
         )
 
         # operation `generate_datafile`
 
-        op_generate_datafile_parser = sub.add_parser(
+        sub.add_parser(
             "generate_datafile",
             help="generate CHANGELOG.yaml from CHANGELOG.md",
             parents=[generate_parser],

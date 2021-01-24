@@ -1,10 +1,6 @@
 import os
 import subprocess
 
-import pytest
-
-import ctl
-
 
 def test_cli(config_dir):
     output = subprocess.check_output(

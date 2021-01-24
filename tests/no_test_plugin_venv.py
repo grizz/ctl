@@ -35,9 +35,9 @@ def test_build_and_exists(tmpdir, ctlr):
     path = os.path.join(str(tmpdir.mkdir("test_venv")), "venv")
     plugin = instantiate(tmpdir, ctlr)
     plugin.execute(op="build", output=path)
-    assert plugin.venv_exists() == True
-    assert plugin.venv_exists(path) == True
-    assert plugin.venv_exists("does.not.exist") == False
+    assert plugin.venv_exists()
+    assert plugin.venv_exists(path)
+    assert not plugin.venv_exists("does.not.exist")
     plugin.venv_validate()
     plugin.venv_validate(path)
     with pytest.raises(UsageError):
@@ -67,7 +67,7 @@ def test_copy(tmpdir, ctlr):
     plugin.execute(op="build", output=path)
     plugin.execute(op="copy", source=path, output=path_copy)
 
-    assert plugin.venv_exists(path_copy) == True
+    assert plugin.venv_exists(path_copy)
     plugin.venv_validate(path_copy)
 
 

@@ -8,7 +8,7 @@ def plugin_instance():
 
 def test_init():
     plugin = plugin_instance()
-    # XXX assert plugin
+    assert plugin
 
 
 def test_send():

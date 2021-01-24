@@ -4,7 +4,6 @@ A plugin that allows you to run one or several shell commands
 
 
 import os
-import select
 import subprocess
 import sys
 
@@ -180,8 +179,6 @@ class CommandPlugin(ctl.plugins.ExecutablePlugin):
 
         - int: process return code
         """
-
-        chunk_size = 4096
 
         popen_kwargs = {
             "stdout": subprocess.PIPE,
