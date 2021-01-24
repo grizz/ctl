@@ -3,7 +3,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/ctl.svg?maxAge=60)](https://pypi.python.org/pypi/ctl)
 [![PyPI](https://img.shields.io/pypi/pyversions/ctl.svg?maxAge=600)](https://pypi.python.org/pypi/ctl)
-[![Travis CI](https://img.shields.io/travis/20c/ctl.svg?maxAge=60)](https://travis-ci.org/20c/ctl)
+[![Tests](https://github.com/20c/ctl/workflows/tests/badge.svg)](https://github.com/20c/ctl)
 [![Codecov](https://img.shields.io/codecov/c/github/20c/ctl/master.svg?maxAge=60)](https://codecov.io/github/20c/ctl)
 
 Full control of your environment
