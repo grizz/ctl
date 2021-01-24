@@ -63,9 +63,7 @@ class VenvPlugin(command.CommandPlugin):
         # subparser that routes operation
         sub = parser.add_subparsers(title="Operation", dest="op")
 
-        sub.add_parser(
-            "build", help="build virtualenv", parents=[install_parser]
-        )
+        sub.add_parser("build", help="build virtualenv", parents=[install_parser])
 
         sub.add_parser(
             "sync",

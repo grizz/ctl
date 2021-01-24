@@ -114,14 +114,10 @@ class GitPlugin(RepositoryPlugin):
         sub = parser.add_subparsers(title="Operation", dest="op")
 
         # operation `clone`
-        sub.add_parser(
-            "clone", help="clone repo", parents=[shared_parser]
-        )
+        sub.add_parser("clone", help="clone repo", parents=[shared_parser])
 
         # operation `pull`
-        sub.add_parser(
-            "pull", help="pull remote", parents=[shared_parser]
-        )
+        sub.add_parser("pull", help="pull remote", parents=[shared_parser])
 
         # operation `checkout`
         op_checkout_parser = sub.add_parser(

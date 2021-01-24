@@ -58,9 +58,7 @@ def plugin_cli_arguments(ctlr, parser, plugin_config):
     # add any aditional cli args
 
     if hasattr(plugin_class, "add_arguments"):
-        plugin_class.add_arguments(
-            parser, config.get("config"), confu_cli_args
-        )
+        plugin_class.add_arguments(parser, config.get("config"), confu_cli_args)
 
     # if no confu generated cli parameters were attached / routed
     # add them all to the main parser
