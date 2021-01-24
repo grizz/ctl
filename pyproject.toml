@@ -22,7 +22,6 @@ classifiers = [
 
 [tool.poetry.scripts]
 ctl = "ctl.cli:main"
-ctl_venv_build = "ctl.run_bin:venv_build"
 
 
 [tool.poetry.dependencies]
