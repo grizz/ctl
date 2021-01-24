@@ -1,8 +1,5 @@
 import os
-import pytest
 import subprocess
-
-import ctl
 
 
 def test_cli(config_dir):

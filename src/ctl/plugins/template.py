@@ -7,12 +7,13 @@ Plugin that allows you to render templates
 """
 
 
-import os
 import collections
+import os
 
-import ctl
 import confu.schema
 import munge
+
+import ctl
 
 try:
     import tmpl
@@ -20,7 +21,7 @@ except ImportError:
     tmpl = None
 
 from ctl.docs import pymdgen_confu_types
-from ctl.plugins.copy import CopyPluginConfig, CopyPlugin
+from ctl.plugins.copy import CopyPlugin, CopyPluginConfig
 
 
 @pymdgen_confu_types()

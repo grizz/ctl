@@ -1,15 +1,12 @@
 import argparse
-import munge
 import sys
 import traceback
-
-import grainy.core
 
 import ctl
 import ctl.plugins.all
 from ctl import Context, Ctl, plugin
-from ctl.exceptions import PermissionDenied, ConfigError, PluginOperationStopped
 from ctl.events import common_events
+from ctl.exceptions import ConfigError, PluginOperationStopped
 
 
 # <release env> moving after deploy
@@ -161,7 +158,7 @@ def main(argv=sys.argv, run=True):
 
     try:
         ctlr.init()
-    except ConfigError as exc:
+    except ConfigError:
         sys.exit(1)
 
     try:

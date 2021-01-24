@@ -2,18 +2,17 @@
 Plugin that allows you manage CHANGELOG.(md|yaml|json) files
 """
 
+import argparse
 import os.path
 import re
-import argparse
-from collections import OrderedDict
 
-import munge
 import confu.schema
+import munge
 
 import ctl
 from ctl.auth import expose
-from ctl.plugins import ExecutablePlugin
 from ctl.docs import pymdgen_confu_types
+from ctl.plugins import ExecutablePlugin
 
 CHANGELOG_SECTIONS = ("added", "fixed", "changed", "deprecated", "removed", "security")
 
@@ -105,13 +104,13 @@ class ChangeLogPlugin(ExecutablePlugin):
 
         # operation `generate`
 
-        op_generate_parser = sub.add_parser(
+        sub.add_parser(
             "generate", help="generate CHANGELOG.md", parents=[generate_parser]
         )
 
         # operation `generate_datafile`
 
-        op_generate_datafile_parser = sub.add_parser(
+        sub.add_parser(
             "generate_datafile",
             help="generate CHANGELOG.yaml from CHANGELOG.md",
             parents=[generate_parser],

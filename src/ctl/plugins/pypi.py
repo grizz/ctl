@@ -8,24 +8,20 @@ Plugin that allows you to release a python package to pypi
 
 
 import os.path
-import subprocess
+
+import confu.schema
 
 import ctl
 import ctl.config
-import select
-import confu.schema
-
-from ctl.auth import expose
-from ctl.plugins import release
-from ctl.exceptions import UsageError
 from ctl.docs import pymdgen_confu_types
+from ctl.plugins import release
 
 PYPI_TEST_REPO = "https://test.pypi.org/legacy/"
 PYPY_LIVE_REPO = ""
 
 try:
-    from twine.commands.upload import upload as twine_upload
     from twine.commands.check import check as twine_check
+    from twine.commands.upload import upload as twine_upload
     from twine.settings import Settings
 except ImportError:
     pass

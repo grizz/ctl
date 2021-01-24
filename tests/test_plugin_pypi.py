@@ -1,15 +1,12 @@
 import os
 import subprocess
-import sys
 
 import pytest
+from test_plugin_git import instantiate as instantiate_git
+from util import instantiate_test_plugin
 
 import ctl
 from ctl.exceptions import UsageError
-
-from util import instantiate_test_plugin
-
-from test_plugin_git import init_tmp_repo, instantiate as instantiate_git
 
 
 def package_repo(package_path, repo_path):

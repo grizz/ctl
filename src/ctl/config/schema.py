@@ -1,9 +1,9 @@
-import re
 import copy
+import re
 
-import confu.schema
-import confu.generator
 import confu.exceptions
+import confu.generator
+import confu.schema
 import grainy.core
 
 

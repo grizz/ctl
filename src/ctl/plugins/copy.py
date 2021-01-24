@@ -5,13 +5,12 @@ A plugin that allows you to copy files
 
 import os
 import shutil
-import re
 
 import confu.schema
-import ctl
 
-from ctl.plugins.walk_dir import WalkDirPlugin, WalkDirPluginConfig
+import ctl
 from ctl.docs import pymdgen_confu_types
+from ctl.plugins.walk_dir import WalkDirPlugin, WalkDirPluginConfig
 
 
 @pymdgen_confu_types()
@@ -64,7 +63,7 @@ class CopyPlugin(WalkDirPlugin):
         - dirpath (`str`): relative dirpath being processed
         """
         output_dir = os.path.dirname(self.output(path))
-        self.log.info(self.output(path))
+        self.log.info(output_dir)
 
         self.debug_append("copied", self.output(path))
 

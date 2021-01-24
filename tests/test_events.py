@@ -1,5 +1,3 @@
-import pytest
-
 from ctl.events import Events
 
 

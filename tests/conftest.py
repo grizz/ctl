@@ -1,6 +1,6 @@
 import os
-import pytest
 
+import pytest
 import pytest_filedata
 
 import ctl

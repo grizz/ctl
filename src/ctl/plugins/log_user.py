@@ -1,10 +1,10 @@
 """
 Plugin that allows you to append user information to log messages
 """
-import pwd
 import os
+import pwd
+
 import ctl
-from ctl import plugin
 from ctl.plugins.log import LogPlugin
 
 

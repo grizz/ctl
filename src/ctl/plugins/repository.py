@@ -2,20 +2,14 @@
 Plugin interface for plugins that manage software repositories
 """
 
-import ctl
 import os
+
 import confu.schema
 import giturlparse
 
-from ctl.util.versioning import version_tuple
-
-from ctl.plugins import ExecutablePlugin
 from ctl.docs import pymdgen_confu_types
-
-try:
-    import urllib.parse as urlparse
-except ImportError:
-    import urllib.parse
+from ctl.plugins import ExecutablePlugin
+from ctl.util.versioning import version_tuple
 
 
 @pymdgen_confu_types()

@@ -3,22 +3,15 @@ Plugin that allows you to manage a git repository
 """
 
 
+import argparse
 import os
 import re
-import argparse
-import ctl
 import subprocess
-import confu.schema
+
+import ctl
 from ctl.auth import expose
 from ctl.exceptions import OperationNotExposed
-from ctl.plugins import PluginBase
-from ctl.plugins.command import CommandPlugin
 from ctl.plugins.repository import RepositoryPlugin
-
-try:
-    import urllib.parse as urlparse
-except ImportError:
-    import urllib.parse
 
 
 def temporary_plugin(ctl, name, path, **config):
@@ -102,7 +95,7 @@ class GitPlugin(RepositoryPlugin):
         """
         get_branch = self.command("rev-parse", "--verify", name)
         try:
-            result = self.run_git_command(get_branch)
+            self.run_git_command(get_branch)
         except Exception as exc:
             if f"{exc}".find("fatal: Needed a single revision") > -1:
                 return False
@@ -121,14 +114,10 @@ class GitPlugin(RepositoryPlugin):
         sub = parser.add_subparsers(title="Operation", dest="op")
 
         # operation `clone`
-        op_clone_parser = sub.add_parser(
-            "clone", help="clone repo", parents=[shared_parser]
-        )
+        sub.add_parser("clone", help="clone repo", parents=[shared_parser])
 
         # operation `pull`
-        op_pull_parser = sub.add_parser(
-            "pull", help="pull remote", parents=[shared_parser]
-        )
+        sub.add_parser("pull", help="pull remote", parents=[shared_parser])
 
         # operation `checkout`
         op_checkout_parser = sub.add_parser(
@@ -261,7 +250,7 @@ class GitPlugin(RepositoryPlugin):
         command_commit = self.command("commit", *files) + ["-m", message]
         self.run_git_command(command_commit)
 
-        self.log.debug(f"COMMIT COMPLETE")
+        self.log.debug("COMMIT COMPLETE")
         if kwargs.get("push"):
             self.push()
 

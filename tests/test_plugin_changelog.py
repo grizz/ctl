@@ -1,13 +1,11 @@
 import os
-import pytest
 import shutil
 
-import ctl
-import json
-
-from ctl.plugins.changelog import ChangeLogPlugin, ChangelogVersionMissing
-
+import pytest
 from util import instantiate_test_plugin
+
+import ctl
+from ctl.plugins.changelog import ChangelogVersionMissing
 
 
 def instantiate(tmpdir, ctlr=None, **kwargs):

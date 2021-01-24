@@ -9,21 +9,17 @@ Plugin that allows you to manage a python virtual env
 """
 
 
-import os
-import sys
 import argparse
-import re
+import os
+
+import confu.schema
 
 import ctl
 import ctl.config
-import subprocess
-import select
-import confu.schema
-
 from ctl.auth import expose
-from ctl.plugins import command
-from ctl.exceptions import UsageError
 from ctl.docs import pymdgen_confu_types
+from ctl.exceptions import UsageError
+from ctl.plugins import command
 
 try:
     import pipenv_setup
@@ -67,11 +63,9 @@ class VenvPlugin(command.CommandPlugin):
         # subparser that routes operation
         sub = parser.add_subparsers(title="Operation", dest="op")
 
-        op_build_parser = sub.add_parser(
-            "build", help="build virtualenv", parents=[install_parser]
-        )
+        sub.add_parser("build", help="build virtualenv", parents=[install_parser])
 
-        op_sync_parser = sub.add_parser(
+        sub.add_parser(
             "sync",
             help="sync virtualenv using pipenv, "
             "will build venv first if it does not exist",

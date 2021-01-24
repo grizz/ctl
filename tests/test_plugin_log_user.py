@@ -1,8 +1,9 @@
 import os
 import pwd
 
-from ctl.plugins.log_user import LogUserPlugin
 from util import instantiate_test_plugin
+
+from ctl.plugins.log_user import LogUserPlugin
 
 
 def test_apply():

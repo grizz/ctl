@@ -3,15 +3,16 @@ Base classes for ctl plugins
 """
 
 
-import pluginmgr.config
-import confu.schema
-from confu.cli import argparse_options
-import ctl
-
-from ctl.log import Log
-from ctl.events import common_events
-from ctl.exceptions import ConfigError, UsageError, OperationNotExposed
 import collections
+
+import confu.schema
+import pluginmgr.config
+from confu.cli import argparse_options
+
+import ctl
+from ctl.events import common_events
+from ctl.exceptions import ConfigError, OperationNotExposed, UsageError
+from ctl.log import Log
 
 __all__ = ["command", "config"]
 

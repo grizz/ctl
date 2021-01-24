@@ -1,6 +1,4 @@
-import smtplib
 import ctl
-from ctl.plugins.email import EmailPlugin
 
 
 def plugin_instance():
@@ -10,6 +8,7 @@ def plugin_instance():
 
 def test_init():
     plugin = plugin_instance()
+    assert plugin
 
 
 def test_send():

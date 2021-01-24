@@ -1,8 +1,9 @@
 import os
-import json
+
 import pytest
-import ctl
 from util import instantiate_test_plugin
+
+import ctl
 
 
 def instantiate(tmpdir, ctlr=None, **kwargs):
@@ -17,6 +18,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
         _ctl=ctlr,
         config={"command": [f"echo 'echo 1 ran' > {path_1}"], "shell": True},
     )
+    assert echo_1_plugin
 
     path_2 = os.path.join(path_dir, "test2")
 
@@ -29,6 +31,7 @@ def instantiate(tmpdir, ctlr=None, **kwargs):
             "shell": True,
         },
     )
+    assert echo_2_plugin
 
     config = {
         "config": {
@@ -67,7 +70,7 @@ def test_run_full(tmpdir, ctlr):
 def test_run_end(tmpdir, ctlr):
     plugin, outfile_1, outfile_2 = instantiate(tmpdir, ctlr)
     plugin.execute(end="first")
-    with pytest.raises(IOError) as exc:
+    with pytest.raises(IOError):
         open(outfile_2)
 
     with open(outfile_1) as fh:
@@ -77,8 +80,8 @@ def test_run_end(tmpdir, ctlr):
 def test_run_start(tmpdir, ctlr):
     plugin, outfile_1, outfile_2 = instantiate(tmpdir, ctlr)
     plugin.execute(start="second")
-    with pytest.raises(IOError) as exc:
+    with pytest.raises(IOError):
         open(outfile_1)
 
     with open(outfile_2) as fh:
-        assert (fh.read()) == "echo 2 ran\n"
+        assert str(fh.read()) == "echo 2 ran\n"

@@ -1,8 +1,9 @@
 import os
 import pwd
-import ctl
 
 from util import instantiate_test_plugin
+
+import ctl
 from ctl.plugins import PluginBase
 
 
