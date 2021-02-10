@@ -122,13 +122,14 @@ def test_tag_pyproject(tmpdir, ctlr):
 
     shutil.copyfile(
         os.path.join(os.path.dirname(__file__), "data", "version", "pyproject.toml"),
-        pyproject_path
+        pyproject_path,
     )
 
     plugin.tag(version="2.0.0", repo="dummy_repo")
 
     pyproject = toml.load(pyproject_path)
     assert pyproject["tool"]["poetry"]["version"] == "2.0.0"
+
 
 def test_bump(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)

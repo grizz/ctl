@@ -289,16 +289,12 @@ class VersionPlugin(ExecutablePlugin):
         if not os.path.exists(repo_plugin.repo_ctl_dir):
             os.makedirs(repo_plugin.repo_ctl_dir)
 
-
         files = []
 
         self.update_version_files(repo_plugin, version, files)
 
-        repo_plugin.commit(
-            files=files, message=f"Version {version}", push=True
-        )
+        repo_plugin.commit(files=files, message=f"Version {version}", push=True)
         repo_plugin.tag(version, message=version, push=True)
-
 
     @expose("ctl.{plugin_name}.bump")
     def bump(self, version, repo, **kwargs):
@@ -336,7 +332,6 @@ class VersionPlugin(ExecutablePlugin):
         if not is_dev and not self.no_auto_dev:
             self.log.info("Creating dev tag")
             self.bump(version="dev", repo=repo, **kwargs)
-
 
     def update_version_files(self, repo_plugin, version, files):
 
@@ -381,7 +376,6 @@ class VersionPlugin(ExecutablePlugin):
             with open(pyproject_path, "w") as fh:
                 toml.dump(pyproject, fh)
             return pyproject_path
-
 
     def validate_changelog(self, repo, version, data_file="CHANGELOG.yaml"):
 
