@@ -5,6 +5,8 @@ Plugin that allows you to handle repository versioning
 import argparse
 import os
 
+import toml
+
 import confu.schema
 
 import ctl
@@ -287,13 +289,16 @@ class VersionPlugin(ExecutablePlugin):
         if not os.path.exists(repo_plugin.repo_ctl_dir):
             os.makedirs(repo_plugin.repo_ctl_dir)
 
-        with open(repo_plugin.version_file, "w") as fh:
-            fh.write(version)
+
+        files = []
+
+        self.update_version_files(repo_plugin, version, files)
 
         repo_plugin.commit(
-            files=["Ctl/VERSION"], message=f"Version {version}", push=True
+            files=files, message=f"Version {version}", push=True
         )
         repo_plugin.tag(version, message=version, push=True)
+
 
     @expose("ctl.{plugin_name}.bump")
     def bump(self, version, repo, **kwargs):
@@ -331,6 +336,52 @@ class VersionPlugin(ExecutablePlugin):
         if not is_dev and not self.no_auto_dev:
             self.log.info("Creating dev tag")
             self.bump(version="dev", repo=repo, **kwargs)
+
+
+    def update_version_files(self, repo_plugin, version, files):
+
+        """
+        Finds the various files in a repo that will need to
+        have new version values written, such as Ctl/VERSION
+        and pyproject.toml
+        """
+
+        types = ["ctl", "pyproject"]
+
+        for typ in types:
+            fn = getattr(self, f"update_{typ}_version")
+            path = fn(repo_plugin, version)
+            if path:
+                files.append(path)
+
+    def update_ctl_version(self, repo_plugin, version):
+
+        """
+        Writes a new version to the Ctl/VERSION files
+        """
+
+        with open(repo_plugin.version_file, "w") as fh:
+            fh.write(version)
+        return repo_plugin.version_file
+
+    def update_pyproject_version(self, repo_plugin, version):
+
+        """
+        Writes a new version to the pyproject.toml file
+        if it exists
+        """
+
+        pyproject_path = os.path.join(repo_plugin.checkout_path, "pyproject.toml")
+
+        if os.path.exists(pyproject_path):
+            with open(pyproject_path, "r") as fh:
+                pyproject = toml.load(fh)
+
+            pyproject["tool"]["poetry"]["version"] = version
+            with open(pyproject_path, "w") as fh:
+                toml.dump(pyproject, fh)
+            return pyproject_path
+
 
     def validate_changelog(self, repo, version, data_file="CHANGELOG.yaml"):
 

@@ -38,6 +38,7 @@
 Unreleased:
   added:
   - '`pypi release` support for poetry based projects (#27)'
+  - '`version tag/bump` support for poetry based projects (#27)'
   changed: []
   deprecated: []
   fixed: []

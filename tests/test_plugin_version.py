@@ -1,4 +1,6 @@
 import os
+import shutil
+import toml
 
 import pytest
 from util import instantiate_test_plugin
@@ -112,6 +114,21 @@ def test_tag(tmpdir, ctlr):
     assert dummy_repo._merged == "release"
     assert dummy_repo.branch == "release"
 
+
+def test_tag_pyproject(tmpdir, ctlr):
+    plugin, dummy_repo = instantiate(tmpdir, ctlr)
+
+    pyproject_path = os.path.join(dummy_repo.checkout_path, "pyproject.toml")
+
+    shutil.copyfile(
+        os.path.join(os.path.dirname(__file__), "data", "version", "pyproject.toml"),
+        pyproject_path
+    )
+
+    plugin.tag(version="2.0.0", repo="dummy_repo")
+
+    pyproject = toml.load(pyproject_path)
+    assert pyproject["tool"]["poetry"]["version"] == "2.0.0"
 
 def test_bump(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
