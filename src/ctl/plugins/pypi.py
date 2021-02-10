@@ -105,7 +105,18 @@ class PyPIPlugin(release.ReleasePlugin):
         Build dist
         """
 
-        command = ["rm dist/* -rf", "python setup.py sdist"]
+
+        command = ["rm dist/* -rf"]
+
+        path = self.repository.checkout_path
+
+        if os.path.exists( os.path.join(path, "setup.py") ):
+            command.append("python setup.py sdist")
+        elif os.path.exists( os.path.join(path, "poetry.lock") ):
+            command.append("poetry build -f sdist")
+        else:
+            raise IOError("Could find neither setup.py nor poetry.lock")
+
         self._run_commands(command)
 
     def _validate(self, **kwargs):
