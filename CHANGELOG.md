@@ -2,6 +2,8 @@
 
 
 ## Unreleased
+### Added
+- `pypi release` support for poetry based projects (#27)
 
 
 ## 1.0.0

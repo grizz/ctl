@@ -36,7 +36,8 @@
   - python3.4 support (#21)
   - python3.5 support (#21)
 Unreleased:
-  added: []
+  added:
+  - '`pypi release` support for poetry based projects (#27)'
   changed: []
   deprecated: []
   fixed: []
