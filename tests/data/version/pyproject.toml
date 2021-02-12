@@ -1,0 +1,4 @@
+[tool.poetry]
+name = "ctl-test"
+repository = "https://github.com/20c/ctl"
+version = "1.0.0"
