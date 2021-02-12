@@ -111,8 +111,9 @@ class PyPIPlugin(release.ReleasePlugin):
 
         if os.path.exists(os.path.join(path, "setup.py")):
             command.append("python setup.py sdist")
+            command.append("python setup.py bdist_wheel")
         elif os.path.exists(os.path.join(path, "poetry.lock")):
-            command.append("poetry build -f sdist")
+            command.append("poetry build")
         else:
             raise IOError("Could find neither setup.py nor poetry.lock")
 
