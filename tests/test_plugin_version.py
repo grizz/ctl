@@ -179,6 +179,30 @@ def test_bump_truncated(tmpdir, ctlr):
     assert dummy_repo._tag == "4.0.0"
 
 
+def test_bump_prerelease(tmpdir, ctlr):
+    plugin, dummy_repo = instantiate(tmpdir, ctlr)
+    plugin.tag(version="1.0.0", repo="dummy_repo")
+
+    plugin.bump(version="patch", repo="dummy_repo", prerelease="alpha")
+    assert dummy_repo.version == ("1", "0", "1", "alpha")
+    assert dummy_repo._tag == "1.0.1-alpha"
+
+    plugin.bump(version="minor", repo="dummy_repo", prerelease="alpha")
+    assert dummy_repo.version == ("1", "1", "0", "alpha")
+    assert dummy_repo._tag == "1.1.0-alpha"
+
+    plugin.bump(version="major", repo="dummy_repo", prerelease="alpha")
+    assert dummy_repo.version == ("2", "0", "0", "alpha")
+    assert dummy_repo._tag == "2.0.0-alpha"
+
+    plugin.bump(version="dev", repo="dummy_repo", prerelease="alpha")
+    assert dummy_repo.version == ("2", "0", "0", "alpha", "1")
+    assert dummy_repo._tag == "2.0.0-alpha.1"
+
+    with pytest.raises(ValueError):
+        plugin.bump(version="dev", repo="dummy_repo", prerelease="&&&")
+
+
 def test_execute(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
     plugin.execute(op="tag", version="1.0.0", repository="dummy_repo", init=True)

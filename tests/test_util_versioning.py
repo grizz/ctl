@@ -33,6 +33,26 @@ def test_validate_semantic(version, expected, raises):
 
 
 @pytest.mark.parametrize(
+    "prerelease,raises",
+    [
+        ("alpha", None),
+        ("alpha.1", None),
+        ("0.3.7", None),
+        ("x-y-z.-", None),
+        ("&&&", ValueError),
+        ("abc.01", ValueError),
+        ("foo..bar", ValueError),
+    ],
+)
+def test_validate_prerelease(prerelease, raises):
+    if raises:
+        with pytest.raises(raises):
+            assert versioning.validate_prerelease(prerelease)
+    else:
+        assert versioning.validate_prerelease(prerelease)
+
+
+@pytest.mark.parametrize(
     "version,segment,expected",
     [
         ("1.2.3.4", "major", (2, 0, 0)),

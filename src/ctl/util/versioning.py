@@ -1,3 +1,6 @@
+import re
+
+
 def version_tuple(version):
     """ Returns a tuple from version string """
     return tuple(version.split("."))
@@ -23,6 +26,30 @@ def validate_semantic(version, pad=0):
         version = tuple(list(version) + [0 for i in range(0, pad - parts)])
 
     return tuple([int(n) for n in version])
+
+
+def validate_prerelease(prerelease):
+    if not isinstance(prerelease, (list, tuple)):
+        prerelease = version_tuple(prerelease)
+
+    for identifier in prerelease:
+
+        if identifier == "":
+            raise ValueError("Identifiers must not be empty")
+
+        regex = r"[0-9A-Za-z-]+"
+        match = re.match(regex, identifier)
+        if not bool(match):
+            raise ValueError(
+                "Prerelease identifier must comprise only ASCII alphanumerics and hyphens"
+            )
+
+        regex = r"^0[0-9]+"
+        match = re.match(regex, identifier)
+        if bool(match):
+            raise ValueError("Numeric identifiers must not have leading zeroes")
+
+    return True
 
 
 def bump_semantic(version, segment):
