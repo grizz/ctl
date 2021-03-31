@@ -5,20 +5,22 @@ Plugin that allows you to handle repository versioning
 import argparse
 import os
 
-import toml
-
 import confu.schema
+import toml
 
 import ctl
 from ctl.auth import expose
 from ctl.docs import pymdgen_confu_types
-from ctl.exceptions import OperationNotExposed, PluginOperationStopped, UsageError
+from ctl.exceptions import (OperationNotExposed, PluginOperationStopped,
+                            UsageError)
 from ctl.plugins import ExecutablePlugin
 from ctl.plugins.changelog import ChangelogVersionMissing
-from ctl.plugins.changelog import temporary_plugin as temporary_changelog_plugin
+from ctl.plugins.changelog import \
+    temporary_plugin as temporary_changelog_plugin
 from ctl.plugins.git import temporary_plugin as temporary_git_plugin
 from ctl.plugins.repository import RepositoryPlugin
-from ctl.util.versioning import bump_semantic, version_string
+from ctl.util.versioning import (bump_semantic, create_version_tag,
+                                 validate_prerelease, version_string)
 
 
 @pymdgen_confu_types()
@@ -273,6 +275,7 @@ class VersionPlugin(ExecutablePlugin):
 
         **Keyword Arguments**
 
+        - prerelease (`str`): identifier if this is a prerelease version
         - release (`bool`): if `True` also run `merge_release`
         """
         repo_plugin = self.repository(repo)
@@ -285,16 +288,24 @@ class VersionPlugin(ExecutablePlugin):
             self.merge_release(repo=repo)
             repo_plugin.checkout(self.get_config("branch_release") or "master")
 
-        self.log.info(f"Preparing to tag {repo_plugin.checkout_path} as {version}")
+        if kwargs.get("prerelease"):
+            prerelease = kwargs.get("prerelease")
+            validate_prerelease(prerelease)
+        else:
+            prerelease = None
+
+        version_tag = create_version_tag(version, prerelease)
+
+        self.log.info(f"Preparing to tag {repo_plugin.checkout_path} as {version_tag}")
         if not os.path.exists(repo_plugin.repo_ctl_dir):
             os.makedirs(repo_plugin.repo_ctl_dir)
 
         files = []
 
-        self.update_version_files(repo_plugin, version, files)
+        self.update_version_files(repo_plugin, version_tag, files)
 
-        repo_plugin.commit(files=files, message=f"Version {version}", push=True)
-        repo_plugin.tag(version, message=version, push=True)
+        repo_plugin.commit(files=files, message=f"Version {version_tag}", push=True)
+        repo_plugin.tag(version_tag, message=version_tag, push=True)
 
     @expose("ctl.{plugin_name}.bump")
     def bump(self, version, repo, **kwargs):
