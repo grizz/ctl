@@ -3,6 +3,10 @@ import re
 
 def version_tuple(version):
     """ Returns a tuple from version string """
+    if len(version.split("-")) > 1:
+        version = version.split("-")[0]
+        prerelease = "-".join(version.split("-")[1:])
+
     return tuple(version.split("."))
 
 
@@ -30,7 +34,7 @@ def validate_semantic(version, pad=0):
 
 def validate_prerelease(prerelease):
     if not isinstance(prerelease, (list, tuple)):
-        prerelease = version_tuple(prerelease)
+        prerelease = tuple(prerelease.split("."))
 
     for identifier in prerelease:
 
@@ -68,3 +72,21 @@ def bump_semantic(version, segment):
             return (version[0], version[1], version[2], version[3] + 1)
         except IndexError:
             return (version[0], version[1], version[2], 1)
+
+
+def create_version_tag(version, prerelease=None):
+
+    if not prerelease:
+        return version
+
+    if len(version_tuple(version)) < 4:
+
+        return f"{version}-{prerelease}"
+
+    elif len(version_tuple(version)) == 4:
+        vt = version_tuple(version)
+        version = version_string(vt[0:3])
+        dev = vt[3]
+        return f"{version}-{prerelease}.{dev}"
+
+        return None

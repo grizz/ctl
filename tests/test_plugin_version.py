@@ -131,6 +131,14 @@ def test_tag_pyproject(tmpdir, ctlr):
     assert pyproject["tool"]["poetry"]["version"] == "2.0.0"
 
 
+def test_tag_prerelease(tmpdir, ctlr):
+    plugin, dummy_repo = instantiate(tmpdir, ctlr)
+    plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="1.2.3")
+    assert os.path.exists(dummy_repo.version_file)
+    assert dummy_repo.version == ("1", "0", "0")
+    assert dummy_repo._tag == "1.0.0-1.2.3"
+
+
 def test_bump(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
     plugin.tag(version="1.0.0", repo="dummy_repo")
@@ -184,19 +192,19 @@ def test_bump_prerelease(tmpdir, ctlr):
     plugin.tag(version="1.0.0", repo="dummy_repo")
 
     plugin.bump(version="patch", repo="dummy_repo", prerelease="alpha")
-    assert dummy_repo.version == ("1", "0", "1", "alpha")
+    assert dummy_repo.version == ("1", "0", "1")
     assert dummy_repo._tag == "1.0.1-alpha"
 
     plugin.bump(version="minor", repo="dummy_repo", prerelease="alpha")
-    assert dummy_repo.version == ("1", "1", "0", "alpha")
+    assert dummy_repo.version == ("1", "1", "0")
     assert dummy_repo._tag == "1.1.0-alpha"
 
     plugin.bump(version="major", repo="dummy_repo", prerelease="alpha")
-    assert dummy_repo.version == ("2", "0", "0", "alpha")
+    assert dummy_repo.version == ("2", "0", "0")
     assert dummy_repo._tag == "2.0.0-alpha"
 
     plugin.bump(version="dev", repo="dummy_repo", prerelease="alpha")
-    assert dummy_repo.version == ("2", "0", "0", "alpha", "1")
+    assert dummy_repo.version == ("2", "0", "0", "1")
     assert dummy_repo._tag == "2.0.0-alpha.1"
 
     with pytest.raises(ValueError):
