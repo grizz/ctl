@@ -1,27 +1,11 @@
 import re
+
 import semver
-
-
-def validate_semantic(version, pad=0):
-    if not isinstance(version, (list, tuple)):
-        version = version_tuple(version)
-
-    parts = len(version)
-
-    if parts < 1:
-        raise ValueError("Semantic version needs to contain at least a major version")
-    if parts > 4:
-        raise ValueError("Semantic version can not contain more than 4 parts")
-
-    if parts < pad:
-        version = tuple(list(version) + [0 for i in range(0, pad - parts)])
-
-    return tuple([int(n) for n in version])
 
 
 def validate_prerelease(prerelease):
     if not isinstance(prerelease, (list, tuple)):
-        prerelease = tuple(prerelease.split("."))
+        prerelease = list(prerelease.split("."))
 
     for identifier in prerelease:
 
@@ -40,7 +24,12 @@ def validate_prerelease(prerelease):
         if bool(match):
             raise ValueError("Numeric identifiers must not have leading zeroes")
 
-    return True
+    # If the last part of the prerelease is not a number
+    # we want to append ".1" so we can bump in the future
+    if not re.match(r"[0-9]", prerelease[-1]):
+        prerelease.append("1")
+
+    return ".".join(prerelease)
 
 
 def bump_semantic(version, segment):
@@ -64,5 +53,13 @@ def bump_semantic(version, segment):
         return str(version.bump_minor())
     elif segment == "patch":
         return str(version.bump_patch())
+    elif segment == "prerelease":
+
+        if not version.prerelease:
+            raise ValueError(
+                "Cannot bump the prerelease if it's not a prereleased version"
+            )
+        else:
+            return str(version.bump_prerelease())
     else:
         raise ValueError

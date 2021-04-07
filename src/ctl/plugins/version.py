@@ -6,16 +6,18 @@ import argparse
 import os
 
 import confu.schema
-import toml
 import semver
+import toml
 
 import ctl
 from ctl.auth import expose
 from ctl.docs import pymdgen_confu_types
-from ctl.exceptions import OperationNotExposed, PluginOperationStopped, UsageError
+from ctl.exceptions import (OperationNotExposed, PluginOperationStopped,
+                            UsageError)
 from ctl.plugins import ExecutablePlugin
 from ctl.plugins.changelog import ChangelogVersionMissing
-from ctl.plugins.changelog import temporary_plugin as temporary_changelog_plugin
+from ctl.plugins.changelog import \
+    temporary_plugin as temporary_changelog_plugin
 from ctl.plugins.repository import RepositoryPlugin
 from ctl.util.versioning import bump_semantic, validate_prerelease
 
@@ -285,15 +287,13 @@ class VersionPlugin(ExecutablePlugin):
 
         if kwargs.get("prerelease"):
             prerelease = kwargs.get("prerelease")
-            validate_prerelease(prerelease)
+            prerelease = validate_prerelease(prerelease)
             version = f"{version}-{prerelease}"
 
         # Use semver to parse version
         version = semver.VersionInfo.parse(version)
         version_tag = str(version)
-        print("version")
-        print(version)
-        print("version_tag" + version_tag)
+
         self.log.info(f"Preparing to tag {repo_plugin.checkout_path} as {version_tag}")
         if not os.path.exists(repo_plugin.repo_ctl_dir):
             os.makedirs(repo_plugin.repo_ctl_dir)
@@ -312,17 +312,17 @@ class VersionPlugin(ExecutablePlugin):
 
         **Arguments**
 
-        - version (`str`): major, minor, patch or dev
+        - version (`str`): major, minor, patch or prerelease
         - repo (`str`): name of existing repository type plugin instance
         """
 
         repo_plugin = self.repository(repo)
         repo_plugin.pull()
 
-        if version not in ["major", "minor", "patch", "dev"]:
+        if version not in ["major", "minor", "patch", "prerelease"]:
             raise ValueError(f"Invalid semantic version: {version}")
 
-        is_dev = version == "dev"
+        is_dev = version == "prerelease"
 
         current = repo_plugin.version
         version = bump_semantic(current, version)
@@ -336,6 +336,7 @@ class VersionPlugin(ExecutablePlugin):
 
         self.tag(version=str(version), repo=repo, **kwargs)
 
+        # FIXME
         if not is_dev and not self.no_auto_dev:
             self.log.info("Creating dev tag")
             self.bump(version="dev", repo=repo, **kwargs)

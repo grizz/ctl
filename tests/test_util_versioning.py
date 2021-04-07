@@ -19,23 +19,23 @@ def test_version_string(version, string):
 
 
 @pytest.mark.parametrize(
-    "prerelease,raises",
+    "prerelease,expected,raises",
     [
-        ("alpha", None),
-        ("alpha.1", None),
-        ("0.3.7", None),
-        ("x-y-z.-", None),
-        ("&&&", ValueError),
-        ("abc.01", ValueError),
-        ("foo..bar", ValueError),
+        ("alpha", "alpha.1", None),
+        ("alpha.1", "alpha.1", None),
+        ("0.3.7", "0.3.7", None),
+        ("x-y-z.-", "x-y-z.-.1", None),
+        ("&&&", None, ValueError),
+        ("abc.01", None, ValueError),
+        ("foo..bar", None, ValueError),
     ],
 )
-def test_validate_prerelease(prerelease, raises):
+def test_validate_prerelease(prerelease, expected, raises):
     if raises:
         with pytest.raises(raises):
             assert versioning.validate_prerelease(prerelease)
     else:
-        assert versioning.validate_prerelease(prerelease)
+        assert versioning.validate_prerelease(prerelease) == expected
 
 
 @pytest.mark.parametrize(
