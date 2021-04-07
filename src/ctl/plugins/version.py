@@ -7,20 +7,17 @@ import os
 
 import confu.schema
 import toml
+import semver
 
 import ctl
 from ctl.auth import expose
 from ctl.docs import pymdgen_confu_types
-from ctl.exceptions import (OperationNotExposed, PluginOperationStopped,
-                            UsageError)
+from ctl.exceptions import OperationNotExposed, PluginOperationStopped, UsageError
 from ctl.plugins import ExecutablePlugin
 from ctl.plugins.changelog import ChangelogVersionMissing
-from ctl.plugins.changelog import \
-    temporary_plugin as temporary_changelog_plugin
-from ctl.plugins.git import temporary_plugin as temporary_git_plugin
+from ctl.plugins.changelog import temporary_plugin as temporary_changelog_plugin
 from ctl.plugins.repository import RepositoryPlugin
-from ctl.util.versioning import (bump_semantic, create_version_tag,
-                                 validate_prerelease, version_string)
+from ctl.util.versioning import bump_semantic, validate_prerelease
 
 
 @pymdgen_confu_types()
@@ -182,8 +179,6 @@ class VersionPlugin(ExecutablePlugin):
 
         super().execute(**kwargs)
 
-        branch_dev = self.get_config("branch_dev")
-        branch_release = self.get_config("branch_release")
         self.no_auto_dev = kwargs.get("no_auto_dev", False)
         self.init_version = kwargs.get("init", False)
 
@@ -291,11 +286,14 @@ class VersionPlugin(ExecutablePlugin):
         if kwargs.get("prerelease"):
             prerelease = kwargs.get("prerelease")
             validate_prerelease(prerelease)
-        else:
-            prerelease = None
+            version = f"{version}-{prerelease}"
 
-        version_tag = create_version_tag(version, prerelease)
-
+        # Use semver to parse version
+        version = semver.VersionInfo.parse(version)
+        version_tag = str(version)
+        print("version")
+        print(version)
+        print("version_tag" + version_tag)
         self.log.info(f"Preparing to tag {repo_plugin.checkout_path} as {version_tag}")
         if not os.path.exists(repo_plugin.repo_ctl_dir):
             os.makedirs(repo_plugin.repo_ctl_dir)
@@ -330,15 +328,13 @@ class VersionPlugin(ExecutablePlugin):
         version = bump_semantic(current, version)
 
         self.log.info(
-            "Bumping semantic version: {} to {}".format(
-                version_string(current), version_string(version)
-            )
+            "Bumping semantic version: {} to {}".format(current, str(version))
         )
 
         if self.get_config("changelog_validate") and not is_dev:
             self.validate_changelog(repo, version)
 
-        self.tag(version=version_string(version), repo=repo, **kwargs)
+        self.tag(version=str(version), repo=repo, **kwargs)
 
         if not is_dev and not self.no_auto_dev:
             self.log.info("Creating dev tag")
@@ -404,7 +400,6 @@ class VersionPlugin(ExecutablePlugin):
         - repo (`str`): name of existing repository type plugin instance
         """
 
-        version = version_string(version)
         repo_plugin = self.repository(repo)
 
         changelog_path = os.path.join(repo_plugin.checkout_path, data_file)
