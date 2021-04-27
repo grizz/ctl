@@ -9,7 +9,6 @@ import giturlparse
 
 from ctl.docs import pymdgen_confu_types
 from ctl.plugins import ExecutablePlugin
-from ctl.util.versioning import version_tuple
 
 
 @pymdgen_confu_types()
@@ -53,10 +52,10 @@ class RepositoryPlugin(ExecutablePlugin):
         try:
             print(("Reading version from", self.version_file))
             with open(self.version_file) as fh:
-                version = version_tuple(fh.read().strip())
+                version = fh.read().strip()
         except FileNotFoundError:
             self.log.debug(f"No version file found at {self.version_file}")
-            return (0, 0, 0)
+            return "0.0.0"
         return version
 
     @property
