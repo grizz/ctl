@@ -5,41 +5,30 @@ Plugin that allows you to handle repository versioning
 import argparse
 import os
 
+import toml
+
 import confu.schema
 
 import ctl
 from ctl.auth import expose
 from ctl.docs import pymdgen_confu_types
-from ctl.exceptions import OperationNotExposed, UsageError
+from ctl.exceptions import OperationNotExposed, PluginOperationStopped, UsageError
+from ctl.plugins import ExecutablePlugin
+from ctl.plugins.changelog import ChangelogVersionMissing
+from ctl.plugins.changelog import temporary_plugin as temporary_changelog_plugin
+from ctl.plugins.repository import RepositoryPlugin
 from ctl.plugins.version_base import VersionBasePlugin, VersionBasePluginConfig
 from ctl.util.versioning import bump_semantic, version_string
 
 
-@pymdgen_confu_types()
-class VersionPluginConfig(VersionBasePluginConfig):
-    """
-    Configuration schema for `VersionPlugin`
-    """
-
-    branch_dev = confu.schema.Str(
-        default="master",
-        help="the branch to merge from when the " "--merge-release flag is present",
-    )
-
-    branch_release = confu.schema.Str(
-        default="master",
-        help="the breanch to merge to when " "the --merge-release flag is present",
-    )
-
-
-@ctl.plugin.register("version")
-class VersionPlugin(VersionBasePlugin):
+@ctl.plugin.register("semver2")
+class Semver2Plugin(VersionBasePlugin):
     """
     manage repository versioning
     """
 
     class ConfigSchema(VersionBasePlugin.ConfigSchema):
-        config = VersionPluginConfig()
+        config = VersionBasePluginConfig()
 
     @classmethod
     def add_arguments(cls, parser, plugin_config, confu_cli_args):
@@ -115,9 +104,6 @@ class VersionPlugin(VersionBasePlugin):
 
         super().execute(**kwargs)
 
-        self.no_auto_dev = kwargs.get("no_auto_dev", False)
-        self.init_version = kwargs.get("init", False)
-
         if "version" in kwargs and isinstance(kwargs["version"], list):
             kwargs["version"] = kwargs["version"][0]
 
@@ -130,27 +116,6 @@ class VersionPlugin(VersionBasePlugin):
             raise OperationNotExposed(op)
 
         fn(**kwargs)
-
-    @expose("ctl.{plugin_name}.merge_release")
-    def merge_release(self, repo, **kwargs):
-        """
-        Merge branch self.branch_dev into branch self.branch_release in the specified
-        repo
-
-        **Arguments**
-
-        - repo (`str`): name of existing repository type plugin instance
-        """
-        from_branch = self.get_config("branch_dev")
-        to_branch = self.get_config("branch_release")
-        if from_branch == to_branch:
-            self.log.debug("dev and release branch are identical, no need to merge")
-            return
-
-        repo_plugin = self.repository(repo)
-        self.log.info(f"Merging branch '{from_branch}' into branch '{to_branch}'")
-        repo_plugin.merge(from_branch, to_branch)
-        repo_plugin.push()
 
     @expose("ctl.{plugin_name}.tag")
     def tag(self, version, repo, **kwargs):
@@ -201,10 +166,8 @@ class VersionPlugin(VersionBasePlugin):
         repo_plugin = self.repository(repo)
         repo_plugin.pull()
 
-        if version not in ["major", "minor", "patch", "dev"]:
+        if version not in ["major", "minor", "patch", "prerelease"]:
             raise ValueError(f"Invalid semantic version: {version}")
-
-        is_dev = version == "dev"
 
         current = repo_plugin.version
         version = bump_semantic(current, version)
@@ -215,11 +178,7 @@ class VersionPlugin(VersionBasePlugin):
             )
         )
 
-        if self.get_config("changelog_validate") and not is_dev:
+        if self.get_config("changelog_validate"):
             self.validate_changelog(repo, version)
 
         self.tag(version=version_string(version), repo=repo, **kwargs)
-
-        if not is_dev and not self.no_auto_dev:
-            self.log.info("Creating dev tag")
-            self.bump(version="dev", repo=repo, **kwargs)

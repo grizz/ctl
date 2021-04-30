@@ -2,6 +2,7 @@
 Plugin that allows you to handle repository versioning
 """
 
+import argparse
 import os
 
 import toml
@@ -69,8 +70,33 @@ class VersionBasePlugin(ExecutablePlugin):
             default=plugin_config.get("repository"),
         )
 
+    @property
+    def init_version(self):
+        """
+        `True` if a `Ctl/VERSION` file should be created if it's missing
+        """
+        return getattr(self, "_init_version", False)
+
+    @init_version.setter
+    def init_version(self, value):
+        self._init_version = value
+
+    @property
+    def no_auto_dev(self):
+        """
+        `True` if we do **NOT** want to automatically bump a dev version when a major
+        minor or patch version is bumped
+        """
+        return getattr(self, "_no_auto_dev", False)
+
+    @no_auto_dev.setter
+    def no_auto_dev(self, value):
+        self._no_auto_dev = value
+
     def execute(self, **kwargs):
         super().execute(**kwargs)
+        self.no_auto_dev = kwargs.get("no_auto_dev", False)
+        self.init_version = kwargs.get("init", False)
 
     def repository(self, target):
         """

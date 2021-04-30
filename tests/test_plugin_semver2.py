@@ -27,10 +27,8 @@ def test_tag(tmpdir, ctlr):
     plugin.tag(version="1.0.1", repo="dummy_repo")
     assert dummy_repo.version == "1.0.1"
 
-    plugin.tag(version="1.0.2", repo="dummy_repo", release=True)
+    plugin.tag(version="1.0.2", repo="dummy_repo")
     assert dummy_repo.version == "1.0.2"
-    assert dummy_repo._merged == "release"
-    assert dummy_repo.branch == "release"
 
 
 def test_tag_prerelease(tmpdir, ctlr):
@@ -105,6 +103,7 @@ def test_bump_prerelease_version(tmpdir, ctlr):
     plugin.bump(version="prerelease", repo="dummy_repo")
     assert dummy_repo.version == "1.0.0-rc.3"
 
+
 def test_release(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
     plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="rc")
@@ -122,6 +121,7 @@ def test_release(tmpdir, ctlr):
     assert dummy_repo.version == "1.0.0-rc.2"
     plugin.bump(version="prerelease", repo="dummy_repo")
     assert dummy_repo.version == "1.0.0-rc.3"
+
 
 def test_execute(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)

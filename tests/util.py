@@ -23,8 +23,9 @@ def instantiate_semver2(tmpdir, ctlr=None):
     dummy_repo = ctl.plugin._instance["dummy_repo"] = DummyRepositoryPlugin(
         {"config": {"checkout_path": str(tmpdir.mkdir("repo"))}}, ctlr
     )
-    config = {"config": {"branch_dev": "master", "branch_release": "release"}}
-    plugin = instantiate_test_plugin("semver2", "test_semver2", _ctl=ctlr, **config)
+    plugin = instantiate_test_plugin("semver2", "test_semver2", _ctl=ctlr)
+    plugin.init_version = True
+
     return (plugin, dummy_repo)
 
 
