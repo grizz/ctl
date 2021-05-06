@@ -115,9 +115,6 @@ class VersionPlugin(VersionBasePlugin):
 
         super().execute(**kwargs)
 
-        self.no_auto_dev = kwargs.get("no_auto_dev", False)
-        self.init_version = kwargs.get("init", False)
-
         if "version" in kwargs and isinstance(kwargs["version"], list):
             kwargs["version"] = kwargs["version"][0]
 

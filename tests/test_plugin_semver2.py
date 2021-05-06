@@ -48,10 +48,10 @@ def test_tag_pyproject(tmpdir, ctlr):
         pyproject_path,
     )
 
-    plugin.tag(version="2.0.0", repo="dummy_repo")
+    plugin.tag(version="2.0.0", repo="dummy_repo", prerelease="rc1")
 
     pyproject = toml.load(pyproject_path)
-    assert pyproject["tool"]["poetry"]["version"] == "2.0.0"
+    assert pyproject["tool"]["poetry"]["version"] == "2.0.0-rc1"
 
 
 def test_bump(tmpdir, ctlr):
@@ -90,14 +90,8 @@ def test_bump_w_prerelease_flag(tmpdir, ctlr):
 def test_bump_prerelease_version(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
     plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="rc")
-    assert dummy_repo.version == "1.0.0-rc"
-
-    plugin.bump(version="prerelease", repo="dummy_repo")
     assert dummy_repo.version == "1.0.0-rc.1"
-    plugin.bump(version="prerelease", repo="dummy_repo")
-    assert dummy_repo.version == "1.0.0-rc.2"
 
-    plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="rc.1")
     plugin.bump(version="prerelease", repo="dummy_repo")
     assert dummy_repo.version == "1.0.0-rc.2"
     plugin.bump(version="prerelease", repo="dummy_repo")
@@ -107,20 +101,9 @@ def test_bump_prerelease_version(tmpdir, ctlr):
 def test_release(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
     plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="rc")
-    assert dummy_repo.version == "1.0.0-rc"
-    plugin.release()
-    assert dummy_repo.version == "1.0.0"
-
-    plugin.bump(version="prerelease", repo="dummy_repo")
     assert dummy_repo.version == "1.0.0-rc.1"
-    plugin.bump(version="prerelease", repo="dummy_repo")
-    assert dummy_repo.version == "1.0.0-rc.2"
-
-    plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="rc.1")
-    plugin.bump(version="prerelease", repo="dummy_repo")
-    assert dummy_repo.version == "1.0.0-rc.2"
-    plugin.bump(version="prerelease", repo="dummy_repo")
-    assert dummy_repo.version == "1.0.0-rc.3"
+    plugin.release(repo="dummy_repo")
+    assert dummy_repo.version == "1.0.0"
 
 
 def test_execute(tmpdir, ctlr):

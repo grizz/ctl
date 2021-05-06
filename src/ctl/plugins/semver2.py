@@ -5,20 +5,13 @@ Plugin that allows you to handle repository versioning
 import argparse
 import os
 
-import toml
-
-import confu.schema
+import semver
 
 import ctl
 from ctl.auth import expose
-from ctl.docs import pymdgen_confu_types
-from ctl.exceptions import OperationNotExposed, PluginOperationStopped, UsageError
-from ctl.plugins import ExecutablePlugin
-from ctl.plugins.changelog import ChangelogVersionMissing
-from ctl.plugins.changelog import temporary_plugin as temporary_changelog_plugin
-from ctl.plugins.repository import RepositoryPlugin
+from ctl.exceptions import OperationNotExposed, UsageError
 from ctl.plugins.version_base import VersionBasePlugin, VersionBasePluginConfig
-from ctl.util.versioning import bump_semantic, version_string
+from ctl.util.versioning import validate_prerelease
 
 
 @ctl.plugin.register("semver2")
@@ -37,13 +30,6 @@ class Semver2Plugin(VersionBasePlugin):
 
         release_parser = argparse.ArgumentParser(add_help=False)
         group = release_parser.add_mutually_exclusive_group(required=False)
-        group.add_argument(
-            "--release",
-            action="store_true",
-            help="if set will also "
-            "perform `merge_release` operation and tag in the specified "
-            "release branch instead of the currently active branch",
-        )
 
         group.add_argument(
             "--init",
@@ -76,29 +62,13 @@ class Semver2Plugin(VersionBasePlugin):
             "version",
             nargs=1,
             type=str,
-            choices=["major", "minor", "patch", "dev"],
+            choices=["major", "minor", "patch", "prerelease"],
             help="bumps the specified version segment by 1",
-        )
-
-        op_bump_parser.add_argument(
-            "--no-auto-dev",
-            help="disable automatic bumping of dev "
-            "version after bumping `major`, `minor` or `patch`",
-            action="store_true",
         )
 
         confu_cli_args.add(op_bump_parser, "changelog_validate")
 
         cls.add_repo_argument(op_bump_parser, plugin_config)
-
-        # operations `merge_release`
-        op_mr_parser = sub.add_parser(
-            "merge_release",
-            help="merge dev branch into release branch " "(branches defined in config)",
-            parents=[shared_parser],
-        )
-
-        cls.add_repo_argument(op_mr_parser, plugin_config)
 
     def execute(self, **kwargs):
 
@@ -128,7 +98,7 @@ class Semver2Plugin(VersionBasePlugin):
         - repo (`str`): name of existing repository type plugin instance
 
         **Keyword Arguments**
-
+        - prerelease (`str`): identifier if this is a prerelease version
         - release (`bool`): if `True` also run `merge_release`
         """
         repo_plugin = self.repository(repo)
@@ -137,20 +107,26 @@ class Semver2Plugin(VersionBasePlugin):
         if not repo_plugin.is_clean:
             raise UsageError("Currently checked out branch is not clean")
 
-        if kwargs.get("release"):
-            self.merge_release(repo=repo)
-            repo_plugin.checkout(self.get_config("branch_release") or "master")
+        if kwargs.get("prerelease"):
+            prerelease = kwargs.get("prerelease")
+            prerelease = validate_prerelease(prerelease)
+            version = f"{version}-{prerelease}"
 
-        self.log.info(f"Preparing to tag {repo_plugin.checkout_path} as {version}")
+        # Use semver to parse version
+        version = semver.VersionInfo.parse(version)
+        version_tag = str(version)
+
+        self.log.info(f"Preparing to tag {repo_plugin.checkout_path} as {version_tag}")
+
         if not os.path.exists(repo_plugin.repo_ctl_dir):
             os.makedirs(repo_plugin.repo_ctl_dir)
 
         files = []
 
-        self.update_version_files(repo_plugin, version, files)
+        self.update_version_files(repo_plugin, version_tag, files)
 
-        repo_plugin.commit(files=files, message=f"Version {version}", push=True)
-        repo_plugin.tag(version, message=version, push=True)
+        repo_plugin.commit(files=files, message=f"Version {version_tag}", push=True)
+        repo_plugin.tag(version_tag, message=version_tag, push=True)
 
     @expose("ctl.{plugin_name}.bump")
     def bump(self, version, repo, **kwargs):
@@ -169,16 +145,46 @@ class Semver2Plugin(VersionBasePlugin):
         if version not in ["major", "minor", "patch", "prerelease"]:
             raise ValueError(f"Invalid semantic version: {version}")
 
-        current = repo_plugin.version
-        version = bump_semantic(current, version)
+        current = semver.VersionInfo.parse(repo_plugin.version)
+
+        if version == "major":
+            new_version = current.bump_major()
+        elif version == "minor":
+            new_version = current.bump_minor()
+        elif version == "patch":
+            new_version = current.bump_patch()
+        elif version == "prerelease":
+            if not current.prerelease:
+                raise ValueError(
+                    "Cannot bump the prerelease if it's not a prereleased version"
+                )
+            else:
+                new_version = current.bump_prerelease()
 
         self.log.info(
-            "Bumping semantic version: {} to {}".format(
-                version_string(current), version_string(version)
-            )
+            "Bumping semantic version: {} to {}".format(str(current), str(new_version))
         )
 
         if self.get_config("changelog_validate"):
-            self.validate_changelog(repo, version)
+            self.validate_changelog(repo, str(new_version))
 
-        self.tag(version=version_string(version), repo=repo, **kwargs)
+        self.tag(version=str(new_version), repo=repo, **kwargs)
+
+    @expose("ctl.{plugin_name}.release")
+    def release(self, repo, **kwargs):
+        """
+        release and tag a version
+
+        **Arguments**
+
+        - repo (`str`): name of existing repository type plugin instance
+        """
+        repo_plugin = self.repository(repo)
+        repo_plugin.pull()
+
+        version = repo_plugin.version
+
+        # Use semver to parse version
+        version = semver.VersionInfo.parse(version)
+        version = version.replace(prerelease=None)
+        self.tag(version=str(version), repo=repo, **kwargs)
