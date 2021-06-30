@@ -49,7 +49,13 @@ class Semver2Plugin(VersionBasePlugin):
         op_tag_parser.add_argument(
             "version", nargs=1, type=str, help="version string to tag with"
         )
+        op_tag_parser.add_argument(
+            "--prerelease",
+            type=str,
+            help="tag a prerelease with the specified prerlease name",
+        )
 
+        confu_cli_args.add(op_tag_parser, "changelog_validate")
         cls.add_repo_argument(op_tag_parser, plugin_config)
 
         # operation `bump`
@@ -65,10 +71,24 @@ class Semver2Plugin(VersionBasePlugin):
             choices=["major", "minor", "patch", "prerelease"],
             help="bumps the specified version segment by 1",
         )
+        op_bump_parser.add_argument(
+            "--prerelease",
+            type=str,
+            help="tag a prerelease with the specified prerlease name",
+            default="rc",
+        )
 
         confu_cli_args.add(op_bump_parser, "changelog_validate")
-
         cls.add_repo_argument(op_bump_parser, plugin_config)
+
+        # operation `release`
+        op_release_parser = sub.add_parser(
+            "release",
+            help="go from pre-release version to release version. This will drop the current pre-release tag.",
+            parents=[shared_parser, release_parser],
+        )
+        confu_cli_args.add(op_release_parser, "changelog_validate")
+        cls.add_repo_argument(op_release_parser, plugin_config)
 
     def execute(self, **kwargs):
 
@@ -88,7 +108,7 @@ class Semver2Plugin(VersionBasePlugin):
         fn(**kwargs)
 
     @expose("ctl.{plugin_name}.tag")
-    def tag(self, version, repo, **kwargs):
+    def tag(self, version, repo, prerelease=None, **kwargs):
         """
         tag a version according to version specified
 
@@ -107,14 +127,17 @@ class Semver2Plugin(VersionBasePlugin):
         if not repo_plugin.is_clean:
             raise UsageError("Currently checked out branch is not clean")
 
-        if kwargs.get("prerelease"):
-            prerelease = kwargs.get("prerelease")
-            prerelease = validate_prerelease(prerelease)
-            version = f"{version}-{prerelease}"
-
-        # Use semver to parse version
         version = semver.VersionInfo.parse(version)
+
+        if prerelease:
+            version = version.bump_prerelease(prerelease)
+
         version_tag = str(version)
+
+        if self.get_config("changelog_validate"):
+            # TODO: changelog for pre-releases?
+            if not version.prerelease:
+                self.validate_changelog(repo, version_tag)
 
         self.log.info(f"Preparing to tag {repo_plugin.checkout_path} as {version_tag}")
 
@@ -146,6 +169,7 @@ class Semver2Plugin(VersionBasePlugin):
             raise ValueError(f"Invalid semantic version: {version}")
 
         current = semver.VersionInfo.parse(repo_plugin.version)
+        prerelease = kwargs.pop("prerelease")
 
         if version == "major":
             new_version = current.bump_major()
@@ -161,12 +185,10 @@ class Semver2Plugin(VersionBasePlugin):
             else:
                 new_version = current.bump_prerelease()
 
-        self.log.info(
-            "Bumping semantic version: {} to {}".format(str(current), str(new_version))
-        )
+        if prerelease and version != "prerelease":
+            new_version = new_version.bump_prerelease(prerelease)
 
-        if self.get_config("changelog_validate"):
-            self.validate_changelog(repo, str(new_version))
+        self.log.info(f"Bumping semantic version: {current} to {new_version}")
 
         self.tag(version=str(new_version), repo=repo, **kwargs)
 
@@ -174,6 +196,8 @@ class Semver2Plugin(VersionBasePlugin):
     def release(self, repo, **kwargs):
         """
         release and tag a version
+
+        current version needs to be a pre-release version.
 
         **Arguments**
 
@@ -186,5 +210,11 @@ class Semver2Plugin(VersionBasePlugin):
 
         # Use semver to parse version
         version = semver.VersionInfo.parse(version)
+
+        if not version.prerelease:
+            raise UsageError(
+                "Currently not on a pre-release version. Use `bump` or `tag` operation instead"
+            )
+
         version = version.replace(prerelease=None)
         self.tag(version=str(version), repo=repo, **kwargs)
