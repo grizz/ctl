@@ -44,10 +44,13 @@ class VersionPlugin(VersionBasePlugin):
     @classmethod
     def add_arguments(cls, parser, plugin_config, confu_cli_args):
 
-        shared_parser = argparse.ArgumentParser(add_help=False)
+        parsers = super(VersionPlugin, cls).add_arguments(
+            parser, plugin_config, confu_cli_args
+        )
+        sub = parsers.get("sub")
+        shared_parser = parsers.get("shared_parser")
+        group = parsers.get("group")
 
-        release_parser = argparse.ArgumentParser(add_help=False)
-        group = release_parser.add_mutually_exclusive_group(required=False)
         group.add_argument(
             "--release",
             action="store_true",
@@ -56,41 +59,7 @@ class VersionPlugin(VersionBasePlugin):
             "release branch instead of the currently active branch",
         )
 
-        group.add_argument(
-            "--init",
-            action="store_true",
-            help="automatically create " "Ctl/VERSION file if it does not exist",
-        )
-
-        # subparser that routes operation
-        sub = parser.add_subparsers(title="Operation", dest="op")
-
-        # operation `tag`
-        op_tag_parser = sub.add_parser(
-            "tag",
-            help="tag with a specified version",
-            parents=[shared_parser, release_parser],
-        )
-        op_tag_parser.add_argument(
-            "version", nargs=1, type=str, help="version string to tag with"
-        )
-
-        cls.add_repo_argument(op_tag_parser, plugin_config)
-
-        # operation `bump`
-        op_bump_parser = sub.add_parser(
-            "bump",
-            help="bump semantic version",
-            parents=[shared_parser, release_parser],
-        )
-        op_bump_parser.add_argument(
-            "version",
-            nargs=1,
-            type=str,
-            choices=["major", "minor", "patch", "dev"],
-            help="bumps the specified version segment by 1",
-        )
-
+        op_bump_parser = parsers.get("op_bump_parser")
         op_bump_parser.add_argument(
             "--no-auto-dev",
             help="disable automatic bumping of dev "
@@ -98,17 +67,12 @@ class VersionPlugin(VersionBasePlugin):
             action="store_true",
         )
 
-        confu_cli_args.add(op_bump_parser, "changelog_validate")
-
-        cls.add_repo_argument(op_bump_parser, plugin_config)
-
         # operations `merge_release`
         op_mr_parser = sub.add_parser(
             "merge_release",
             help="merge dev branch into release branch " "(branches defined in config)",
             parents=[shared_parser],
         )
-
         cls.add_repo_argument(op_mr_parser, plugin_config)
 
     def execute(self, **kwargs):

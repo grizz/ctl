@@ -26,60 +26,31 @@ class Semver2Plugin(VersionBasePlugin):
     @classmethod
     def add_arguments(cls, parser, plugin_config, confu_cli_args):
 
-        shared_parser = argparse.ArgumentParser(add_help=False)
-
-        release_parser = argparse.ArgumentParser(add_help=False)
-        group = release_parser.add_mutually_exclusive_group(required=False)
-
-        group.add_argument(
-            "--init",
-            action="store_true",
-            help="automatically create " "Ctl/VERSION file if it does not exist",
+        parsers = super(Semver2Plugin, cls).add_arguments(
+            parser, plugin_config, confu_cli_args
         )
 
-        # subparser that routes operation
-        sub = parser.add_subparsers(title="Operation", dest="op")
+        sub = parsers.get("sub")
+        shared_parser = parsers.get("shared_parser")
+        release_parser = parsers.get("release_parser")
+        group = parsers.get("group")
 
         # operation `tag`
-        op_tag_parser = sub.add_parser(
-            "tag",
-            help="tag with a specified version",
-            parents=[shared_parser, release_parser],
-        )
-        op_tag_parser.add_argument(
-            "version", nargs=1, type=str, help="version string to tag with"
-        )
+        op_tag_parser = parsers.get("op_tag_parser")
         op_tag_parser.add_argument(
             "--prerelease",
             type=str,
             help="tag a prerelease with the specified prerlease name",
         )
 
-        confu_cli_args.add(op_tag_parser, "changelog_validate")
-        cls.add_repo_argument(op_tag_parser, plugin_config)
-
         # operation `bump`
-        op_bump_parser = sub.add_parser(
-            "bump",
-            help="bump semantic version",
-            parents=[shared_parser, release_parser],
-        )
-        op_bump_parser.add_argument(
-            "version",
-            nargs=1,
-            type=str,
-            choices=["major", "minor", "patch", "prerelease"],
-            help="bumps the specified version segment by 1",
-        )
+        op_bump_parser = parsers.get("op_bump_parser")
         op_bump_parser.add_argument(
             "--prerelease",
             type=str,
             help="tag a prerelease with the specified prerlease name",
             default="rc",
         )
-
-        confu_cli_args.add(op_bump_parser, "changelog_validate")
-        cls.add_repo_argument(op_bump_parser, plugin_config)
 
         # operation `release`
         op_release_parser = sub.add_parser(

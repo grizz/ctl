@@ -70,6 +70,61 @@ class VersionBasePlugin(ExecutablePlugin):
             default=plugin_config.get("repository"),
         )
 
+    @classmethod
+    def add_arguments(cls, parser, plugin_config, confu_cli_args):
+
+        shared_parser = argparse.ArgumentParser(add_help=False)
+        release_parser = argparse.ArgumentParser(add_help=False)
+        group = release_parser.add_mutually_exclusive_group(required=False)
+
+        group.add_argument(
+            "--init",
+            action="store_true",
+            help="automatically create " "Ctl/VERSION file if it does not exist",
+        )
+
+        # subparser that routes operation
+        sub = parser.add_subparsers(title="Operation", dest="op")
+
+        # operation `tag`
+        op_tag_parser = sub.add_parser(
+            "tag",
+            help="tag with a specified version",
+            parents=[shared_parser, release_parser],
+        )
+        op_tag_parser.add_argument(
+            "version", nargs=1, type=str, help="version string to tag with"
+        )
+
+        confu_cli_args.add(op_tag_parser, "changelog_validate")
+        cls.add_repo_argument(op_tag_parser, plugin_config)
+
+        # operation `bump`
+        op_bump_parser = sub.add_parser(
+            "bump",
+            help="bump semantic version",
+            parents=[shared_parser, release_parser],
+        )
+        op_bump_parser.add_argument(
+            "version",
+            nargs=1,
+            type=str,
+            choices=["major", "minor", "patch", "prerelease"],
+            help="bumps the specified version segment by 1",
+        )
+
+        confu_cli_args.add(op_bump_parser, "changelog_validate")
+        cls.add_repo_argument(op_bump_parser, plugin_config)
+
+        return {
+            "group": group,
+            "sub": sub,
+            "shared_parser": shared_parser,
+            "release_parser": release_parser,
+            "op_tag_parser": op_tag_parser,
+            "op_bump_parser": op_bump_parser,
+        }
+
     @property
     def init_version(self):
         """
