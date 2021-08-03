@@ -140,7 +140,7 @@ class Semver2Plugin(VersionBasePlugin):
             raise ValueError(f"Invalid semantic version: {version}")
 
         current = semver.VersionInfo.parse(repo_plugin.version)
-        prerelease = kwargs.pop("prerelease")
+        prerelease = kwargs.pop("prerelease", None)
 
         if version == "major":
             new_version = current.bump_major()

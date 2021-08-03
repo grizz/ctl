@@ -33,9 +33,9 @@ def test_tag(tmpdir, ctlr):
 
 def test_tag_prerelease(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
-    plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="1.2.3")
+    plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="beta")
     assert os.path.exists(dummy_repo.version_file)
-    assert dummy_repo.version == "1.0.0-1.2.3"
+    assert dummy_repo.version == "1.0.0-beta.1"
 
 
 def test_tag_pyproject(tmpdir, ctlr):
@@ -48,10 +48,10 @@ def test_tag_pyproject(tmpdir, ctlr):
         pyproject_path,
     )
 
-    plugin.tag(version="2.0.0", repo="dummy_repo", prerelease="rc1")
+    plugin.tag(version="2.0.0", repo="dummy_repo", prerelease="rc")
 
     pyproject = toml.load(pyproject_path)
-    assert pyproject["tool"]["poetry"]["version"] == "2.0.0-rc1"
+    assert pyproject["tool"]["poetry"]["version"] == "2.0.0-rc.1"
 
 
 def test_bump(tmpdir, ctlr):
@@ -77,14 +77,6 @@ def test_bump_w_prerelease_flag(tmpdir, ctlr):
 
     plugin.bump(version="patch", repo="dummy_repo", prerelease="rc")
     assert dummy_repo.version == "1.0.1-rc.1"
-
-    plugin.tag(version="1.0.0", repo="dummy_repo")
-    plugin.bump(version="minor", repo="dummy_repo", prerelease="alpha.1")
-    assert dummy_repo.version == "1.1.0-alpha.1"
-
-    plugin.tag(version="1.0.0", repo="dummy_repo")
-    plugin.bump(version="major", repo="dummy_repo", prerelease="1")
-    assert dummy_repo.version == "2.0.0-1"
 
 
 def test_bump_prerelease_version(tmpdir, ctlr):
