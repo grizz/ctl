@@ -1,3 +1,10 @@
+Unreleased:
+  added: []
+  fixed: []
+  changed: []
+  deprecated: []
+  removed: []
+  security: []
 1.0.0:
   changed:
   - first change
@@ -10,10 +17,3 @@
   changed:
   - first change
   - second change
-Unreleased:
-  added: []
-  changed: []
-  deprecated: []
-  fixed: []
-  removed: []
-  security: []

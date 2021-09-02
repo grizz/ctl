@@ -5,9 +5,8 @@ Plugin that allows you to handle repository versioning
 import argparse
 import os
 
-import toml
-
 import confu.schema
+import munge
 
 import ctl
 from ctl.docs import pymdgen_confu_types
@@ -228,16 +227,22 @@ class VersionBasePlugin(ExecutablePlugin):
         if it exists
         """
 
-        pyproject_path = os.path.join(repo_plugin.checkout_path, "pyproject.toml")
-
-        if os.path.exists(pyproject_path):
-            with open(pyproject_path, "r") as fh:
-                pyproject = toml.load(fh)
-
+        try:
+            pyproject_path = os.path.join(repo_plugin.checkout_path, "pyproject.toml")
+            pyproject = munge.load_datafile(
+                "pyproject.toml", search_path=(repo_plugin.checkout_path)
+            )
             pyproject["tool"]["poetry"]["version"] = version
+
+            codec = munge.get_codec("toml")
+
             with open(pyproject_path, "w") as fh:
-                toml.dump(pyproject, fh)
+                codec().dump(pyproject, fh)
             return pyproject_path
+
+        except OSError as exc:
+            if "not found" in str(exc):
+                return
 
     def validate_changelog(self, repo, version, data_file="CHANGELOG.yaml"):
 

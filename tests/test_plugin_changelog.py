@@ -57,7 +57,6 @@ def test_generate_datafile(tmpdir, ctlr, data_changelog_generate_datafile):
 
     with open(data_file) as fh:
         content = fh.read()
-        print(content)
         assert content.strip() == data_changelog_generate_datafile.yml.strip()
 
 
@@ -74,6 +73,7 @@ def test_release(tmpdir, ctlr, data_changelog_release):
 
     with open(data_file) as fh:
         content = fh.read()
+        print(content)
         assert content.strip() == data_changelog_release.yml.strip()
 
 

@@ -43,12 +43,12 @@ class RepositoryPlugin(ExecutablePlugin):
 
     @property
     def uuid(self):
-        """ should return current commit hash/id """
+        """should return current commit hash/id"""
         raise NotImplementedError()
 
     @property
     def version(self):
-        """ current version as it exists in `version_file` """
+        """current version as it exists in `version_file`"""
         try:
             print(("Reading version from", self.version_file))
             with open(self.version_file) as fh:
@@ -60,12 +60,12 @@ class RepositoryPlugin(ExecutablePlugin):
 
     @property
     def version_file(self):
-        """ location of version file """
+        """location of version file"""
         return os.path.join(self.repo_ctl_dir, "VERSION")
 
     @property
     def repo_ctl_dir(self):
-        """ location of ctl directory inside repository """
+        """location of ctl directory inside repository"""
         return os.path.join(self.checkout_path, "Ctl")
 
     @property
@@ -118,23 +118,23 @@ class RepositoryPlugin(ExecutablePlugin):
         raise NotImplementedError()
 
     def pull(self, **kwargs):
-        """ Should pull the repository """
+        """Should pull the repository"""
         raise NotImplementedError()
 
     def push(self, **kwargs):
-        """ Should push changes to the remote """
+        """Should push changes to the remote"""
         raise NotImplementedError()
 
     def tag(self, version, **kwargs):
-        """ Should tag the current branch """
+        """Should tag the current branch"""
         raise NotImplementedError()
 
     def checkout(self, branch, **kwargs):
-        """ Should checkout a branch by name """
+        """Should checkout a branch by name"""
         raise NotImplementedError()
 
     def merge(self, branch_a, branch_b, **kwargs):
-        """ Should merge branch b into branch a """
+        """Should merge branch b into branch a"""
         raise NotImplementedError()
 
     def init(self):

@@ -2,14 +2,14 @@ import re
 
 
 def version_tuple(version):
-    """ Returns a tuple from version string """
+    """Returns a tuple from version string"""
     if isinstance(version, tuple):
         return version
     return tuple(version.split("."))
 
 
 def version_string(version):
-    """ Returns a string from version tuple or list """
+    """Returns a string from version tuple or list"""
     if isinstance(version, str):
         return version
     return ".".join([f"{v}" for v in version])
