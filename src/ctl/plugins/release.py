@@ -159,9 +159,9 @@ class ReleasePlugin(command.CommandPlugin):
         self._validate(**kwargs)
 
     def _release(self, **kwargs):
-        """ should run release logic """
+        """should run release logic"""
         raise NotImplementedError()
 
     def _validate(self, **kwargs):
-        """ should run build and validation logic """
+        """should run build and validation logic"""
         raise NotImplementedError()

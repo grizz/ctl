@@ -51,7 +51,7 @@ class GitPlugin(RepositoryPlugin):
 
     @property
     def uuid(self):
-        """ return recent commit hash of the repo """
+        """return recent commit hash of the repo"""
         command = self.command("rev-parse", "--short", "HEAD")
         return self.run_git_command(command)[0].strip()
 

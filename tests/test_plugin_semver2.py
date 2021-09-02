@@ -3,14 +3,14 @@ import shutil
 import toml
 
 import pytest
-from util import instantiate_version as instantiate
+from util import instantiate_semver2 as instantiate
 
 import ctl
 from ctl.exceptions import PermissionDenied
 
 
 def test_init():
-    ctl.plugin.get_plugin_class("version")
+    ctl.plugin.get_plugin_class("semver2")
 
 
 def test_repository(tmpdir, ctlr):
@@ -23,17 +23,19 @@ def test_tag(tmpdir, ctlr):
     plugin.tag(version="1.0.0", repo="dummy_repo")
     assert os.path.exists(dummy_repo.version_file)
     assert dummy_repo.version == "1.0.0"
-    assert dummy_repo._tag == "1.0.0"
 
     plugin.tag(version="1.0.1", repo="dummy_repo")
     assert dummy_repo.version == "1.0.1"
-    assert dummy_repo._tag == "1.0.1"
 
-    plugin.tag(version="1.0.2", repo="dummy_repo", release=True)
+    plugin.tag(version="1.0.2", repo="dummy_repo")
     assert dummy_repo.version == "1.0.2"
-    assert dummy_repo._tag == "1.0.2"
-    assert dummy_repo._merged == "release"
-    assert dummy_repo.branch == "release"
+
+
+def test_tag_prerelease(tmpdir, ctlr):
+    plugin, dummy_repo = instantiate(tmpdir, ctlr)
+    plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="beta")
+    assert os.path.exists(dummy_repo.version_file)
+    assert dummy_repo.version == "1.0.0-beta.1"
 
 
 def test_tag_pyproject(tmpdir, ctlr):
@@ -46,69 +48,63 @@ def test_tag_pyproject(tmpdir, ctlr):
         pyproject_path,
     )
 
-    plugin.tag(version="2.0.0", repo="dummy_repo")
+    plugin.tag(version="2.0.0", repo="dummy_repo", prerelease="rc")
 
     pyproject = toml.load(pyproject_path)
-    assert pyproject["tool"]["poetry"]["version"] == "2.0.0"
+    assert pyproject["tool"]["poetry"]["version"] == "2.0.0-rc.1"
 
 
 def test_bump(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
     plugin.tag(version="1.0.0", repo="dummy_repo")
 
-    plugin.bump(version="dev", repo="dummy_repo")
-    assert dummy_repo.version == "1.0.0.1"
-    assert dummy_repo._tag == "1.0.0.1"
-
     plugin.bump(version="patch", repo="dummy_repo")
     assert dummy_repo.version == "1.0.1"
-    assert dummy_repo._tag == "1.0.1"
 
     plugin.bump(version="minor", repo="dummy_repo")
     assert dummy_repo.version == "1.1.0"
-    assert dummy_repo._tag == "1.1.0"
 
     plugin.bump(version="major", repo="dummy_repo")
     assert dummy_repo.version == "2.0.0"
-    assert dummy_repo._tag == "2.0.0"
 
     with pytest.raises(ValueError):
         plugin.bump(version="invalid", repo="dummy_repo")
 
 
-def test_bump_truncated(tmpdir, ctlr):
+def test_bump_w_prerelease_flag(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
-    plugin.tag(version="1.0", repo="dummy_repo")
+    plugin.tag(version="1.0.0", repo="dummy_repo")
 
-    plugin.bump(version="minor", repo="dummy_repo")
-    assert dummy_repo.version == "1.1.0"
-    assert dummy_repo._tag == "1.1.0"
+    plugin.bump(version="patch", repo="dummy_repo", prerelease="rc")
+    assert dummy_repo.version == "1.0.1-rc.1"
 
-    plugin.tag(version="1.0", repo="dummy_repo")
-    plugin.bump(version="patch", repo="dummy_repo")
-    assert dummy_repo.version == "1.0.1"
-    assert dummy_repo._tag == "1.0.1"
 
-    plugin.tag(version="2", repo="dummy_repo")
-    plugin.bump(version="patch", repo="dummy_repo")
-    assert dummy_repo.version == "2.0.1"
-    assert dummy_repo._tag == "2.0.1"
+def test_bump_prerelease_version(tmpdir, ctlr):
+    plugin, dummy_repo = instantiate(tmpdir, ctlr)
+    plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="rc")
+    assert dummy_repo.version == "1.0.0-rc.1"
 
-    plugin.tag(version="3", repo="dummy_repo")
-    plugin.bump(version="major", repo="dummy_repo")
-    assert dummy_repo.version == "4.0.0"
-    assert dummy_repo._tag == "4.0.0"
+    plugin.bump(version="prerelease", repo="dummy_repo")
+    assert dummy_repo.version == "1.0.0-rc.2"
+    plugin.bump(version="prerelease", repo="dummy_repo")
+    assert dummy_repo.version == "1.0.0-rc.3"
+
+
+def test_release(tmpdir, ctlr):
+    plugin, dummy_repo = instantiate(tmpdir, ctlr)
+    plugin.tag(version="1.0.0", repo="dummy_repo", prerelease="rc")
+    assert dummy_repo.version == "1.0.0-rc.1"
+    plugin.release(repo="dummy_repo")
+    assert dummy_repo.version == "1.0.0"
 
 
 def test_execute(tmpdir, ctlr):
     plugin, dummy_repo = instantiate(tmpdir, ctlr)
     plugin.execute(op="tag", version="1.0.0", repository="dummy_repo", init=True)
-    assert dummy_repo._tag == "1.0.0"
+    assert dummy_repo.version == "1.0.0"
 
-    plugin.execute(
-        op="bump", version="patch", repository="dummy_repo", init=True, no_auto_dev=True
-    )
-    assert dummy_repo._tag == "1.0.1"
+    plugin.execute(op="bump", version="patch", repository="dummy_repo", init=True)
+    assert dummy_repo.version == "1.0.1"
 
     with pytest.raises(ValueError, match="operation not defined"):
         plugin.execute(op=None)
