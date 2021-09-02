@@ -1,3 +1,14 @@
+Unreleased:
+  added:
+  - '`pypi release` support for poetry based projects (#27)'
+  - '`version tag/bump` support for poetry based projects (#27)'
+  - '`semver2` plugin (#20)`'
+  changed: []
+  deprecated: []
+  fixed:
+  - version plugins no longer mangle pyproject.toml formatting (#35)
+  removed: []
+  security: []
 0.2.0:
   changed:
   - 'pypi plugin: config `repository` changed to `pypi_repository` (#2)'
@@ -35,12 +46,3 @@
   - python2.7 support (#21)
   - python3.4 support (#21)
   - python3.5 support (#21)
-Unreleased:
-  added:
-  - '`pypi release` support for poetry based projects (#27)'
-  - '`version tag/bump` support for poetry based projects (#27)'
-  changed: []
-  deprecated: []
-  fixed: []
-  removed: []
-  security: []
