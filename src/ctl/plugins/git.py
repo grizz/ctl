@@ -1,5 +1,5 @@
 """
-Plugin that allows you to manage a git repository
+Plugin that allows you to manage a git repository.
 """
 
 
