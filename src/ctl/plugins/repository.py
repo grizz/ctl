@@ -27,7 +27,8 @@ class PluginConfig(confu.schema.Schema):
         "~/.ctl/cache/{repo_url}",
     )
 
-    branch = confu.schema.Str(help="Checkout this branch", default="master")
+    branch = confu.schema.Str(help="Checkout this branch (just branch name, use `remote` attribute to specify origin)", default="master")
+    remote = confu.schema.Str(help="Checkout this remote", default="origin")
 
 
 class RepositoryPlugin(ExecutablePlugin):

@@ -278,21 +278,30 @@ class GitPlugin(RepositoryPlugin):
         """
         Pull the repo
         """
-        self.log.debug(f"PULL {self.checkout_path}")
-        command_pull = self.command("pull")
+
+        branch = self.get_config("branch")
+        remote = self.get_config("remote")
+
+        self.log.debug(f"PULL {self.checkout_path} {remote}/{branch}")
+        self.checkout(branch)
+        command_pull = self.command("pull", remote, branch)
         self.run_git_command(command_pull)
-        self.log.debug(f"PULL {self.checkout_path} complete")
+        self.log.debug(f"PULL {self.checkout_path} {remote}/{branch} complete")
 
     def push(self, **kwargs):
         """
         Push commits
         """
-        self.log.debug(f"PUSH {self.checkout_path}")
-        command_push = self.command("push", "origin", self.branch)
+
+        branch = self.get_config("branch")
+        remote = self.get_config("remote")
+
+        self.log.debug(f"PUSH {self.checkout_path} {remote} {branch}")
+        command_push = self.command("push", remote, branch)
         if kwargs.get("tags"):
             command_push += ["--tags"]
         self.run_git_command(command_push)
-        self.log.debug(f"PUSH {self.checkout_path} complete")
+        self.log.debug(f"PUSH {self.checkout_path} {remote} {branch} complete")
 
     def tag(self, version, message, **kwargs):
         """
