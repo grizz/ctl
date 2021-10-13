@@ -6,8 +6,10 @@
 - `pypi release` support for poetry based projects (#27)
 - `version tag/bump` support for poetry based projects (#27)
 - `semver2` plugin (#20)`
+- `remote` config attribute for repository plugins
 ### Fixed
 - version plugins no longer mangle pyproject.toml formatting (#35)
+- git plugin will now always set remote and branch for pull and push
 
 
 ## 1.0.0
